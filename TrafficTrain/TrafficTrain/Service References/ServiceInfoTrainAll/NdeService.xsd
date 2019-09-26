@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:2246/NdeService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/NdeDataClasses" />
+  <xs:import schemaLocation="http://localhost:2246/NdeService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/NdeDataClasses.Commands" />
+  <xs:element name="GetLastTrainEvents">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLastTrainEventsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/NdeDataClasses" minOccurs="0" name="GetLastTrainEventsResult" nillable="true" type="q1:ArrayOfTrainEvent" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetWorkVectors">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetWorkVectorsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/NdeDataClasses" minOccurs="0" name="GetWorkVectorsResult" nillable="true" type="q2:ArrayOfTrainWorking" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetWorkMessages">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetWorkMessagesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/NdeDataClasses" minOccurs="0" name="GetWorkMessagesResult" nillable="true" type="q3:ArrayOfWorkMessage" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ExecuteBindingCommand">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/NdeDataClasses.Commands" minOccurs="0" name="command" nillable="true" type="q4:BindingCommand" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ExecuteBindingCommandResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

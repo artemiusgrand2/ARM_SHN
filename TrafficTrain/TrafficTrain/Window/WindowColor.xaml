@@ -1,0 +1,57 @@
+﻿<Window x:Class="TrafficTrain.WindowColor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Цветовая палитра"   Closing="Window_Closing" Icon="/TrafficTrain;component/Images/lightning-icon_34399.ico"
+        ShowInTaskbar="False" WindowStartupLocation="CenterScreen" Visibility="Hidden" Background="{StaticResource SelectedBackgroundBrush}" >
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition  />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition  Width="10" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="10" />
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer Grid.Column="1"  Background="{StaticResource SelectedBackgroundBrush}" >
+            <Expander   Header="Перечень цветов"  HorizontalAlignment="Center"  VerticalAlignment="Bottom"  FontWeight="Bold"    IsExpanded="False">
+                <Grid  >
+                    <WrapPanel VerticalAlignment="Center">
+                        <Label/>
+                        <TextBlock Text="Название цвета:" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <Label Content=" "/>
+                        <ComboBox Name="ComBoxColorNames" SelectionChanged="ComBoxColorNames_SelectionChanged" FontSize="14" />
+                        <Label Content=" "/>
+                        <Button Content="+"   Name="button_add_color" Width="20" Height="20" BorderBrush="Silver" FontSize="12" Click="button_add_color_Click" />
+                        <Label Content=" "/>
+                        <Button Content="-"  Name="button_remove_color" Width="20" Height="20" BorderBrush="Silver" FontSize="12" Click="button_remove_color_Click" />
+                        <Label Content=" "/>
+                        <Button Content="U"  Name="button_update_color" Width="20" Height="20" BorderBrush="Silver" FontSize="12" Click="button_update_color_Click"/>
+                        <Label Content=" "/>
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Canvas  Name="ExsampleColorPanel" Width="20" Height="20" MouseDown="ExsampleColorPanel_MouseDown" />
+                            <Label Content="  "/>
+                            <TextBlock Name="ExsampleValueColor" VerticalAlignment="Center" FontSize="12"/>
+                        </StackPanel>
+                    </WrapPanel>
+
+                </Grid>
+            </Expander>
+        </ScrollViewer>
+        
+     
+        <ScrollViewer Grid.Row="1" Grid.Column="1"   Background="{StaticResource SelectedBackgroundBrush}" PanningMode="VerticalFirst">
+                <WrapPanel Name="MainPanel" />
+            </ScrollViewer>
+
+        <WrapPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" FlowDirection="RightToLeft">
+            <Button  Height="25" Width="75" Content="Отмена" Name="button_close" BorderBrush="Silver" Click="button_close_Click"/>
+            <Label Content="  "/>
+            <Button  Height="25" Width="75" Content="Принять" Name="button_ok" BorderBrush="Silver" Click="button_ok_Click"/>
+        </WrapPanel>
+    </Grid>
+</Window>

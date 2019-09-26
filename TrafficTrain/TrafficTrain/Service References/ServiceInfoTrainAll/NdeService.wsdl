@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="NdeService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost:2246/NdeService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:2246/NdeService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:2246/NdeService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/NdeDataClasses" />
+      <xsd:import schemaLocation="http://localhost:2246/NdeService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/NdeDataClasses.Commands" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="INdeService_GetLastTrainEvents_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLastTrainEvents" />
+  </wsdl:message>
+  <wsdl:message name="INdeService_GetLastTrainEvents_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLastTrainEventsResponse" />
+  </wsdl:message>
+  <wsdl:message name="INdeService_GetWorkVectors_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetWorkVectors" />
+  </wsdl:message>
+  <wsdl:message name="INdeService_GetWorkVectors_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetWorkVectorsResponse" />
+  </wsdl:message>
+  <wsdl:message name="INdeService_GetWorkMessages_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetWorkMessages" />
+  </wsdl:message>
+  <wsdl:message name="INdeService_GetWorkMessages_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetWorkMessagesResponse" />
+  </wsdl:message>
+  <wsdl:message name="INdeService_ExecuteBindingCommand_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteBindingCommand" />
+  </wsdl:message>
+  <wsdl:message name="INdeService_ExecuteBindingCommand_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteBindingCommandResponse" />
+  </wsdl:message>
+  <wsdl:portType name="INdeService">
+    <wsdl:operation name="GetLastTrainEvents">
+      <wsdl:input wsaw:Action="http://tempuri.org/INdeService/GetLastTrainEvents" message="tns:INdeService_GetLastTrainEvents_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/INdeService/GetLastTrainEventsResponse" message="tns:INdeService_GetLastTrainEvents_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetWorkVectors">
+      <wsdl:input wsaw:Action="http://tempuri.org/INdeService/GetWorkVectors" message="tns:INdeService_GetWorkVectors_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/INdeService/GetWorkVectorsResponse" message="tns:INdeService_GetWorkVectors_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetWorkMessages">
+      <wsdl:input wsaw:Action="http://tempuri.org/INdeService/GetWorkMessages" message="tns:INdeService_GetWorkMessages_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/INdeService/GetWorkMessagesResponse" message="tns:INdeService_GetWorkMessages_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteBindingCommand">
+      <wsdl:input wsaw:Action="http://tempuri.org/INdeService/ExecuteBindingCommand" message="tns:INdeService_ExecuteBindingCommand_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/INdeService/ExecuteBindingCommandResponse" message="tns:INdeService_ExecuteBindingCommand_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_INdeService" type="tns:INdeService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetLastTrainEvents">
+      <soap:operation soapAction="http://tempuri.org/INdeService/GetLastTrainEvents" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWorkVectors">
+      <soap:operation soapAction="http://tempuri.org/INdeService/GetWorkVectors" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWorkMessages">
+      <soap:operation soapAction="http://tempuri.org/INdeService/GetWorkMessages" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteBindingCommand">
+      <soap:operation soapAction="http://tempuri.org/INdeService/ExecuteBindingCommand" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="NdeService">
+    <wsdl:port name="BasicHttpBinding_INdeService" binding="tns:BasicHttpBinding_INdeService">
+      <soap:address location="http://localhost:2246/NdeService.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

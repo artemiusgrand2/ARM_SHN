@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/MessageTrainService" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/MessageTrainService" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ArrayOfTrainInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="TrainInfo" nillable="true" type="tns:TrainInfo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTrainInfo" nillable="true" type="tns:ArrayOfTrainInfo" />
+  <xs:complexType name="TrainInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="LenghtTrain" type="xs:double" />
+      <xs:element minOccurs="0" name="Mark" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="StationEnd" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="WeightTrain" type="xs:double" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TrainInfo" nillable="true" type="tns:TrainInfo" />
+</xs:schema>

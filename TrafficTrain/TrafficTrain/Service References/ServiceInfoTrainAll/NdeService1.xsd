@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/NdeDataClasses" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/NdeDataClasses" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ArrayOfTrainEvent">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="TrainEvent" nillable="true" type="tns:TrainEvent" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTrainEvent" nillable="true" type="tns:ArrayOfTrainEvent" />
+  <xs:complexType name="TrainEvent">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CWagCount" type="xs:int" />
+      <xs:element minOccurs="0" name="CrewStTimeH" type="xs:int" />
+      <xs:element minOccurs="0" name="CrewStTimeM" type="xs:int" />
+      <xs:element minOccurs="0" name="DObjName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DObjType" type="xs:int" />
+      <xs:element minOccurs="0" name="DestStation" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DestType" type="xs:int" />
+      <xs:element minOccurs="0" name="EventAxis" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EventStation" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EventTime" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="EventType" type="xs:int" />
+      <xs:element minOccurs="0" name="GrWeight" type="xs:int" />
+      <xs:element minOccurs="0" name="Machinist" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MessIdn" type="xs:int" />
+      <xs:element minOccurs="0" name="NeibStation" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NtWeight" type="xs:int" />
+      <xs:element minOccurs="0" name="TrainIdn" type="xs:int" />
+      <xs:element minOccurs="0" name="TrainNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TrainNumberPrefix" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TrainNumberSuffix" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TrainEvent" nillable="true" type="tns:TrainEvent" />
+  <xs:complexType name="ArrayOfTrainWorking">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="TrainWorking" nillable="true" type="tns:TrainWorking" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTrainWorking" nillable="true" type="tns:ArrayOfTrainWorking" />
+  <xs:complexType name="TrainWorking">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="MsType" type="xs:int" />
+      <xs:element minOccurs="0" name="NeStation" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Remark" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="StartTime" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Station" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="StopTime" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Track" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TrainNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TrainPrefix" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TrainSuffix" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TrainWorking" nillable="true" type="tns:TrainWorking" />
+  <xs:complexType name="ArrayOfWorkMessage">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WorkMessage" nillable="true" type="tns:WorkMessage" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWorkMessage" nillable="true" type="tns:ArrayOfWorkMessage" />
+  <xs:complexType name="WorkMessage">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CWagCount" type="xs:int" />
+      <xs:element minOccurs="0" name="CrewStTimeH" type="xs:int" />
+      <xs:element minOccurs="0" name="CrewStTimeM" type="xs:int" />
+      <xs:element minOccurs="0" name="GrWeight" type="xs:int" />
+      <xs:element minOccurs="0" name="Machinist" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MessIdn" type="xs:int" />
+      <xs:element minOccurs="0" name="MessProp" type="xs:int" />
+      <xs:element minOccurs="0" name="MessStation" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MessTime" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="MessType" type="xs:int" />
+      <xs:element minOccurs="0" name="NmSost" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NtWeight" type="xs:int" />
+      <xs:element minOccurs="0" name="StDest" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="StForm" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TrainIdn" type="xs:int" />
+      <xs:element minOccurs="0" name="TrainNum" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WorkMessage" nillable="true" type="tns:WorkMessage" />
+</xs:schema>
