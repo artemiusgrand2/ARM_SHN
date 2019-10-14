@@ -357,13 +357,16 @@ namespace TrafficTrain
 
         private bool CheckNotValue(byte[] data)
         {
+            var countF = 0;
             foreach (var bit in data)
             {
-                if (bit != 0xFF)
-                    return false;//short.MaxValue
+                if (bit == 0xFF)
+                    countF++;
             }
+            if (countF > data.Length / 2)
+                return true;
             //
-            return true;
+            return false;
         }
 
         private byte[] FormaterToSingle(byte [] data)
