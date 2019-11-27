@@ -266,7 +266,7 @@ namespace TrafficTrain
         public static string CreateMessages(string message, DateTime start, DateTime end)
         {
             var startStr = GetDateTimeStr(start);
-            var endStr =/*(end != DateTime.MinValue) ? GetDateTimeStr(end) :*/ string.Empty;
+            var endStr =(end != DateTime.MinValue) ? GetDateTimeStr(end) :string.Empty;
             //
             return string.Format("{0}{1}. {2}{3}", startStr, (!string.IsNullOrEmpty(endStr)) ? string.Format(" - {0}", endStr) : endStr, message, Environment.NewLine);
         }

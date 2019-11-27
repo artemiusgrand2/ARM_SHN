@@ -19,23 +19,23 @@ namespace TrafficTrain
                 {
                     if (element.Messages.ContainsKey(element.state))
                         result.Add(LoadProject.CreateMessages(element.Messages[element.state], DateTime.Now, DateTime.MinValue));
-                    //
-                    if (element.stateActiv != StatesControl.nocontrol)
-                    {
-                        if (element.state == StatesControl.activ)
-                        {
-                            if (element.Messages.ContainsKey(StatesControl.pasiv))
-                                result.Add(LoadProject.CreateMessages(element.Messages[StatesControl.pasiv], element.LastUpdate, DateTime.Now));
-                        }
-                        else
-                        {
-                            if (element.Messages.ContainsKey(StatesControl.activ))
-                                result.Add(LoadProject.CreateMessages(element.Messages[StatesControl.activ], element.LastUpdate, DateTime.Now));
-                        }
-                    }
-                    //
-                    element.LastUpdate = DateTime.Now;
-                    element.stateActiv = element.state;
+                    ////
+                    //if (element.stateActiv != StatesControl.nocontrol)
+                    //{
+                    //    if (element.state == StatesControl.activ)
+                    //    {
+                    //        if (element.Messages.ContainsKey(StatesControl.pasiv))
+                    //            result.Add(LoadProject.CreateMessages(element.Messages[StatesControl.pasiv], element.LastUpdate, DateTime.Now));
+                    //    }
+                    //    else
+                    //    {
+                    //        if (element.Messages.ContainsKey(StatesControl.activ))
+                    //            result.Add(LoadProject.CreateMessages(element.Messages[StatesControl.activ], element.LastUpdate, DateTime.Now));
+                    //    }
+                    //}
+                    ////
+                    //element.LastUpdate = DateTime.Now;
+                    //element.stateActiv = element.state;
                 }
             }
             //

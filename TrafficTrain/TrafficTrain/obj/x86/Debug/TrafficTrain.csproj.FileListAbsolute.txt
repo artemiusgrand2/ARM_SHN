@@ -319,7 +319,6 @@ C:\Users\Артем\Documents\Visual Studio 2012\Projects\ARM_SHN\TrafficTrain\T
 d:\STP\ARM\system\TrafficTrain.exe.config
 d:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\TrafficTrain.exe
 d:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\TrafficTrain.pdb
-d:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\TrafficTrain.csprojResolveAssemblyReference.cache
 d:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\MainControl\ControlColor.baml
 d:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\MainControl\ControlColorElement.baml
 d:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\MainControl\ControlColorStatus.baml

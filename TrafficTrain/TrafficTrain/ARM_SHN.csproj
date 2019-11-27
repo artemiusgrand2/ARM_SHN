@@ -59,7 +59,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net">
-      <HintPath>C:\STP\ARM\system2\log4net.dll</HintPath>
+      <HintPath>..\..\..\ARM_DNZ\TrafficTrain\bin\x64\Debug\log4net.dll</HintPath>
     </Reference>
     <Reference Include="RW.KTC.ORPO.Berezina.BuildingTables">
       <HintPath>..\..\..\2.0.0.0\2.0.0.0\Output\Server\RW.KTC.ORPO.Berezina.BuildingTables.dll</HintPath>
@@ -86,7 +86,7 @@
       <HintPath>..\..\..\2.0.0.0\2.0.0.0\Output\Server\RW.KTC.ORPO.Berezina.Server.Core.dll</HintPath>
     </Reference>
     <Reference Include="SCADA.Common">
-      <HintPath>C:\STP\ARM\system2\SCADA.Common.dll</HintPath>
+      <HintPath>..\..\..\SCADA.Common\SaveProtocol\bin\Debug\SCADA.Common.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />

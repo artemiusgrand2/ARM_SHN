@@ -508,9 +508,6 @@ namespace TrafficTrain
         public IList<string> Analis()
         {
             bool update = false;
-            if (nametrack == "Аварийное отключение")
-            {
-            }
             var result = new List<string>();
             foreach (KeyValuePair<Viewmode, StateElement> Imp in Impulses)
             {

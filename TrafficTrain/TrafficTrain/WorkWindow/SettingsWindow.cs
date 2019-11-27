@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Timers;
+using System.Linq;
 using System.IO;
 using System.Xml;
 using System.Windows.Input;
@@ -285,12 +286,10 @@ namespace TrafficTrain.WorkWindow
                 {
                     var messages = new List<string>();
                     foreach (var el in LoadProject.Indications)
-                    {
                         messages.AddRange(el.Analis());
-                    }
                     //
                     if (messages.Count > 0)
-                        LoadProject.AddMessages(messages);
+                        LoadProject.AddMessages(messages.Distinct().ToList());
                 }
             }));
         }
