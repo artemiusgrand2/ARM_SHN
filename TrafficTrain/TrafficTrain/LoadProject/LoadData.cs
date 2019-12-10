@@ -1176,7 +1176,7 @@ namespace TrafficTrain
                                         {
                                             case ViewTrack.analogCell:
                                                 {
-                                                if(el.StationNumber == 17 &&  nameKey== "ЩП.Uh")
+                                                if(el.StationNumber == 14 &&  nameKey== "ЩП.Uh")
                                                 {
 
                                                 }
