@@ -3,8 +3,7 @@ using System.Configuration;
 using System.Timers;
 
 using TrafficTrain.Delegate;
-using TrafficTrain.Impulsesver;
-using TrafficTrain.Impulsesver.Client;
+using SCADA.Common.ImpulsClient;
 
 namespace TrafficTrain.WorkWindow
 {
@@ -27,11 +26,11 @@ namespace TrafficTrain.WorkWindow
         /// секунды времени
         /// </summary>
         public static event NewTaktEvent NewSecond;
-        static ImpulsesClient _client;
+        static ImpulsesClientTCP  _client;
         /// <summary>
         /// класс для работы с сервером импульсов
         /// </summary>
-        public static ImpulsesClient ClientImpulses { get { return _client; } }
+        public static ImpulsesClientTCP ClientImpulses { get { return _client; } }
         /// <summary>
         /// тактовый таймер для мигания различных элементов
         /// </summary>
@@ -61,6 +60,8 @@ namespace TrafficTrain.WorkWindow
 
         //int index_color = 1;
 
+
+
         #endregion
 
         public Connections()
@@ -79,8 +80,8 @@ namespace TrafficTrain.WorkWindow
             if (LoadInfo != null)
                 LoadInfo("Подключение к импульс серверу");
             //подключение к импульс серверу
-            ServerConfiguration config = ServerConfiguration.FromFile(ConfigurationManager.AppSettings["cfgpath"]);
-            _client = new ImpulsesClient(config.Stations, ConfigurationManager.AppSettings["constring"], ConfigurationManager.AppSettings["tablespath"]);
+            var config = ServerConfiguration.FromFile(ConfigurationManager.AppSettings["cfgpath"]);
+            _client = new ImpulsesClientTCP(config.Stations, ConfigurationManager.AppSettings["constring"], ConfigurationManager.AppSettings["tablespath"], false, LoadProject.TsServiceList);
             if (LoadInfo != null)
                 LoadInfo("Подключение к серверу номеров поездов");
         }

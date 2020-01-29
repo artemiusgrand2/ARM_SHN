@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using TrafficTrain.Impulsesver.Client;
 using TrafficTrain.Interface;
 using TrafficTrain.WorkWindow;
 using TrafficTrain.Enums;

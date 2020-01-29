@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using TrafficTrain.Impulsesver.Client;
 using TrafficTrain.EditText;
 using TrafficTrain.Interface;
 using TrafficTrain.Enums;
@@ -14,6 +13,7 @@ using TrafficTrain.Delegate;
 
 using SCADA.Common.Enums;
 using SCADA.Common.SaveElement;
+using SCADA.Common.ImpulsClient;
 
 namespace TrafficTrain
 {
@@ -483,7 +483,7 @@ namespace TrafficTrain
         {
             if (Impulses.Count > 0)
             {
-                if (ImpulsesClient.Connect)
+                if (ImpulsesClientTCP.Connect)
                     //GetColorStroke();
                     Stroke = m_colordiesel_traction;
                 else
@@ -514,7 +514,7 @@ namespace TrafficTrain
                 if (Imp.Value.Name != Viewmode.electrification)
                 {
                     StatesControl state = Imp.Value.state;
-                    Imp.Value.state = GetImpuls.GetStateControl(StationControl, Imp.Value.Impuls);
+                    Imp.Value.state = Connections.ClientImpulses.Data.GetStateControl(StationControl, Imp.Value.Impuls);
                     //
                     if (state != Imp.Value.state)
                     {

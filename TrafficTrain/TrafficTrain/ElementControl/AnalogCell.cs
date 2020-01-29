@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using TrafficTrain.Impulsesver.Client;
 using TrafficTrain.Interface;
 using TrafficTrain.WorkWindow;
 using TrafficTrain.DataServer;
@@ -304,8 +303,8 @@ namespace TrafficTrain
             {
                 var wholeNumber = (long)Math.Truncate(data);
                 var whole = wholeNumber.ToString(string.Format("D{0}", m_wholeCount));
-                if (data < 0 && wholeNumber == 0)
-                    whole = whole.Insert(0, "-");
+                //if (data < 0 && wholeNumber == 0)
+                //    whole = whole.Insert(0, "-");
                 if (m_fractionalCount > 0)
                     return string.Format("{0}.{1}", whole, data.ToString(string.Format("F{0}", m_fractionalCount)).Split(new char[] { ',', '.' })[1]);
                 else

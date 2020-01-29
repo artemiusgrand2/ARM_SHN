@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using TrafficTrain.Impulsesver.Client;
 using TrafficTrain.Interface;
 using TrafficTrain.Enums;
 using TrafficTrain.Delegate;

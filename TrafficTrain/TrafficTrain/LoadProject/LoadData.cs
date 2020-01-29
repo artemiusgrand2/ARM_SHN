@@ -24,6 +24,7 @@ using TrafficTrain.DataServer;
 using SCADA.Common.Enums;
 using SCADA.Common.SaveElement;
 using SCADA.Common.Strage.SaveElement;
+using SCADA.Common.ImpulsClient;
 using SCADA.Common.LogicalParse;
 using SCADA.Common.Constant;
 using log4net;
@@ -1176,7 +1177,7 @@ namespace TrafficTrain
                                         {
                                             case ViewTrack.analogCell:
                                                 {
-                                                if(el.StationNumber == 14 &&  nameKey== "ЩП.Uh")
+                                                if(el.StationNumber == 11 &&  nameKey== "ЩР.A2.Н")
                                                 {
 
                                                 }
@@ -1400,9 +1401,9 @@ namespace TrafficTrain
                                 //
                                 if (!TsServiceList[station.Key].NamesValue.ContainsKey(split_name[1]))
                                 {
-                                    if (Connections.ClientImpulses.data.Stations.ContainsKey(station.Key))
+                                    if (Connections.ClientImpulses.Data.Stations.ContainsKey(station.Key))
                                     {
-                                        if (Connections.ClientImpulses.data.Stations[station.Key].TS.AddTSImpuls(split_name[1]))
+                                        if (Connections.ClientImpulses.Data.Stations[station.Key].TS.AddTSImpuls(split_name[1]))
                                         {
                                             TsServiceList[station.Key].NamesValue.Add(split_name[1], new Dictionary<Viewmode, string>());
                                             foreach (StateValue state in names.Value)

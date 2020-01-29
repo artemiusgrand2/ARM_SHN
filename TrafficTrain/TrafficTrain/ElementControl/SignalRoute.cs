@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using TrafficTrain.Impulsesver.Client;
 using TrafficTrain.Interface;
 using TrafficTrain.Enums;
 using TrafficTrain.WorkWindow;
@@ -11,6 +10,7 @@ using TrafficTrain.Constant;
 
 using SCADA.Common.Enums;
 using SCADA.Common.SaveElement;
+using SCADA.Common.ImpulsClient;
 using log4net;
 
 namespace TrafficTrain
@@ -429,7 +429,7 @@ namespace TrafficTrain
         {
             if (Impulses.Count > 0)
             {
-                if (!ImpulsesClient.Connect)
+                if (!ImpulsesClientTCP.Connect)
                 {
                     foreach (KeyValuePair<Viewmode, StateElement> imp in Impulses)
                         imp.Value.state = StatesControl.nocontrol;
@@ -448,7 +448,7 @@ namespace TrafficTrain
             foreach (KeyValuePair<Viewmode, StateElement> Imp in Impulses)
             {
                 StatesControl state = Imp.Value.state;
-                Imp.Value.state = GetImpuls.GetStateControl(StationControl, Imp.Value.Impuls);
+                Imp.Value.state = Connections.ClientImpulses.Data.GetStateControl(StationControl, Imp.Value.Impuls);
                 //
                 if (state != Imp.Value.state)
                 {

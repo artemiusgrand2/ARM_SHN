@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using TrafficTrain.Impulsesver.Client;
 using TrafficTrain.Interface;
 using TrafficTrain.WorkWindow;
 using TrafficTrain.Constant;
@@ -11,6 +10,7 @@ using TrafficTrain.Enums;
 
 using SCADA.Common.Enums;
 using SCADA.Common.SaveElement;
+using SCADA.Common.ImpulsClient;
 using log4net;
 
 
@@ -297,13 +297,13 @@ namespace TrafficTrain
             //проверяем поддерживает ли станция автопилот
             if (impulses.ContainsKey(Viewmode.auto_pilot))
             {
-                if (Connections.ClientImpulses.data.Stations.ContainsKey(StationControl))
+                if (Connections.ClientImpulses.Data.Stations.ContainsKey(StationControl))
                 {
-                    if (Connections.ClientImpulses.data.Stations[StationControl].TS.ContainsTS(impulses[Viewmode.auto_pilot].Impuls))
+                    if (Connections.ClientImpulses.Data.Stations[StationControl].TS.ContainsTS(impulses[Viewmode.auto_pilot].Impuls))
                         AutoPilot = true;
                     else
                     {
-                        if (Connections.ClientImpulses.data.Stations[StationControl].TS.AddTSImpuls(impulses[Viewmode.auto_pilot].Impuls))
+                        if (Connections.ClientImpulses.Data.Stations[StationControl].TS.AddTSImpuls(impulses[Viewmode.auto_pilot].Impuls))
                             AutoPilot = true;
                     }
                 }
@@ -411,7 +411,7 @@ namespace TrafficTrain
         {
             if (Impulses.Count > 0)
             {
-                if (ImpulsesClient.Connect)
+                if (ImpulsesClientTCP.Connect)
                     Stroke = _color_stroke_normal;
                 else
                 {
@@ -432,7 +432,7 @@ namespace TrafficTrain
             {
                 StatesControl state = Imp.Value.state;
                 if (Imp.Value.Name != Viewmode.autonomous_control)
-                    Imp.Value.state = GetImpuls.GetStateControl(StationControl, Imp.Value.Impuls);
+                    Imp.Value.state = Connections.ClientImpulses.Data.GetStateControl(StationControl, Imp.Value.Impuls);
                 else
                 {
                     switch (Imp.Value.Name)

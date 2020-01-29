@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using TrafficTrain.Impulsesver.Client;
 
 using TrafficTrain.Interface;
 using TrafficTrain.EditText;
@@ -13,6 +12,7 @@ using TrafficTrain.Constant;
 using TrafficTrain.Enums;
 
 using SCADA.Common.Enums;
+using SCADA.Common.ImpulsClient;
 
 namespace TrafficTrain
 {
@@ -374,7 +374,7 @@ namespace TrafficTrain
 
         private void ServerClose(bool iscolor)
         {
-            if (ImpulsesClient.Connect)
+            if (ImpulsesClientTCP.Connect)
                 Stroke = _color_ramka;
             else
             {

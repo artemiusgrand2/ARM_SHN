@@ -14,10 +14,10 @@ using log4net;
 using TrafficTrain.Interface;
 using TrafficTrain.Enums;
 using TrafficTrain.Delegate;
-using TrafficTrain.Impulsesver.Client;
 
 using SCADA.Common.Enums;
 using SCADA.Common.Strage.SaveElement;
+using SCADA.Common.ImpulsClient;
 
 namespace TrafficTrain.WorkWindow
 {
@@ -214,8 +214,8 @@ namespace TrafficTrain.WorkWindow
                 CommandButton.OnOffObject += OnOffEventRun;
             }
             //
-            ImpulsesClient.NewData += NewInfomation;
-            ImpulsesClient.ConnectDisconnectionServer += ConnectCloseServer;
+            ImpulsesClientTCP.NewData += NewInfomation;
+            ImpulsesClientTCP.ConnectDisconnectionServer += ConnectCloseServer;
         }
 
         public SettingsWindow(ContentControl window, Canvas drawcanvas, ViewWindow viewwindow)
@@ -255,8 +255,8 @@ namespace TrafficTrain.WorkWindow
         {
             LoadColorControl.NewColor -= NewColor;
             CommandButton.OnOffObject -= OnOffEventRun;
-            ImpulsesClient.NewData -= NewInfomation;
-            ImpulsesClient.ConnectDisconnectionServer -= ConnectCloseServer;
+            ImpulsesClientTCP.NewData -= NewInfomation;
+            ImpulsesClientTCP.ConnectDisconnectionServer -= ConnectCloseServer;
         }
 
         private void SetSettings(Canvas drawcanvas)
