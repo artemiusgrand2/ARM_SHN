@@ -19,7 +19,7 @@ namespace TrafficTrain
     /// <summary>
     /// класс индикации шильд
     /// </summary>
-    class AnalogCell : Shape, IGraficElement, IDisposable, IText, ISelectElement
+    class AnalogCell : Shape, IGraficElement, IDisposable, IText, ISelectElement, IInfoElement
     {
         #region Переменные и свойства
         /////геометрия элемента
@@ -203,6 +203,8 @@ namespace TrafficTrain
         /// число символов после запятой
         /// </summary>
         private byte m_fractionalCount = 2;
+
+        public string FileClick { get; set; } = string.Empty;
         #endregion
 
         /// <summary>
@@ -248,6 +250,11 @@ namespace TrafficTrain
             }
         }
 
+        public string InfoElement()
+        {
+            return string.Format("{0}", Notes);
+        }
+
         private double AnalisFactor(string factor)
         {
             double result;
@@ -273,7 +280,7 @@ namespace TrafficTrain
                 {
                     if (Core.Stations.ContainsKey(StationControl))
                     {
-                        if (m_tableId == 14)
+                        if (m_tableId == 14 && m_nameItem == "Фидер1_счет")
                         {
                         }
                         if (Core.Stations[StationControl].ContainsKey(m_tableId))

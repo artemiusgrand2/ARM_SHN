@@ -80,7 +80,7 @@ namespace TrafficTrain.Interface
 
         int StationControl { get; set; }
         int StationTransition { get; set; }
-
+        string FileClick { get; set; }
         string NameUl { get; }
     }
 

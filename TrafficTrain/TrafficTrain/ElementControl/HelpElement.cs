@@ -222,6 +222,8 @@ namespace TrafficTrain
                 return NameElement;
             }
         }
+
+        public string FileClick { get; set; } = string.Empty;
         #endregion
 
         /// <summary>

@@ -29,6 +29,8 @@ using SCADA.Common.LogicalParse;
 using SCADA.Common.Constant;
 using log4net;
 
+//using CefSharp.Wpf;
+
 namespace TrafficTrain
 {
 
@@ -219,7 +221,7 @@ namespace TrafficTrain
         /// <summary>
         /// список повторяющихся сообщений по названиям объектов
         /// </summary>
-        private static IDictionary<int, IDictionary<string, IDictionary<Viewmode, IList<string>>>> m_messagesRepeat = new Dictionary<int, IDictionary<string, IDictionary<Viewmode, IList<string>>>>();
+       // private static IDictionary<int, IDictionary<string, IDictionary<Viewmode, IList<string>>>> m_messagesRepeat = new Dictionary<int, IDictionary<string, IDictionary<Viewmode, IList<string>>>>();
 
         private IDictionary<string, FieldType> m_nameTypesFiled = new Dictionary<string, FieldType>() { { "float", FieldType.floatType }, { "int", FieldType.intType } };
 
@@ -953,6 +955,7 @@ namespace TrafficTrain
             {
                 selectEl.StationControl = baseSave.StationNumber;
                 selectEl.StationTransition = baseSave.StationNumberRight;
+                selectEl.FileClick = baseSave.FileForClick;
             }
             //если элемент поддекживает индикацию
             if (indicEl != null && indicEl.Impulses.Count > 0)
@@ -1177,7 +1180,7 @@ namespace TrafficTrain
                                         {
                                             case ViewTrack.analogCell:
                                                 {
-                                                if(el.StationNumber == 11 &&  nameKey== "ЩР.A2.Н")
+                                                if(el.StationNumber == 14 &&  nameKey== "IBAP.U")
                                                 {
 
                                                 }
@@ -1562,18 +1565,18 @@ namespace TrafficTrain
                         {
                             if (!impulses.ContainsKey(value.ViewTS))
                             {
-                                var isAddMessage = false;
-                                if (!m_messagesRepeat.ContainsKey(station_number))
-                                    m_messagesRepeat.Add(station_number, new Dictionary<string, IDictionary<Viewmode, IList<string>>>());
-                                if (!m_messagesRepeat[station_number].ContainsKey(name_element))
-                                    m_messagesRepeat[station_number].Add(name_element, new Dictionary<Viewmode, IList<string>>());
-                                if (!m_messagesRepeat[station_number][name_element].ContainsKey(value.ViewTS) && value.Messages != null)
-                                {
-                                    m_messagesRepeat[station_number][name_element].Add(value.ViewTS, value.Messages.Values.ToList());
-                                    isAddMessage = true;
-                                }
+                                //var isAddMessage = false;
+                                //if (!m_messagesRepeat.ContainsKey(station_number))
+                                //    m_messagesRepeat.Add(station_number, new Dictionary<string, IDictionary<Viewmode, IList<string>>>());
+                                //if (!m_messagesRepeat[station_number].ContainsKey(name_element))
+                                //    m_messagesRepeat[station_number].Add(name_element, new Dictionary<Viewmode, IList<string>>());
+                                //if (!m_messagesRepeat[station_number][name_element].ContainsKey(value.ViewTS) && value.Messages != null)
+                                //{
+                                //    m_messagesRepeat[station_number][name_element].Add(value.ViewTS, value.Messages.Values.ToList());
+                                //    isAddMessage = true;
+                                //}
                                 //
-                                impulses.Add(value.ViewTS, new StateElement((isAddMessage) ? value.Messages : null) { Name = value.ViewTS, Impuls = value.Formula });
+                                impulses.Add(value.ViewTS, new StateElement(/*(isAddMessage) ?*/ value.Messages/* : null*/) { Name = value.ViewTS, Impuls = value.Formula });
                             }
                         }
                     }
@@ -1809,7 +1812,7 @@ namespace TrafficTrain
                     {
                         case ViewArea.area_picture:
                             {
-                                AreaPicture areaPicture = new AreaPicture(GetPathGeometry(area.Figures), area.Path, area.Angle) { Nodes = area.Notes, StationTransition = area.StationNumberRight };
+                                AreaPicture areaPicture = new AreaPicture(GetPathGeometry(area.Figures), area.Path, area.Angle) { Nodes = area.Notes, StationTransition = area.StationNumberRight, FileClick = area.FileForClick };
                                 //выводи объекта на панель
                                 areaPicture.Visibility = visible;
                                 drawCanvas.Children.Add(areaPicture);
@@ -1842,16 +1845,32 @@ namespace TrafficTrain
                                 elements.Add(m_areaMessage);
                             }
                             break;
-                         //case ViewArea.area_station:
-                         //   {
-                         //       if (m_detailStation == null)
-                         //       {
-                         //           m_detailStation = new DetailViewStation(x, y, width, height, ContentHelp);
-                         //           m_detailStation.
-                         //           drawCanvas.Children.Add(m_detailStation);
-                         //       }
-                         //   }
-                         //   break;
+                        //case ViewArea.webBrowser:
+                        //    {
+                        //        var areaWebrowser = new ChromiumWebBrowser();
+                        //        areaWebrowser.ZoomLevelIncrement = area.ZoomLevelIncrement;
+                        //        areaWebrowser.VerticalAlignment = VerticalAlignment.Top;
+                        //        areaWebrowser.HorizontalAlignment = HorizontalAlignment.Left;
+                        //        areaWebrowser.Margin = new Thickness(x, y, 0, 0);
+                        //        areaWebrowser.Width = width;
+                        //        areaWebrowser.Height = height;
+                        //        areaWebrowser.Address = area.Path;
+                        //        areaWebrowser.Visibility = visible;
+                        //        //выводи объекта на панель
+                        //        drawCanvas.Children.Add(areaWebrowser);
+                        //        elements.Add(areaWebrowser);
+                        //    }
+                        //    break;
+                            //case ViewArea.area_station:
+                            //   {
+                            //       if (m_detailStation == null)
+                            //       {
+                            //           m_detailStation = new DetailViewStation(x, y, width, height, ContentHelp);
+                            //           m_detailStation.
+                            //           drawCanvas.Children.Add(m_detailStation);
+                            //       }
+                            //   }
+                            //   break;
                     }
                     break;
                 }

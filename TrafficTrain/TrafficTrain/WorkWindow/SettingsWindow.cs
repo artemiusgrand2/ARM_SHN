@@ -19,6 +19,8 @@ using SCADA.Common.Enums;
 using SCADA.Common.Strage.SaveElement;
 using SCADA.Common.ImpulsClient;
 
+//using CefSharp.Wpf;
+
 namespace TrafficTrain.WorkWindow
 {
     class SettingsWindow
@@ -240,6 +242,16 @@ namespace TrafficTrain.WorkWindow
             _viewwindow = viewwindow;
             m_content = window;
             DrawCanvas = drawcanvas;
+            //foreach (var children in drawcanvas.Children)
+            //{
+            //    var findBrowser = children as ChromiumWebBrowser;
+            //    if (findBrowser != null)
+            //    {
+            //        findBrowser.PreviewMouseWheel += FindBrowser_PreviewMouseWheel;
+            //        //findBrowser.FrameLoadEnd += FindBrowser_FrameLoadEnd;
+            //        //findBrowser.PreviewKeyDown += FindBrowser_PreviewKeyDown;
+            //    }
+           // }
             groupTransform.Children.Add(new TranslateTransform());
             DrawCanvas.RenderTransform = groupTransform;
             if (areainfo != null)
@@ -277,6 +289,37 @@ namespace TrafficTrain.WorkWindow
                 }
             }
         }
+
+
+        //private void FindBrowser_FrameLoadEnd(object sender, CefSharp.FrameLoadEndEventArgs e)
+        //{
+        //    var browser = (ChromiumWebBrowser)sender;
+        //    //DrawCanvas.Dispatcher.Invoke(() =>
+        //    //{
+        //    //    var findBrowser = LoadProject.ProejctGrafic.GraficObjects.Where(x => x.ViewElement == ViewElement.area && (x as AreaSave).Figures[0].StartPoint.X == browser.Margin.Left
+        //    //                      && (x as AreaSave).Figures[0].StartPoint.Y == browser.Margin.Top).FirstOrDefault();
+        //    //    if (findBrowser != null)
+        //    //        browser.ZoomLevel = (findBrowser as AreaSave).ZoomLevel;
+        //    //});
+        //}
+
+        //private void FindBrowser_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        //{
+        //    if (Keyboard.IsKeyDown(Key.LeftShift))
+        //    {
+        //        var browser = sender as ChromiumWebBrowser;
+        //        if (e.Delta > 0)
+        //            browser.ZoomInCommand.Execute(null);
+        //        else
+        //            browser.ZoomOutCommand.Execute(null);
+        //        //
+        //       // var findBrowser = LoadProject.ProejctGrafic.GraficObjects.Where(x => x.ViewElement == ViewElement.area && (x as AreaSave).Figures[0].StartPoint.X == browser.Margin.Left
+        //       //&& (x as AreaSave).Figures[0].StartPoint.Y == browser.Margin.Top).FirstOrDefault();
+        //       // //
+        //       // if (findBrowser != null)
+        //       //     (findBrowser as AreaSave).ZoomLevel = browser.ZoomLevel;
+        //    }
+        //}
 
 
         private void NewInfomation()

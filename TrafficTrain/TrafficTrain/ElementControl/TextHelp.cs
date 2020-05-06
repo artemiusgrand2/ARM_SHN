@@ -129,6 +129,7 @@ namespace TrafficTrain
 
         public int StationControl { get; set; }
         public int StationTransition { get; set; }
+        public string FileClick { get; set; } = string.Empty;
 
         #endregion
 

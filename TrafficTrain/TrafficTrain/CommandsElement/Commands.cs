@@ -47,6 +47,9 @@ namespace TrafficTrain
             //}
             //else
             //{
+            if (!string.IsNullOrEmpty(element.FileClick) && System.IO.File.Exists(element.FileClick))
+                System.Diagnostics.Process.Start(element.FileClick);
+            else
                 LoadProject.UpdateStation(element.StationTransition, element.NameUl);
             //}
             //

@@ -1,0 +1,403 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="d:\programms\visual studio 2015\team tools\static analysis tools\fxcop\Xml\CodeAnalysisReport.xsl"?>
+<FxCopReport Version="14.0">
+ <Targets>
+  <Target Name="D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\bin\x64\Debug\TrafficTrain.exe">
+   <Modules>
+    <Module Name="traffictrain.exe">
+     <Namespaces>
+      <Namespace Name="TrafficTrain">
+       <Types>
+        <Type Name="App" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Messages>
+          <Message TypeName="TypesThatOwnDisposableFieldsShouldBeDisposable" Category="Microsoft.Design" CheckId="CA1001" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="DependsOnFix">
+           <Issue Name="DependsOnFix" Certainty="95" Level="CriticalError">Implement IDisposable on 'App' because it creates members of the following IDisposable types: 'Mutex'. If 'App' has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</Issue>
+          </Message>
+         </Messages>
+        </Type>
+        <Type Name="BlockSection" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Messages>
+          <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+           <Issue Name="ProvideDisposeBool" Certainty="95" Level="Error">Provide an overridable implementation of Dispose(bool) on 'BlockSection' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</Issue>
+          </Message>
+         </Messages>
+         <Members>
+          <Member Name="#Dispose()" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="DisposeImplementation" Certainty="95" Level="Error" Path="D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\ElementControl" File="BlockSection.cs" Line="178">Modify 'BlockSection.Dispose()' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+        <Type Name="ButtonStation" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Messages>
+          <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+           <Issue Name="ProvideDisposeBool" Certainty="95" Level="Error">Provide an overridable implementation of Dispose(bool) on 'ButtonStation' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</Issue>
+          </Message>
+         </Messages>
+         <Members>
+          <Member Name="#Dispose()" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="DisposeImplementation" Certainty="95" Level="Error" Path="D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\ElementControl" File="ButtonStation.cs" Line="281">Modify 'ButtonStation.Dispose()' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+        <Type Name="CloseWindowWpf" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Messages>
+          <Message TypeName="TypesThatOwnDisposableFieldsShouldBeDisposable" Category="Microsoft.Design" CheckId="CA1001" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="DependsOnFix">
+           <Issue Name="DependsOnFix" Certainty="95" Level="CriticalError">Implement IDisposable on 'CloseWindowWpf' because it creates members of the following IDisposable types: 'Timer'. If 'CloseWindowWpf' has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</Issue>
+          </Message>
+         </Messages>
+        </Type>
+        <Type Name="CommandButton" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name="#OnOffObject" Kind="Event" Static="True" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="First" Certainty="95" Level="Error">Declare the first parameter of 'OnOffObject' as an object named 'sender'.</Issue>
+             <Issue Name="Second" Certainty="95" Level="Error">Declare the second parameter of 'OnOffObject' as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#OpenColorDialog" Kind="Event" Static="True" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="First" Certainty="95" Level="Error">Declare the first parameter of 'NewColor' as an object named 'sender'.</Issue>
+             <Issue Name="Second" Certainty="95" Level="Error">Declare the second parameter of 'NewColor' as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#ShowObject" Kind="Event" Static="True" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="First" Certainty="95" Level="Error">Declare the first parameter of 'ShowCommand' as an object named 'sender'.</Issue>
+             <Issue Name="Second" Certainty="95" Level="Error">Declare the second parameter of 'ShowCommand' as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#TrainLayout" Kind="Event" Static="True" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="First" Certainty="95" Level="Error">Declare the first parameter of 'FilterNumberTrain' as an object named 'sender'.</Issue>
+             <Issue Name="Second" Certainty="95" Level="Error">Declare the second parameter of 'FilterNumberTrain' as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#VisibleObject" Kind="Event" Static="True" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="First" Certainty="95" Level="Error">Declare the first parameter of 'CommandObject' as an object named 'sender'.</Issue>
+             <Issue Name="Second" Certainty="95" Level="Error">Declare the second parameter of 'CommandObject' as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+        <Type Name="Direction" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Messages>
+          <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+           <Issue Name="ProvideDisposeBool" Certainty="95" Level="Error">Provide an overridable implementation of Dispose(bool) on 'Direction' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</Issue>
+          </Message>
+         </Messages>
+         <Members>
+          <Member Name="#Dispose()" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="DisposeImplementation" Certainty="95" Level="Error" Path="D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\ElementControl" File="Direction.cs" Line="220">Modify 'Direction.Dispose()' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+        <Type Name="LightShunting" Kind="Class" Accessibility="Assembly" ExternallyVisible="False">
+         <Members>
+          <Member Name="#InfoElement()" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="False">
+           <Messages>
+            <Message TypeName="Provide correct arguments to formatting methods" Category="Microsoft.Usage" CheckId="CA2241" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="DependsOnFix">
+             <Issue Name="MissingFormatItem" Certainty="75" Level="Warning" Path="D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\ElementControl" File="LightShunting.cs" Line="175">Method 'LightShunting.InfoElement()' calls 'string.Format(string, object, object)' and does not provide a format item for argument "2". The provided format string is: '"Маневровый светофор - {0}"'</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+        <Type Name="LoadProject" Kind="Class" Accessibility="Assembly" ExternallyVisible="False">
+         <Members>
+          <Member Name="#LoadColor(System.String,System.String)" Kind="Method" Static="True" Accessibility="Private" ExternallyVisible="False">
+           <Messages>
+            <Message TypeName="Do not dispose objects multiple times" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="DependsOnFix">
+             <Issue Certainty="75" Level="Warning" Path="D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\LoadProject" File="LoadData.cs" Line="357">Object 'reader' can be disposed more than once in method 'LoadProject.LoadColor(string, string)'. To avoid generating a System.ObjectDisposedException you should not call Dispose more than one time on an object.: Lines: 357</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#LoadGrafickProject(System.String,System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="False">
+           <Messages>
+            <Message TypeName="Do not dispose objects multiple times" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="DependsOnFix">
+             <Issue Certainty="75" Level="Warning" Path="D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\LoadProject" File="LoadData.cs" Line="318">Object 'reader' can be disposed more than once in method 'LoadProject.LoadGrafickProject(string, string)'. To avoid generating a System.ObjectDisposedException you should not call Dispose more than one time on an object.: Lines: 318</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#LoadStyles()" Kind="Method" Static="True" Accessibility="Private" ExternallyVisible="False">
+           <Messages>
+            <Message TypeName="Provide correct arguments to formatting methods" Category="Microsoft.Usage" CheckId="CA2241" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="DependsOnFix">
+             <Issue Name="MissingFormatItem" Certainty="75" Level="Warning" Path="D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\LoadProject" File="LoadData.cs" Line="409">Method 'LoadProject.LoadStyles()' calls 'string.Format(string, object, object)' and does not provide a format item for argument "2". The provided format string is: '"Стиль c названием {0} уже существует !!!"'</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+        <Type Name="NameStation" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Messages>
+          <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+           <Issue Name="ProvideDisposeBool" Certainty="95" Level="Error">Provide an overridable implementation of Dispose(bool) on 'NameStation' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</Issue>
+          </Message>
+         </Messages>
+         <Members>
+          <Member Name="#Dispose()" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="DisposeImplementation" Certainty="95" Level="Error" Path="D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\ElementControl" File="NameStation.cs" Line="181">Modify 'NameStation.Dispose()' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+        <Type Name="RouteSignal" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Messages>
+          <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+           <Issue Name="ProvideDisposeBool" Certainty="95" Level="Error">Provide an overridable implementation of Dispose(bool) on 'RouteSignal' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</Issue>
+          </Message>
+         </Messages>
+         <Members>
+          <Member Name="#Dispose()" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="DisposeImplementation" Certainty="95" Level="Error" Path="D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\ElementControl" File="SignalRoute.cs" Line="257">Modify 'RouteSignal.Dispose()' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+        <Type Name="StartWpf" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Messages>
+          <Message TypeName="TypesThatOwnDisposableFieldsShouldBeDisposable" Category="Microsoft.Design" CheckId="CA1001" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="DependsOnFix">
+           <Issue Name="DependsOnFix" Certainty="95" Level="CriticalError">Implement IDisposable on 'StartWpf' because it creates members of the following IDisposable types: 'Timer'. If 'StartWpf' has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</Issue>
+          </Message>
+         </Messages>
+        </Type>
+        <Type Name="StationPath" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name="#CancelShow" Kind="Event" Static="True" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="First" Certainty="95" Level="Error">Declare the first parameter of 'ShowCommand' as an object named 'sender'.</Issue>
+             <Issue Name="Second" Certainty="95" Level="Error">Declare the second parameter of 'ShowCommand' as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+        <Type Name="ViewStations" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Messages>
+          <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+           <Issue Name="ProvideDisposeBool" Certainty="95" Level="Error">Provide an overridable implementation of Dispose(bool) on 'ViewStations' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</Issue>
+          </Message>
+         </Messages>
+         <Members>
+          <Member Name="#Dispose()" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="DisposeImplementation" Certainty="95" Level="Error" Path="D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\Window" File="ViewStations.xaml.cs" Line="40">Modify 'ViewStations.Dispose()' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+        <Type Name="WindowColor" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name="#Save()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="False">
+           <Messages>
+            <Message TypeName="Do not dispose objects multiple times" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="DependsOnFix">
+             <Issue Certainty="75" Level="Warning" Path="D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\Window" File="WindowColor.xaml.cs" Line="69">Object 'savestream' can be disposed more than once in method 'WindowColor.Save()'. To avoid generating a System.ObjectDisposedException you should not call Dispose more than one time on an object.: Lines: 69</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#AddColor" Kind="Event" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="First" Certainty="95" Level="Error">Declare the first parameter of 'AddColor' as an object named 'sender'.</Issue>
+             <Issue Name="Second" Certainty="95" Level="Error">Declare the second parameter of 'AddColor' as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#RemoveColor" Kind="Event" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="First" Certainty="95" Level="Error">Declare the first parameter of 'UpdateColorValue' as an object named 'sender'.</Issue>
+             <Issue Name="Second" Certainty="95" Level="Error">Declare the second parameter of 'UpdateColorValue' as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#UpdateColorName" Kind="Event" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="First" Certainty="95" Level="Error">Declare the first parameter of 'UpdateColorName' as an object named 'sender'.</Issue>
+             <Issue Name="Second" Certainty="95" Level="Error">Declare the second parameter of 'UpdateColorName' as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#UpdateColorValue" Kind="Event" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="First" Certainty="95" Level="Error">Declare the first parameter of 'UpdateColorValue' as an object named 'sender'.</Issue>
+             <Issue Name="Second" Certainty="95" Level="Error">Declare the second parameter of 'UpdateColorValue' as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+       </Types>
+      </Namespace>
+      <Namespace Name="TrafficTrain.WorkWindow">
+       <Types>
+        <Type Name="Connections" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Messages>
+          <Message TypeName="TypesThatOwnDisposableFieldsShouldBeDisposable" Category="Microsoft.Design" CheckId="CA1001" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="DependsOnFix">
+           <Issue Name="DependsOnFix" Certainty="95" Level="CriticalError">Implement IDisposable on 'Connections' because it creates members of the following IDisposable types: 'Timer'. If 'Connections' has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</Issue>
+          </Message>
+         </Messages>
+         <Members>
+          <Member Name="#LoadInfo" Kind="Event" Static="True" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="First" Certainty="95" Level="Error">Declare the first parameter of 'Info' as an object named 'sender'.</Issue>
+             <Issue Name="Second" Certainty="95" Level="Error">Declare the second parameter of 'Info' as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#NewSecond" Kind="Event" Static="True" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="First" Certainty="95" Level="Error">Declare the first parameter of 'NewTaktEvent' as an object named 'sender'.</Issue>
+             <Issue Name="Second" Certainty="95" Level="Error">Declare the second parameter of 'NewTaktEvent' as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#NewTart" Kind="Event" Static="True" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="Breaking">
+             <Issue Name="First" Certainty="95" Level="Error">Declare the first parameter of 'NewTaktEvent' as an object named 'sender'.</Issue>
+             <Issue Name="Second" Certainty="95" Level="Error">Declare the second parameter of 'NewTaktEvent' as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+        <Type Name="SettingsWindow" Kind="Class" Accessibility="Assembly" ExternallyVisible="False">
+         <Members>
+          <Member Name="#Save()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="False">
+           <Messages>
+            <Message TypeName="Do not dispose objects multiple times" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="DependsOnFix">
+             <Issue Certainty="75" Level="Warning" Path="D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\WorkWindow" File="SettingsWindow.cs" Line="731">Object 'savestream' can be disposed more than once in method 'SettingsWindow.Save()'. To avoid generating a System.ObjectDisposedException you should not call Dispose more than one time on an object.: Lines: 731</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#window_Closing(System.Object,System.ComponentModel.CancelEventArgs)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="False">
+           <Messages>
+            <Message TypeName="Do not dispose objects multiple times" Category="Microsoft.Usage" CheckId="CA2202" Status="Active" Created="2020-04-24 08:11:57Z" FixCategory="DependsOnFix">
+             <Issue Certainty="75" Level="Warning" Path="D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\WorkWindow" File="SettingsWindow.cs" Line="964">Object 'savestream' can be disposed more than once in method 'SettingsWindow.window_Closing(object, CancelEventArgs)'. To avoid generating a System.ObjectDisposedException you should not call Dispose more than one time on an object.: Lines: 964</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+       </Types>
+      </Namespace>
+     </Namespaces>
+    </Module>
+   </Modules>
+  </Target>
+ </Targets>
+ <Rules>
+  <Rule TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009">
+   <Name>Declare event handlers correctly</Name>
+   <Description>By convention, .NET events have two parameters that specify the event sender and event data. Event handler signatures should follow this form: void MyEventHandler(object sender, EventArgs e). The 'sender' parameter is always of type System.Object, even if it is possible to employ a more specific type. The 'e' parameter is always of type System.EventArgs. Events that do not provide event data should use the System.EventHandler delegate type. Event handlers return void so that they can send each event to multiple target methods. Any value returned by a target would be lost after the first call.</Description>
+   <Resolution Name="First">Declare the first parameter of {0} as an object named 'sender'.</Resolution>
+   <Resolution Name="Second">Declare the second parameter of {0} as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Resolution>
+   <Owner />
+   <Url>http://msdn.microsoft.com/library/ms182133.aspx</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="95">Error</MessageLevel>
+   <File Name="designrules.dll" Version="14.0.0.0" />
+  </Rule>
+  <Rule TypeName="Do not dispose objects multiple times" Category="Microsoft.Usage" CheckId="CA2202">
+   <Name>Do not dispose objects multiple times</Name>
+   <Description>A correctly implemented Dispose method can be called multiple times without throwing an exception. However, this is not guaranteed and to avoid generating a System.ObjectDisposedException you should not call Dispose more than one time on an object.</Description>
+   <Resolution Name="Default">Object {0} can be disposed more than once in method {1}. To avoid generating a System.ObjectDisposedException you should not call Dispose more than one time on an object.: Lines: 964</Resolution>
+   <Owner>RuleOwner</Owner>
+   <Url>http://msdn.microsoft.com/library/ms182334.aspx</Url>
+   <Email />
+   <MessageLevel Certainty="75">Warning</MessageLevel>
+   <File Name="dataflowrules.dll" Version="14.0.0.0" />
+  </Rule>
+  <Rule TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063">
+   <Name>Implement IDisposable correctly</Name>
+   <Description>All IDisposable types should implement the Dispose pattern correctly.</Description>
+   <Resolution Name="DisposeImplementation">Modify {0} so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</Resolution>
+   <Resolution Name="ProvideDisposeBool">Provide an overridable implementation of Dispose(bool) on {0} or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</Resolution>
+   <Owner />
+   <Url>http://msdn.microsoft.com/library/ms244737.aspx</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="95">Error</MessageLevel>
+   <File Name="designrules.dll" Version="14.0.0.0" />
+  </Rule>
+  <Rule TypeName="Provide correct arguments to formatting methods" Category="Microsoft.Usage" CheckId="CA2241">
+   <Name>Provide correct arguments to formatting methods</Name>
+   <Description>Provide the correct number of arguments to String.Format calls.</Description>
+   <Resolution Name="MissingFormatItem">Method {0} calls {1} and does not provide a format item for argument {2}. The provided format string is: '{3}'</Resolution>
+   <Owner>RuleOwner</Owner>
+   <Url>http://msdn.microsoft.com/library/ms182361.aspx</Url>
+   <Email />
+   <MessageLevel Certainty="75">Warning</MessageLevel>
+   <File Name="dataflowrules.dll" Version="14.0.0.0" />
+  </Rule>
+  <Rule TypeName="TypesThatOwnDisposableFieldsShouldBeDisposable" Category="Microsoft.Design" CheckId="CA1001">
+   <Name>Types that own disposable fields should be disposable</Name>
+   <Description>Types that declare disposable members should also implement IDisposable. If the type does not own any unmanaged resources, do not implement a finalizer on it.</Description>
+   <Resolution Name="DependsOnFix">Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</Resolution>
+   <Owner />
+   <Url>http://msdn.microsoft.com/library/ms182172.aspx</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="95">CriticalError</MessageLevel>
+   <File Name="designrules.dll" Version="14.0.0.0" />
+  </Rule>
+ </Rules>
+ <Localized>
+  <String Key="Category">Category</String>
+  <String Key="Certainty">Certainty</String>
+  <String Key="CollapseAll">Collapse All</String>
+  <String Key="CheckId">Check Id</String>
+  <String Key="Error">Error</String>
+  <String Key="Errors">error(s)</String>
+  <String Key="ExpandAll">Expand All</String>
+  <String Key="Help">Help</String>
+  <String Key="Line">Line</String>
+  <String Key="Messages">message(s)</String>
+  <String Key="LocationNotStoredInPdb">[Location not stored in Pdb]</String>
+  <String Key="Project">Project</String>
+  <String Key="Resolution">Resolution</String>
+  <String Key="Rule">Rule</String>
+  <String Key="RuleFile">Rule File</String>
+  <String Key="RuleDescription">Rule Description</String>
+  <String Key="Source">Source</String>
+  <String Key="Status">Status</String>
+  <String Key="Target">Target</String>
+  <String Key="Warning">Warning</String>
+  <String Key="Warnings">warning(s)</String>
+  <String Key="ReportTitle">Code Analysis Report</String>
+ </Localized>
+</FxCopReport>

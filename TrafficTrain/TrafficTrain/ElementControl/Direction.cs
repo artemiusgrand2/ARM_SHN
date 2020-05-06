@@ -169,6 +169,7 @@ namespace TrafficTrain
             }
         }
 
+        public string FileClick { get; set; } = string.Empty;
         #endregion
 
         /// <summary>
@@ -179,13 +180,12 @@ namespace TrafficTrain
         /// <param name="geometry">название пути</param>
         /// <param name="name">граница</param>
         public Direction(int stationnumberleft, int stationnumberright, int station, PathGeometry geometry, string nametrack, Dictionary<Viewmode, StateElement> impulses, NumberTrainRamka train, bool constrotate,
-            ViewDirection viewdirection, bool IsVisible, string Notes)
+            ViewDirection viewdirection, bool IsVisible)
         {
             StationNumberLeft = stationnumberleft;
             StationTransition = stationnumberright;
             StationControl = station;
             NameTrack = nametrack;
-            this.Notes = Notes;
             ConstRotate = constrotate;
             Impulses = impulses;
             trainramka = train;
