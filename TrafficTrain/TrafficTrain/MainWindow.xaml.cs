@@ -82,7 +82,7 @@ namespace TrafficTrain
                     Environment.Exit(-1);
                 };
                 //Конфигурируем логер
-                log4net.Config.XmlConfigurator.Configure(new FileInfo(ConfigurationManager.AppSettings["file_log_configuration"]));
+                log4net.Config.XmlConfigurator.Configure(new FileInfo(App.Configuration["file_log_configuration"]));
                 log.Info("Программа запущена!!!");
                 //загрузка цветовой палитры
                 LoadProject.LoadColorAll();
@@ -105,9 +105,9 @@ namespace TrafficTrain
                 potok_headband.Start();
                 //инициализируем подключения
                 connections = new Connections();
-                if (ConfigurationManager.AppSettings["users"] != null && !string.IsNullOrEmpty(ConfigurationManager.AppSettings["users"]))
+                if (App.Configuration["users"] != null && !string.IsNullOrEmpty(App.Configuration["users"]))
                 {
-                    if (ConfigurationManager.AppSettings["users"] == ConstName.admin)
+                    if (App.Configuration["users"] == ConstName.admin)
                         Admin = true;
                 }
                 //загружаем проект
@@ -141,13 +141,13 @@ namespace TrafficTrain
             double scroll_save = 0;
             if (Admin)
             {
-                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["scroll_save"]) && double.TryParse(ConfigurationManager.AppSettings["scroll_save"], out buffer))
-                    scroll_save = Math.Abs(double.Parse(ConfigurationManager.AppSettings["scroll_save"]));
+                if (!string.IsNullOrEmpty(App.Configuration["scroll_save"]) && double.TryParse(App.Configuration["scroll_save"], out buffer))
+                    scroll_save = Math.Abs(double.Parse(App.Configuration["scroll_save"]));
             }
             else
             {
-                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["scroll_main"]) && double.TryParse(ConfigurationManager.AppSettings["scroll_main"], out buffer))
-                    scroll_save = Math.Abs(double.Parse(ConfigurationManager.AppSettings["scroll_main"]));
+                if (!string.IsNullOrEmpty(App.Configuration["scroll_main"]) && double.TryParse(App.Configuration["scroll_main"], out buffer))
+                    scroll_save = Math.Abs(double.Parse(App.Configuration["scroll_main"]));
             }
             //
             if (scroll_save >= 0.5 && scroll_save <= 99.5)

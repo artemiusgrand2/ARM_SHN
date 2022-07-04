@@ -43,3 +43,6 @@ d:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\TrafficTrain.g.re
 d:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\TrafficTrain.Properties.Resources.resources
 d:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\ARM_SHN.csproj.GenerateResource.Cache
 d:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\TrafficTrain.exe.licenses
+d:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\ARM_SHN.csproj.CoreCompileInputs.cache
+d:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\ARM_SHN.csproj.CopyComplete
+d:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\ARM_SHN.csprojAssemblyReference.cache

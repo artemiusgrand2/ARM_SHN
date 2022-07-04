@@ -70,7 +70,7 @@ namespace TrafficTrain.WorkWindow
             Takt.Elapsed += Takt_Elapsed;
             TaktTime.Elapsed += TaktTime_Elapsed;
             int buffer;
-            int.TryParse(ConfigurationManager.AppSettings["IntervalUpdatePalitra"], out buffer);
+            int.TryParse(App.Configuration["IntervalUpdatePalitra"], out buffer);
             if (buffer > 0)
                 UpdateScreenColorTime = new Timer(buffer * 60000);
             else
@@ -80,8 +80,8 @@ namespace TrafficTrain.WorkWindow
             if (LoadInfo != null)
                 LoadInfo("Подключение к импульс серверу");
             //подключение к импульс серверу
-            var config = ServerConfiguration.FromFile(ConfigurationManager.AppSettings["cfgpath"]);
-            _client = new ImpulsesClientTCP(config.Stations, ConfigurationManager.AppSettings["constring"], ConfigurationManager.AppSettings["tablespath"], false, LoadProject.TsServiceList);
+            var config = ServerConfiguration.FromFile(App.Configuration["cfgpath"]);
+            _client = new ImpulsesClientTCP(config.Stations, App.Configuration["constring"], App.Configuration["tablespath"], false, LoadProject.TsServiceList);
             if (LoadInfo != null)
                 LoadInfo("Подключение к серверу номеров поездов");
         }

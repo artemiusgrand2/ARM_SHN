@@ -543,9 +543,9 @@ namespace TrafficTrain.WorkWindow
         {
             try
             {
-                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["file_settings"]) && new FileInfo(ConfigurationManager.AppSettings["file_settings"]).Exists)
+                if (!string.IsNullOrEmpty(App.Configuration["file_settings"]) && new FileInfo(App.Configuration["file_settings"]).Exists)
                 {
-                    var reader = new XmlTextReader(ConfigurationManager.AppSettings["file_settings"]);
+                    var reader = new XmlTextReader(App.Configuration["file_settings"]);
                     var deserializer = new XmlSerializer(typeof(Settings));
                     _settings = (Settings)deserializer.Deserialize(reader);
                     reader.Close();
@@ -553,8 +553,8 @@ namespace TrafficTrain.WorkWindow
                 if (_settings == null)
                     _settings = new Settings();
                 //файл справки
-                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["file_help"]) && (new FileInfo(ConfigurationManager.AppSettings["file_help"]).Exists))
-                    HelpFile = ConfigurationManager.AppSettings["file_help"];
+                if (!string.IsNullOrEmpty(App.Configuration["file_help"]) && (new FileInfo(App.Configuration["file_help"]).Exists))
+                    HelpFile = App.Configuration["file_help"];
                 //настраиваем скорость прокрутки
                 YesPlaySoundMessage = true;
             }
@@ -719,9 +719,9 @@ namespace TrafficTrain.WorkWindow
                 SCADA.Common.SaveElement.StrageProject Project = LoadProject.SaveAnalis(m_Po, m_currentscale, 0, 0);
                 if (Project != null)
                 {
-                    if (System.Configuration.ConfigurationManager.AppSettings["grafick_project"] != null && !string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["grafick_project"]))
+                    if (App.Configuration["grafick_project"] != null && !string.IsNullOrEmpty(App.Configuration["grafick_project"]))
                     {
-                        using (Stream savestream = new FileStream(System.Configuration.ConfigurationManager.AppSettings["grafick_project"], FileMode.Create))
+                        using (Stream savestream = new FileStream(App.Configuration["grafick_project"], FileMode.Create))
                         {
                             // Указываем тип того объекта, который сериализуем
                             XmlSerializer xml = new XmlSerializer(typeof(SCADA.Common.SaveElement.StrageProject));
@@ -954,9 +954,9 @@ namespace TrafficTrain.WorkWindow
                             potokclose.SetApartmentState(System.Threading.ApartmentState.STA);
                             potokclose.Start();
                             (m_content as MainWindow).CloseAll();
-                            if (!string.IsNullOrEmpty(System.Configuration.ConfigurationManager.AppSettings["file_settings"]))
+                            if (!string.IsNullOrEmpty(App.Configuration["file_settings"]))
                             {
-                                using (Stream savestream = new FileStream(System.Configuration.ConfigurationManager.AppSettings["file_settings"], FileMode.Create))
+                                using (Stream savestream = new FileStream(App.Configuration["file_settings"], FileMode.Create))
                                 {
                                     XmlSerializer xml = new XmlSerializer(typeof(Settings));
                                     xml.Serialize(savestream, _settings);

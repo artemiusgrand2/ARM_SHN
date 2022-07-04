@@ -300,11 +300,11 @@ namespace TrafficTrain
             {
                 if (Connections.ClientImpulses.Data.Stations.ContainsKey(StationControl))
                 {
-                    if (Connections.ClientImpulses.Data.Stations[StationControl].TS.ContainsTS(impulses[Viewmode.auto_pilot].Impuls))
+                    if (Connections.ClientImpulses.Data.Stations[StationControl].TS.AddImpuls(impulses[Viewmode.auto_pilot].Impuls))
                         AutoPilot = true;
                     else
                     {
-                        if (Connections.ClientImpulses.Data.Stations[StationControl].TS.AddTSImpuls(impulses[Viewmode.auto_pilot].Impuls))
+                        if (Connections.ClientImpulses.Data.Stations[StationControl].TS.AddImpuls(impulses[Viewmode.auto_pilot].Impuls))
                             AutoPilot = true;
                     }
                 }

@@ -373,11 +373,11 @@ namespace TrafficTrain
         {
             try
             {
-                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["file_styles"]))
+                if (!string.IsNullOrEmpty(App.Configuration["file_styles"]))
                 {
-                    if (new FileInfo(ConfigurationManager.AppSettings["file_styles"]).Exists)
+                    if (new FileInfo(App.Configuration["file_styles"]).Exists)
                     {
-                        List<string> spisokstyle = GetStrLineFileRead(ConfigurationManager.AppSettings["file_styles"], Encoding.UTF8);
+                        List<string> spisokstyle = GetStrLineFileRead(App.Configuration["file_styles"], Encoding.UTF8);
                         foreach (string st in spisokstyle)
                         {
                             try
@@ -423,7 +423,7 @@ namespace TrafficTrain
                         m_log.Info("Стили загружены");
                     }
                     else
-                        m_log.Error(string.Format("Файла с перечнем путей с цветовым коллекциям по адресу {0} - не существует", ConfigurationManager.AppSettings["file_styles"]));
+                        m_log.Error(string.Format("Файла с перечнем путей с цветовым коллекциям по адресу {0} - не существует", App.Configuration["file_styles"]));
                 }
                 else
                     m_log.Error(string.Format("Введите в файле конфигурации путь к перечню файлов стилей , обозначенного {0}", "<<file_styles>>"));
@@ -604,12 +604,12 @@ namespace TrafficTrain
             try
             {
 
-                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["filestationTS"]))
+                if (!string.IsNullOrEmpty(App.Configuration["filestationTS"]))
                 {
-                    if (new FileInfo(ConfigurationManager.AppSettings["filestationTS"]).Exists)
+                    if (new FileInfo(App.Configuration["filestationTS"]).Exists)
                     {
 
-                        List<string> spisokstation = GetStrLineFileRead(ConfigurationManager.AppSettings["filestationTS"], Encoding.UTF8);
+                        List<string> spisokstation = GetStrLineFileRead(App.Configuration["filestationTS"], Encoding.UTF8);
                         foreach (string st in spisokstation)
                         {
                             try
@@ -706,7 +706,7 @@ namespace TrafficTrain
                         m_log.Info("Таблицы импульсов ТС загружены");
                     }
                     else
-                        m_log.Error(string.Format("Файла с перечнем импульсов ТС по адресу {0} - не существует", ConfigurationManager.AppSettings["filestationTS"]));
+                        m_log.Error(string.Format("Файла с перечнем импульсов ТС по адресу {0} - не существует", App.Configuration["filestationTS"]));
                 }
                 else
                     m_log.Error(string.Format("Введите в файле конфигурации путь к описанию импульсов ТС, обозначенного {0}", "<<filestationTS>>"));
@@ -718,11 +718,11 @@ namespace TrafficTrain
             //проверяем информацию по импульсам телеуправления
             try
             {
-                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["filestationTU"]))
+                if (!string.IsNullOrEmpty(App.Configuration["filestationTU"]))
                 {
-                    if (new FileInfo(ConfigurationManager.AppSettings["filestationTU"]).Exists)
+                    if (new FileInfo(App.Configuration["filestationTU"]).Exists)
                     {
-                        List<string> spisokstation = GetStrLineFileRead(ConfigurationManager.AppSettings["filestationTU"], Encoding.UTF8);
+                        List<string> spisokstation = GetStrLineFileRead(App.Configuration["filestationTU"], Encoding.UTF8);
                         foreach (string st in spisokstation)
                         {
                             try
@@ -761,7 +761,7 @@ namespace TrafficTrain
                         m_log.Info("Таблицы импульсов ТУ загружены");
                     }
                     else
-                        m_log.Error(string.Format("Файла с перечнем импульсов ТУ по адресу {0} - не существует", ConfigurationManager.AppSettings["filestationTU"]));
+                        m_log.Error(string.Format("Файла с перечнем импульсов ТУ по адресу {0} - не существует", App.Configuration["filestationTU"]));
                 }
                 else
                     m_log.Error(string.Format("Введите в файле конфигурации путь к описанию импульсов ТУ, обозначенного {0}", "<<filestationTU>>"));
@@ -796,11 +796,11 @@ namespace TrafficTrain
             //проверяем информацию по импульсам телесигнализации
             try
             {
-                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["view_stations"]))
+                if (!string.IsNullOrEmpty(App.Configuration["view_stations"]))
                 {
-                    if (new FileInfo(ConfigurationManager.AppSettings["view_stations"]).Exists)
+                    if (new FileInfo(App.Configuration["view_stations"]).Exists)
                     {
-                        List<string> spisokstation = GetStrLineFileRead(ConfigurationManager.AppSettings["view_stations"], Encoding.GetEncoding(1251));
+                        var spisokstation = GetStrLineFileRead(App.Configuration["view_stations"], Encoding.GetEncoding(1251));
                         foreach (string st in spisokstation)
                         {
                             try
@@ -834,7 +834,7 @@ namespace TrafficTrain
                         m_log.Info("Графики станций загружены");
                     }
                     else
-                        m_log.Error(string.Format("Файла с перечнем файлов детальных график станции по адресу {0} - не существует", ConfigurationManager.AppSettings["view_stations"]));
+                        m_log.Error(string.Format("Файла с перечнем файлов детальных график станции по адресу {0} - не существует", App.Configuration["view_stations"]));
                 }
                 else
                     m_log.Error(string.Format("Введите в файле конфигурации путь к описанию детальных график станций, обозначенного {0}", "<<view_stations>>"));
@@ -1406,7 +1406,7 @@ namespace TrafficTrain
                                 {
                                     if (Connections.ClientImpulses.Data.Stations.ContainsKey(station.Key))
                                     {
-                                        if (Connections.ClientImpulses.Data.Stations[station.Key].TS.AddTSImpuls(split_name[1]))
+                                        if (Connections.ClientImpulses.Data.Stations[station.Key].TS.AddImpuls(split_name[1]))
                                         {
                                             TsServiceList[station.Key].NamesValue.Add(split_name[1], new Dictionary<Viewmode, string>());
                                             foreach (StateValue state in names.Value)
@@ -1654,7 +1654,7 @@ namespace TrafficTrain
             //загружаем аналоговые данные
             if (LoadInfo != null)
                 LoadInfo("Загрузка аналоговых данных");
-            Core.Load(ConfigurationManager.AppSettings["filestationAnalog"]);
+            Core.Load(App.Configuration["filestationAnalog"]);
             //отрисовываем графику
             if (LoadInfo != null)
                 LoadInfo("Загрузка графики");
@@ -1680,13 +1680,13 @@ namespace TrafficTrain
             }
             //
             uint buffer;
-            if (uint.TryParse(ConfigurationManager.AppSettings["max_count_message"], out buffer))
+            if (uint.TryParse(App.Configuration["max_count_message"], out buffer))
                 m_countMessages = buffer;
             //
-            if (uint.TryParse(ConfigurationManager.AppSettings["ReturnTime"], out buffer))
+            if (uint.TryParse(App.Configuration["ReturnTime"], out buffer))
                 m_returnTime = buffer;
             //
-            CreateDirDiagnostics(ConfigurationManager.AppSettings["Diagnostics"].ToString(), m_DirDiagnostics);
+            CreateDirDiagnostics(App.Configuration["Diagnostics"].ToString(), m_DirDiagnostics);
             LoadDiagnostics();
             m_log.Info("-----------------------------------------------------------------------Загрузка завершена !!!!-------------------------------------------------------------------");
         }
