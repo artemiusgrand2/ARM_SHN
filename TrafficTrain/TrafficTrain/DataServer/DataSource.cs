@@ -74,9 +74,9 @@ namespace TrafficTrain.DataServer
         public void Stop()
         {
             isStop = true;
-            parsingThread.Join();
-            processingThread.Join();
-            showThread.Join();
+            //parsingThread.Join();
+            //processingThread.Join();
+           // showThread.Join();
         }
 
         private Answer GetAnswer(Request request)
