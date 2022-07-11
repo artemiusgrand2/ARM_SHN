@@ -181,8 +181,8 @@ namespace TrafficTrain
         {
             try
             {
-                DataServer.Core.Stop();
                 connections.Stop();
+                DataServer.Core.Stop();
                 if (SettingsWindow.WindowStation != null)
                     SettingsWindow.WindowStation.Close();
                 if (SettingsWindow.WindowColor != null)

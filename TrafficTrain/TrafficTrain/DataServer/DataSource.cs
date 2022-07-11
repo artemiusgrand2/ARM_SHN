@@ -74,9 +74,9 @@ namespace TrafficTrain.DataServer
         public void Stop()
         {
             isStop = true;
-            //parsingThread.Join();
-            //processingThread.Join();
-           // showThread.Join();
+            parsingThread.Join();
+            processingThread.Join();
+            showThread.Join();
         }
 
         private Answer GetAnswer(Request request)
@@ -166,6 +166,8 @@ namespace TrafficTrain.DataServer
                         catch (Exception e)
                         {
                             LoadProject.Log.Error(string.Format("Error parsing message. {0} . Station - {1}, tableId - {2}", e, st.Key, table.Key), e);
+                            if (isStop)
+                                break;
                         }
                         finally
                         {
