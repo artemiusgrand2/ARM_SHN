@@ -237,7 +237,7 @@ namespace TrafficTrain
 
         private void AnalisFormat(string format)
         {
-            var indexPoint = format.IndexOf(".");
+            var indexPoint = format.IndexOf('.');
             if (indexPoint != -1 && indexPoint > 0)
             {
                 m_wholeCount = (byte)indexPoint;
@@ -252,10 +252,10 @@ namespace TrafficTrain
 
         public string InfoElement()
         {
-            return string.Format("{0}", Notes);
+            return Notes;
         }
 
-        private double AnalisFactor(string factor)
+        static double AnalisFactor(string factor)
         {
             double result;
             if(!double.TryParse(SCADA.Common.HelpCommon.HelpFuctions.GetFormatString(factor), out result))
@@ -264,34 +264,25 @@ namespace TrafficTrain
             return result;
         }
 
-        public void Dispose()
-        {
-
-        }
+        public void Dispose() { }
 
         public void AnalisNewData()
         {
-            if (m_tableId == 11)
-            {
-            }
             Dispatcher.Invoke(new Action(() =>
             {
                 if (IsFind)
                 {
-                    if (Core.Stations.ContainsKey(StationControl))
+                    if (Core.Stations.TryGetValue(StationControl, out var stationfind))
                     {
-                        if (m_tableId == 14 && m_nameItem == "Фидер1_счет")
+                        if (stationfind.TryGetValue(m_tableId, out var tablefind))
                         {
-                        }
-                        if (Core.Stations[StationControl].ContainsKey(m_tableId))
-                        {
-                            var data = Core.Stations[StationControl][m_tableId].GetValue(m_nameItem);
+                            var data = tablefind.GetValue(m_nameItem);
                             //
                             if (data.Count > 0)
                             {
                                 bool isNotValue;
                                 double val = GetValue(data[0].Value, out isNotValue);
-                                var valStr = (isNotValue) ? m_noData : GetFormatString(Core.Stations[StationControl][m_tableId].Corrector * val* m_factor);
+                                var valStr = (isNotValue) ? m_noData : GetFormatString(tablefind.Corrector * val* m_factor);
                                 if (valStr != m_text.Text)
                                 {
                                     m_text.Text = valStr;
@@ -310,10 +301,8 @@ namespace TrafficTrain
             {
                 var wholeNumber = (long)Math.Truncate(data);
                 var whole = wholeNumber.ToString(string.Format("D{0}", m_wholeCount));
-                //if (data < 0 && wholeNumber == 0)
-                //    whole = whole.Insert(0, "-");
                 if (m_fractionalCount > 0)
-                    return string.Format("{0}.{1}", whole, data.ToString(string.Format("F{0}", m_fractionalCount)).Split(new char[] { ',', '.' })[1]);
+                    return $"{whole}.{data.ToString(string.Format("F{0}", m_fractionalCount)).Split(new char[] { ',', '.' })[1]}";
                 else
                     return whole;
             }
@@ -361,7 +350,7 @@ namespace TrafficTrain
             }
         }
 
-        private bool CheckNotValue(byte[] data)
+        static bool CheckNotValue(byte[] data)
         {
             var countF = 0;
             foreach (var bit in data)
@@ -375,7 +364,7 @@ namespace TrafficTrain
             return false;
         }
 
-        private byte[] FormaterToSingle(byte [] data)
+        static byte[] FormaterToSingle(byte [] data)
         {
             var buffer = new List<byte>();
             buffer.AddRange(data);

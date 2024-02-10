@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\
+D:\Distr\ARM_SHN\TrafficTrain\TrafficTrain\obj\x86\Debug\
 TrafficTrain
 none
 false
 CODE_ANALYSIS;DEBUG;TRACE
-D:\Distributiv\ARM_SHN\TrafficTrain\TrafficTrain\App.xaml
-18-897634865
+D:\Distr\ARM_SHN\TrafficTrain\TrafficTrain\App.xaml
+18-1967965641
 
-72310422470
-271238315463
+72597659362
+27303566688
 MainControl\ControlColor.xaml;MainControl\ControlColorElement.xaml;MainControl\ControlColorStatus.xaml;MainWindow.xaml;Themes\BureauBlack.xaml;Themes\BureauBlue.xaml;Themes\ExpressionDark.xaml;Themes\ExpressionLight.xaml;Themes\ShinyBlue.xaml;Themes\ShinyRed.xaml;Themes\WhistlerBlue.xaml;MainControl\DetailViewStation.xaml;Window\AddNewColorWindow.xaml;Window\CloseProgramm.xaml;Window\CloseWindowWpf.xaml;Window\StartWpf.xaml;Window\ViewStations.xaml;Window\WindowColor.xaml;
 
 False

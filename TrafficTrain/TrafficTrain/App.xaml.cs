@@ -6,6 +6,8 @@ using System.Data;
 using System.Net.NetworkInformation;
 using System.Windows;
 using System.IO;
+using RW.KTC.ORPO.Berezina.Common.Helpers;
+using System.Linq;
 
 namespace TrafficTrain
 {
@@ -21,8 +23,6 @@ namespace TrafficTrain
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            //if (CheckPhysicalAddress())
-            //{
             var nameproject = "ARMGraficDNC";
             if (e.Args.Length > 0)
             {
@@ -52,29 +52,16 @@ namespace TrafficTrain
                 Close = false;
                 Shutdown();
             }
-            //}
-            //else
-            //{
-            //    Close = false;
-            //    Shutdown();
-            //}
-        }
-
-        private bool CheckPhysicalAddress()
-        {
-            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-            String sMacAddress = string.Empty;
-            foreach (NetworkInterface adapter in nics)
+            //
+            if (Configuration.AllKeys.Contains("M"))
             {
-                IPInterfaceProperties properties = adapter.GetIPProperties();
-                var adress =  adapter.GetPhysicalAddress().ToString();
-                if (m_PhysicalAddress == adress)
+                if (!PhysicalAddressHelper.CheckPhysicalAddresses(Configuration.GetValues("M")[0]))
                 {
-                    return true;
+                    MessageBox.Show("Нет лицензии для использования программного обеспечения. Обратитесь к производителю.", "", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Close = false;
+                    Shutdown();
                 }
             }
-            //
-            return false;
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)

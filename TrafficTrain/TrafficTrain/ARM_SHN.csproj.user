@@ -2,7 +2,8 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <StartAction>Project</StartAction>
-    <StartArguments>c:\STP\ARM\System\TrafficTrain2.exe.config</StartArguments>
+    <StartArguments>c:\STP\ARM\System\TrafficTrain.exe.config</StartArguments>
+    <StartWorkingDirectory>C:\STP\ARM\System\</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup>
     <PublishUrlHistory>publish\</PublishUrlHistory>
