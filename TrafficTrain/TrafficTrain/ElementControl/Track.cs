@@ -354,7 +354,7 @@ namespace TrafficTrain
             foreach (KeyValuePair<Viewmode, StateElement> control in impulses)
             {
                 //смотрим с каким графическим объектом работает контроль
-                foreach (Viewmode stroke_element in _priority_stroke)
+                foreach (var stroke_element in _priority_stroke)
                 {
                     if (stroke_element == control.Value.Name)
                     {
@@ -384,12 +384,12 @@ namespace TrafficTrain
 
         private string GetTimeUpdateStatus()
         {
-            if (Impulses.ContainsKey(Viewmode.occupation))
-                return Impulses[Viewmode.occupation].LastUpdate.ToLongTimeString();
+            if (Impulses.TryGetValue(Viewmode.occupation, out var imp))
+                return imp.LastUpdate.ToLongTimeString();
             else return "Время неизвестно !!!";
         }
 
-        private bool iSNullOrEmpty(string str)
+        static bool iSNullOrEmpty(string str)
         {
             if (str == null)
                 return true;
@@ -511,7 +511,7 @@ namespace TrafficTrain
         {
             bool update = false;
             var result = new List<string>();
-            foreach (KeyValuePair<Viewmode, StateElement> Imp in Impulses)
+            foreach (var Imp in Impulses)
             {
                 if (Imp.Value.Name != Viewmode.electrification)
                 {
@@ -545,43 +545,6 @@ namespace TrafficTrain
             return result;
         }
 
-        /// <summary>
-        /// анализ состояния для первого запуска дочерних элементов
-        /// </summary>
-        public void Analis(StationPath track)
-        {
-            bool update = false;
-            foreach (KeyValuePair<Viewmode, StateElement> Imp in Impulses)
-            {
-                if (Imp.Value.Name != Viewmode.electrification && track.Impulses.ContainsKey(Imp.Key))
-                {
-                    StatesControl state = Imp.Value.state;
-                    Imp.Value.state = track.Impulses[Imp.Key].state;
-                    //
-                    if (state != Imp.Value.state)
-                    {
-                        if (Imp.Value.Name == Viewmode.occupation)
-                        {
-                            m_currentstate = Imp.Value.state;
-                            if (m_updateCurState <= 1)
-                                m_updateCurState++;
-                            if (state == StatesControl.activ && Imp.Value.state != StatesControl.activ)
-                                m_timelastactiv = track.Impulses[Imp.Key].LastUpdate;
-                        }
-                        Imp.Value.LastUpdate = track.Impulses[Imp.Key].LastUpdate;
-                        Imp.Value.Update = true;
-                        update = true;
-                    }
-                }
-            }
-            //обновляем элемент
-            if (update)
-            {
-                UpdateElement(true);
-                //анализируем где находится голова поезда
-                AnalisHeadSide();
-            }
-        }
 
         /// <summary>
         /// анализируем где находится голова поезда
