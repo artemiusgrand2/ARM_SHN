@@ -659,36 +659,6 @@ namespace TrafficTrain
                 case EnumColor.AreaStationStroke:
                     RamkaStation._colorstroke = new SolidColorBrush(color);
                     break;
-                case EnumColor.AreaStragePasiveFon:
-                    NumberTrainRamka._color_pasiv = new SolidColorBrush(color);
-                    break;
-                case EnumColor.AreaStrageActiveFon:
-                    NumberTrainRamka._coloractiv = new SolidColorBrush(color);
-                    break;
-                case EnumColor.AreaStrageNotControlFon:
-                    NumberTrainRamka._colornotcontrol = new SolidColorBrush(color);
-                    break;
-                case EnumColor.AreaStrageNormalStroke:
-                    NumberTrainRamka._color_ramka = new SolidColorBrush(color);
-                    break;
-                case EnumColor.AreaStrageNotControlStroke:
-                    NumberTrainRamka._colornotcontrolstroke = new SolidColorBrush(color);
-                    break;
-                case EnumColor.AreaStrageNormalText:
-                    NumberTrainRamka._color_text_defult = new SolidColorBrush(color);
-                    break;
-                case EnumColor.AreaStrageNotNormalText:
-                    NumberTrainRamka._color_text_notnormal = new SolidColorBrush(color);
-                    break;
-                case EnumColor.TrackStragePasive:
-                    BlockSection._colorpassiv = new SolidColorBrush(color);
-                    break;
-                case EnumColor.TrackStrageActive:
-                    BlockSection._coloractiv = new SolidColorBrush(color);
-                    break;
-                case EnumColor.TrackStrageNotControl:
-                    BlockSection._colornotcontrolstroke = new SolidColorBrush(color);
-                    break;
                 case EnumColor.TrackPasiveFon:
                     StationPath._colorpassiv = new SolidColorBrush(color);
                     break;
@@ -725,30 +695,6 @@ namespace TrafficTrain
                 case EnumColor.TrackTrainPlanText:
                     StationPath._color_train_plan = new SolidColorBrush(color);
                     break;
-                case EnumColor.MoveFaultStroke:
-                    Moves._color_faultmove = new SolidColorBrush(color);
-                    break;
-                case EnumColor.MoveAccidentStroke:
-                    Moves._color_accident = new SolidColorBrush(color);
-                    break;
-                case EnumColor.MoveNotControlStroke:
-                    Moves._colornotcontrolstroke = new SolidColorBrush(color);
-                    break;
-                case EnumColor.MoveDefultStroke:
-                    Moves._color_moveopen = new SolidColorBrush(color);
-                    break;
-                case EnumColor.MoveDefultFon:
-                    Moves._color_fon_defult = new SolidColorBrush(color);
-                    break;
-                case EnumColor.MoveNotControlFon:
-                    Moves._colornotcontrol = new SolidColorBrush(color);
-                    break;
-                case EnumColor.MoveButtonClosedFon:
-                    Moves._color_closingmove_button = new SolidColorBrush(color);
-                    break;
-                case EnumColor.MoveAutoClosedFon:
-                    Moves._color_closingmove_auto = new SolidColorBrush(color);
-                    break;
                 case EnumColor.ControlObjectFaultStroke:
                     ControlObject._color_fault = new SolidColorBrush(color);
                     break;
@@ -766,45 +712,6 @@ namespace TrafficTrain
                     break;
                 case EnumColor.ControlObjectDefultFon:
                     ControlObject._color_fon_defult = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ButtonStationReserveControlFon:
-                    ButtonStation._color_reserve_control = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ButtonStationSesonControlFon:
-                    ButtonStation._color_sesoncontol = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ButtonStationDispatcherControlFon:
-                    ButtonStation._color_dispatcher = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ButtonStationAutoDispatcherControlFon:
-                    ButtonStation._color_auto_dispatcher = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ButtonStationAutonomousСontrolFon:
-                    ButtonStation._color_autonomous_control = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ButtonStationNotDispatcherControlFon:
-                    ButtonStation._color_not_dispatcher = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ButtonStationNotControlFon:
-                    ButtonStation._color_notlink = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ButtonStationDefultFon:
-                    ButtonStation._color_defult = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ButtonStationFireControlFon:
-                    ButtonStation._color_fire = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ButtonStationFaultStroke:
-                    ButtonStation._color_fault = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ButtonStationAccidentStroke:
-                    ButtonStation._color_accident = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ButtonStationNotControlStroke:
-                    ButtonStation._colornotcontrolstroke = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ButtonStationDefultStroke:
-                    ButtonStation._color_stroke_normal = new SolidColorBrush(color);
                     break;
                 case EnumColor.ActiveLineActiveStroke:
                     LineHelp._color_active = new SolidColorBrush(color);
@@ -832,87 +739,6 @@ namespace TrafficTrain
                     break;
                 case EnumColor.DirectionActiveStrageFon:
                 //    CenterDirection._color_occupation = new SolidColorBrush(color);
-                    break;
-                case EnumColor.DirectionPasiveStrageFon:
-                    Direction._color_pasive = new SolidColorBrush(color);
-                    break;
-                case EnumColor.DirectionNotControlStrageFon:
-                    Direction._colornotcontrol = new SolidColorBrush(color);
-                    break;
-                case EnumColor.DirectionDepartureDirectonFon:
-                    Direction._color_departure = new SolidColorBrush(color);
-                    break;
-                case EnumColor.DirectionWaitingDepartureDirectonFon:
-                    Direction._color_wait_departure = new SolidColorBrush(color);
-                    break;
-                case EnumColor.DirectionOKDepartureDirectonFon:
-                    Direction._color_ok_departure = new SolidColorBrush(color);
-                    break;
-                case EnumColor.DirectionNotControlStroke:
-                    Direction._colornotcontrolstroke = new SolidColorBrush(color);
-                    break;
-                case EnumColor.DirectionDefultStroke:
-                    Direction._color_ramka = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalDefultStroke:
-                    RouteSignal._color_ramka_defult = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalReceivedOneStroke:
-                    RouteSignal._color_command_received_one = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalReceivedTyStroke:
-                    RouteSignal._color_command_received_ty = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalCheckRouteStroke:
-                    RouteSignal._color_check_route = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalWaitInstallOneStroke:
-                    RouteSignal._color_wait_install_one = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalWaitInstallTyStroke:
-                    RouteSignal._color_wait_install_ty = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalFaultStroke:
-                    RouteSignal._color_fault = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalNotControlStroke:
-                    RouteSignal._colornotcontrolstroke = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalActiceFon:
-                    RouteSignal._color_active = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalPasiveFon:
-                    RouteSignal._color_pasive = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalNotControlFon:
-                    RouteSignal._colornotcontrol = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalLockingFon:
-                    RouteSignal._color_locing = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalFencingFon:
-                    RouteSignal._color_fencing = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalPassageFon:
-                    RouteSignal._color_passage = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalInvitationalOneFon:
-                    RouteSignal._color_invitational_one = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalInvitationalTyFon:
-                    RouteSignal._color_invitational_ty = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalInstallOneStroke:
-                    RouteSignal._color_install_route_one = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalInstallTyStroke:
-                    RouteSignal._color_install_route_ty = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalShuntingFon:
-                    RouteSignal._color_shunting = new SolidColorBrush(color);
-                    break;
-                case EnumColor.RouteSignalSignalFon:
-                    RouteSignal._color_open = new SolidColorBrush(color);
                     break;
                 case EnumColor.HelpElementAccidentFon:
                     HelpElement._colorRed = new SolidColorBrush(color);
@@ -1045,36 +871,6 @@ namespace TrafficTrain
                     break;
                 case EnumColor.ManagmentElementHelpStringStroke:
                     CommandButton._color_helpstring_stroke = new SolidColorBrush(color);
-                    break;
-                case EnumColor.SignalDefultStroke:
-                    LightTrain.m_color_stroke = new SolidColorBrush(color);
-                    break;
-                case EnumColor.SignalInstallStroke:
-                    LightTrain.m_color_install = new SolidColorBrush(color);
-                    break;
-                case EnumColor.SignalNotControlStroke:
-                    LightTrain.m_color_stroke_notcontrol = new SolidColorBrush(color);
-                    break;
-                case EnumColor.SignalSignalFon:
-                    LightTrain.m_color_open = new SolidColorBrush(color);
-                    break;
-                case EnumColor.SignalShuntingFon:
-                    LightTrain.m_color_shunting = new SolidColorBrush(color);
-                    break;
-                case EnumColor.SignalInvitationalOneFon:
-                    LightTrain.m_color_invitation_one = new SolidColorBrush(color);
-                    break;
-                case EnumColor.SignalInvitationalTyFon:
-                    LightTrain.m_color_invitation_ty = new SolidColorBrush(color);
-                    break;
-                case EnumColor.SignalDefultFon:
-                    LightTrain.m_color_defult = new SolidColorBrush(color);
-                    break;
-                case EnumColor.SignalCloseSignalFon:
-                    LightTrain.m_color_close = new SolidColorBrush(color);
-                    break;
-                case EnumColor.SignalNotControlFon:
-                    LightTrain.m_color_fon_notcontrol = new SolidColorBrush(color);
                     break;
             }
         }

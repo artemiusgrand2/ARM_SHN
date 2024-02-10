@@ -84,11 +84,7 @@ namespace TrafficTrain.DataServer
             Answer answer = null;
             lock (converter)
             {
-                if(request is CurrentValueRequest)
-                {
-
-                }
-                byte[] requestData = converter.ToBytes(request, 0);
+                var requestData = converter.ToBytes(request, 0);
                 dataStream.ConnectOnWrite = true;
                 dataStream.Write(requestData);
                 bool isStop = false;
@@ -167,14 +163,12 @@ namespace TrafficTrain.DataServer
                         {
                             LoadProject.Log.Error(string.Format("Error parsing message. {0} . Station - {1}, tableId - {2}", e, st.Key, table.Key), e);
                             if (isStop)
-                                break;
-                        }
-                        finally
-                        {
-                            Thread.Sleep(1);
+                                return;
                         }
                     }
                 }
+                //
+                Thread.Sleep(1);
             }
         }
 
@@ -194,23 +188,17 @@ namespace TrafficTrain.DataServer
                     }
                     if (message != null)
                     {
-                        if (Core.Stations.ContainsKey(message.StationCode))
+                        if (Core.Stations.TryGetValue(message.StationCode, out var selectstation))
                         {
-                            if (Core.Stations[message.StationCode].ContainsKey(message.TableId))
+                            if (selectstation.TryGetValue(message.TableId, out var selectTable))
                             {
-                                if (message.TableId == 17)
-                                {
-                                }
-                                endTime = DateTime.Now;
-                                DateTime start = DateTime.Now;
-                                if(!Core.Stations[message.StationCode][message.TableId].SetValues(message.Values))
-                                    LoadProject.Log.Error(string.Format("Таблица {0} {1} {2} не обновилась, проверьте ее размерность (параметр - 'DataSize') в конфигурации", Core.Stations[message.StationCode][message.TableId].Type,
-                                                            Core.Stations[message.StationCode][message.TableId].Id, Core.Stations[message.StationCode][message.TableId].Name));
+                                var start = DateTime.Now;
+                                if(!selectTable.SetValues(message.Values))
+                                    LoadProject.Log.Error(string.Format("Таблица {0} {1} {2} не обновилась, проверьте ее размерность (параметр - 'DataSize') в конфигурации", selectTable.Type, selectTable.Id, selectTable.Name));
                                 else
                                 {
                                     DateTime end = DateTime.Now;
-                                    LoadProject.Log.Info(string.Format("Processed table {0} {1} {2} in {3}", Core.Stations[message.StationCode][message.TableId].Type,
-                                                                 Core.Stations[message.StationCode][message.TableId].Id, Core.Stations[message.StationCode][message.TableId].Name, end - start));
+                                    LoadProject.Log.Info(string.Format("Processed table {0} {1} {2} in {3}", selectTable.Type, selectTable.Id, selectTable.Name, end - start));
                                 }
                             }
                         }
@@ -238,12 +226,14 @@ namespace TrafficTrain.DataServer
                 {
                     foreach (var grafic in LoadProject.AnalogGrafic)
                         grafic.AnalisNewData();
-                    //
-                    Thread.Sleep(1000);
                 }
                 catch (Exception e)
                 {
                     LoadProject.Log.Error("Error parsing message. {0}", e);
+                }
+                finally
+                {
+                    Thread.Sleep(1000);
                 }
             }
         }

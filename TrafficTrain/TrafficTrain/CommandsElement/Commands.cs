@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Windows.Controls;
 
@@ -29,7 +28,7 @@ namespace TrafficTrain
         public static bool AnalisCommand(ISelectElement element, ContentControl content)
         {
             //если выбран элемент название станции
-            CommandButton command = element as CommandButton;
+            var command = element as CommandButton;
             if (command != null)
             {
                 switch (command.ViewCommand)
@@ -38,20 +37,12 @@ namespace TrafficTrain
                         command.Click(content);
                         return true;
                 }
-                
             }
             //
-            //if (element is IShowElement)
-            //{
-            //    LoadProject.UpdateStation((element as IShowElement).StationNumberRight, element.NameUl);
-            //}
-            //else
-            //{
             if (!string.IsNullOrEmpty(element.FileClick) && System.IO.File.Exists(element.FileClick))
                 System.Diagnostics.Process.Start(element.FileClick);
             else
                 LoadProject.UpdateStation(element.StationTransition, element.NameUl);
-            //}
             //
             return true;
         }

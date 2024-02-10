@@ -17,7 +17,6 @@ using TrafficTrain.Constant;
 using TrafficTrain.Interface;
 using TrafficTrain.WorkWindow;
 using TrafficTrain.Delegate;
-using TrafficTrain.DataProject;
 using TrafficTrain.DataGrafik;
 using TrafficTrain.DataServer;
 
@@ -41,15 +40,6 @@ namespace TrafficTrain
     {
         #region Переменные и свойства
 
-         private IList<CommandButton> filters_number_train = new List<CommandButton>();
-
-         public IList<CommandButton> FiltersNumberTrain
-         {
-             get
-             {
-                 return filters_number_train;
-             }
-         }
         /// <summary>
         /// область вывода справочной информации
         /// </summary>
@@ -62,18 +52,6 @@ namespace TrafficTrain
         /// набор ТС служебных импульсов по каждой станции
         /// </summary>
         public static Dictionary<int, StationTableServiceTs> TsServiceList = new Dictionary<int, StationTableServiceTs>();
-        /// <summary>
-        /// набор ТУ импульсов по каждой станции
-        /// </summary>
-        public static Dictionary<int, StationTableTu> TuList = new Dictionary<int, StationTableTu>();
-        /// <summary>
-        /// журнал звуковых сообщений
-        /// </summary>
-        public static List<MessageInfo> JournalSoundMessage = new List<MessageInfo>();
-        /// <summary>
-        /// журнал сообщений диагностики
-        /// </summary>
-        public static List<MessageInfo> JournalDiagnosticMessage = new List<MessageInfo>();
         /// <summary>
         /// инфо о ходе загрузки
         /// </summary>
@@ -162,19 +140,6 @@ namespace TrafficTrain
             get
             {
                 return m_areaMessage;
-            }
-        }
-
-        private DetailViewStation m_detailStation = null;
-
-        /// <summary>
-        /// Область детального вида
-        /// </summary>
-        public DetailViewStation DetailStation
-        {
-            get
-            {
-                return m_detailStation;
             }
         }
 
@@ -296,7 +261,7 @@ namespace TrafficTrain
         /// загружаем файл графики  проекта 
         /// </summary>
         /// <param name="projectmodel">путь к файлу</param>
-        private SCADA.Common.SaveElement.StrageProject LoadGrafickProject(string filename, string namedesing)
+        private static SCADA.Common.SaveElement.StrageProject LoadGrafickProject(string filename, string namedesing)
         {
             try
             {
@@ -434,146 +399,6 @@ namespace TrafficTrain
             }
         }
 
-        private static Point NewScalePosition(Point center, double scale,Point pointold)
-        {
-            return new Point((pointold.X * scale + center.X),(pointold.Y * scale + center.Y));
-        }
-
-        private static void SetSettingsBeforeSave(BaseSave el, Point center, double scale)
-        {
-            foreach (Figure fig in el.Figures)
-            {
-                fig.StartPoint = NewScalePosition(center, scale, fig.StartPoint);
-                //
-                foreach (Segment seg in fig.Segments)
-                {
-                    seg.Point = NewScalePosition(center, scale, seg.Point);
-                    seg.RadiusX *= scale;
-                    seg.RadiusY *= scale;
-                }
-            }
-        }
-
-        /// <summary>
-        /// анализируем объекты перед сохранением
-        /// </summary>
-        public static SCADA.Common.SaveElement.StrageProject SaveAnalis(Point center, double scale, double widthtrainramka, double heightrainramka)
-        {
-            //находим  коэффициент масштаба
-            try
-            {
-                if (ProejctGrafic.Scroll > 0)
-                    ProejctGrafic.Scroll *= scale;
-                else ProejctGrafic.Scroll = 1;
-
-                ProejctGrafic.WightTrainInfo = widthtrainramka;
-                ProejctGrafic.HeightTrainInfo = heightrainramka;
-            }
-            catch(Exception error) 
-            {
-                m_log.Error(error.Message, error);
-            }
-            //анализируем сигнал
-
-            foreach (BaseSave el in ProejctGrafic.GraficObjects)
-            {
-                try
-                {
-                    foreach (Figure fig in el.Figures)
-                    {
-                        fig.StartPoint = NewScalePosition(center, scale, fig.StartPoint);
-                        //
-                        foreach (Segment seg in fig.Segments)
-                        {
-                            seg.Point = NewScalePosition(center, scale, seg.Point);
-                            seg.RadiusX *= scale;
-                            seg.RadiusY *= scale;
-                        }
-                    }
-                    switch (el.ViewElement)
-                    {
-                        case ViewElement.chiefroad:
-                            {
-                                RoadStation bigpath = el as RoadStation;
-                                bigpath.TextSize *= scale;
-                                bigpath.Xinsert = bigpath.Xinsert * scale + center.X;
-                                bigpath.Yinsert = bigpath.Yinsert * scale + center.Y;
-                            }
-                            break;
-                        case ViewElement.time:
-                            {
-                                TimeSave time = el as TimeSave;
-                                time.FontSize *= scale;
-                                time.Height *= scale;
-                                time.Width *= scale;
-                                time.Left = time.Left * scale + center.X;
-                                time.Top = time.Top * scale + center.Y;
-                            }
-                            break;
-                        case ViewElement.buttoncommand:
-                            {
-                                ButtonCommandSave commandbutton = el as ButtonCommandSave;
-                                commandbutton.TextSize *= scale;
-                                commandbutton.Xinsert = commandbutton.Xinsert * scale + center.X;
-                                commandbutton.Yinsert = commandbutton.Yinsert * scale + center.Y;
-                            }
-                            break;
-                        case ViewElement.namestation:
-                            {
-                                NameStationSave namestation = el as NameStationSave;
-                                namestation.FontSize *= scale;
-                                namestation.Height *= scale;
-                                namestation.Width *= scale;
-                                namestation.Left = namestation.Left * scale + center.X;
-                                namestation.Top = namestation.Top * scale + center.Y;
-                            }
-                            break;
-                        case ViewElement.help_element:
-                            {
-                                TextHelpSave helptext = el as TextHelpSave;
-                                helptext.FontSize *= scale;
-                                helptext.Height *= scale;
-                                helptext.Width *= scale;
-                                helptext.Left = helptext.Left * scale + center.X;
-                                helptext.Top = helptext.Top * scale + center.Y;
-                            }
-                            break;
-                    }
-                }
-                catch (Exception error)
-                {
-                    m_log.Error(error.Message, error);
-                }
-
-            }
-            //
-            return ProejctGrafic;
-        }
-
-        private string Trim(List<char> trim, List<char> massiv)
-        {
-            for(int i = 0;i < massiv.Count;i++)
-            {
-                foreach (char tr in trim)
-                {
-                    if (massiv[i] == tr)
-                    {
-                        massiv.RemoveAt(i);
-                        i--;
-                    }
-                }
-            }
-
-            string answer = string.Empty;
-            foreach (char ch in massiv)
-            {
-                answer += ch.ToString();
-            }
-
-            return answer ;
-        }
-
-
         private static List<string> GetStrLineFileRead(string filename, Encoding coding)
         {
             List<string> file_ts = new List<string>();
@@ -596,7 +421,7 @@ namespace TrafficTrain
         }
 
         /// <summary>
-        /// загрузка таблиц ТУ  и ТС
+        /// загрузка таблиц ТУ
         /// </summary>
         private void LoadImpulsInformation()
         {
@@ -715,61 +540,6 @@ namespace TrafficTrain
             {
                 m_log.Error(error.Message);
             }
-            //проверяем информацию по импульсам телеуправления
-            try
-            {
-                if (!string.IsNullOrEmpty(App.Configuration["filestationTU"]))
-                {
-                    if (new FileInfo(App.Configuration["filestationTU"]).Exists)
-                    {
-                        List<string> spisokstation = GetStrLineFileRead(App.Configuration["filestationTU"], Encoding.UTF8);
-                        foreach (string st in spisokstation)
-                        {
-                            try
-                            {
-                                string[] files = st.Split(new string[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
-                                int buffer = 0;
-                                if (files.Length == 2 && int.TryParse(files[0], out buffer))
-                                {
-                                    int current_numberstation = int.Parse(files[0]);
-                                    if (new FileInfo(files[1]).Exists)
-                                    {
-                                        List<string> fileTuinfo = GetStrLineFileRead(files[1], Encoding.GetEncoding(1251));
-                                        TuList.Add(current_numberstation, new StationTableTu());
-                                        //
-                                        foreach (string row in fileTuinfo)
-                                        {
-                                            try
-                                            {
-                                                string[] cells = row.Split(new string[] { ";" }, StringSplitOptions.None);
-                                                if (cells.Length >= 7)
-                                                    FillingTableTu(cells[0], cells[1], string.Format("{0}-{1}", cells[2], cells[3]), string.Format("{0}-{1}", cells[4], cells[5]), cells[6], current_numberstation);
-                                            }
-                                            catch (Exception error) { m_log.Error(error.Message ,error); }
-                                        }
-                                    }
-                                    else
-                                        m_log.Error(string.Format("Файла с перечнем импульсов ТУ станции {0} по адресу {1} - не существует", current_numberstation.ToString(), files[1]));
-                                }
-                            }
-                            catch (Exception error)
-                            {
-                                m_log.Error(error.Message);
-                            }
-                        }
-                        //
-                        m_log.Info("Таблицы импульсов ТУ загружены");
-                    }
-                    else
-                        m_log.Error(string.Format("Файла с перечнем импульсов ТУ по адресу {0} - не существует", App.Configuration["filestationTU"]));
-                }
-                else
-                    m_log.Error(string.Format("Введите в файле конфигурации путь к описанию импульсов ТУ, обозначенного {0}", "<<filestationTU>>"));
-            }
-            catch (Exception error)
-            {
-                m_log.Error(error.Message);
-            }
         }
 
         private string [] RemoveIsEmpty(List<string> massiv)
@@ -845,40 +615,6 @@ namespace TrafficTrain
             }
         }
         
-
-       /// <summary>
-        /// заполнение таблиц ту по каждой станции
-       /// </summary>
-       /// <param name="numbersost">виды управляющих комманд</param>
-       /// <param name="namecommand">название комманды</param>
-       /// <param name="startpath">путь задания команды начало</param>
-        /// <param name="endpath">путь задания команды окончание</param>
-       /// <param name="tu">управляющий импульс</param>
-       /// <param name="number_station">номер станции</param>
-        private void FillingTableTu(string numbersost, string namecommand, string startpath, string endpath, string tu, int number_station)
-        {
-            if (TuList.Count > 0)
-            {
-                switch (numbersost)
-                {
-                    case ViewNameSostNumberTu.seasonal_management:
-                        TuList[number_station].NamesValue.Add(new StateValueTu() { NameTu = namecommand, StartPath = startpath, EndPath = endpath, Tu =tu, ViewCommand = numbersost });
-                        break;
-                    case ViewNameSostNumberTu.yes_departure:
-                        TuList[number_station].NamesValue.Add(new StateValueTu() { NameTu = namecommand, StartPath = startpath, EndPath = endpath, Tu = tu, ViewCommand = numbersost });
-                        break;
-                    case ViewNameSostNumberTu.yes_route_setting:
-                        TuList[number_station].NamesValue.Add(new StateValueTu() { NameTu = namecommand, StartPath = startpath, EndPath = endpath, Tu = tu, ViewCommand = numbersost });
-                        break;
-                    case ViewNameSostNumberTu.no_departure:
-                        TuList[number_station].NamesValue.Add(new StateValueTu() { NameTu = namecommand, StartPath = startpath, EndPath = endpath, Tu = tu, ViewCommand = numbersost });
-                        break;
-                    case ViewNameSostNumberTu.no_route_setting:
-                        TuList[number_station].NamesValue.Add(new StateValueTu() { NameTu = namecommand, StartPath = startpath, EndPath = endpath, ViewCommand = numbersost, Tu = tu,});
-                        break;
-                }
-            }
-        }
      
         /// <summary>
         /// анализируем данные проекта станции
@@ -964,25 +700,11 @@ namespace TrafficTrain
             }
         }
 
-
         private int SortElement(BaseSave x, BaseSave y)
         {
-
-            //if (IndexSort(x) && !IndexSort(y))
-            //    return -1;
-            //else return 1;
             if (x.ViewElement < y.ViewElement)
                 return -1;
             else return 1;
-        }
-
-        private bool IndexSort(BaseSave x)
-        {
-            if (x.ViewElement == ViewElement.namestation || x.ViewElement == ViewElement.buttonstation || x.ViewElement == ViewElement.arrowmove)
-            {
-                return true;     
-            }
-            else return false;
         }
 
         private void GetNameElement(string name, out string textShow, out string nameKey)
@@ -1085,7 +807,7 @@ namespace TrafficTrain
             if (Project != null)
             {
                 Project.GraficObjects.Sort(SortElement);
-                foreach (BaseSave el in Project.GraficObjects)
+                foreach (var el in Project.GraficObjects)
                     {
                         try
                         {
@@ -1118,22 +840,6 @@ namespace TrafficTrain
                                         SetSettingsObject(newelement, el, DrawCanvas, result, visible);
                                     }
                                     break;
-                                case ViewElement.buttonstation:
-                                    {
-                                        ButtonStation newelement = new ButtonStation(GetPathGeometry(el.Figures), nameKey,
-                                                                                      FullImpulsesElement((int)el.StationNumber, NumberContolTS.button_station,
-                                                                                      string.Format("{0}-{1}", NumberContolTS.button_station, nameKey)));
-                                        SetSettingsObject(newelement, el, DrawCanvas, result, visible);
-                                    }
-                                    break;
-                                case ViewElement.signal:
-                                    {
-                                        RouteSignal newelement = new RouteSignal(GetPathGeometry(el.Figures), nameKey,
-                                                                                FullImpulsesElement((int)el.StationNumber, NumberContolTS.signal,
-                                                                                string.Format("{0}-{1}", NumberContolTS.signal, nameKey)));
-                                        SetSettingsObject(newelement, el, DrawCanvas, result, visible);
-                                    }
-                                    break;
                                 case ViewElement.buttoncommand:
                                     {
                                         ButtonCommandSave command = el as ButtonCommandSave;
@@ -1155,9 +861,6 @@ namespace TrafficTrain
                                                     ContentHelp = newelement;
                                                 break;
                                         }
-                                        //
-                                        if (command.ViewCommand == ViewCommand.viewtrain)
-                                            filters_number_train.Add(newelement);
                                     }
                                     break;
                                 case ViewElement.ramka:
@@ -1288,22 +991,6 @@ namespace TrafficTrain
                                         SetSettingsObject(newelement, el, DrawCanvas, result, visible);
                                     }
                                     break;
-                                case ViewElement.numbertrain:
-                                    {
-                                        NumberTrainSave train = el as NumberTrainSave;
-                                        NumberTrainRamka newelement;
-                                        newelement = new NumberTrainRamka(GetPathGeometry(el.Figures), string.Empty, string.Empty, train.Name, train.RotateText);
-                                        //выводи объект на панель
-                                        SetSettingsObject(newelement, el, DrawCanvas, result, visible);
-                                    }
-                                    break;
-                                case ViewElement.lightShunting:
-                                    {
-                                        LightShunting newelement = new LightShunting(GetPathGeometry(el.Figures), nameKey,
-                                                                          FullImpulsesElement((int)el.StationNumber, NumberContolTS.signal, string.Format("{0}-{1}", NumberContolTS.signal, nameKey)));
-                                        SetSettingsObject(newelement, el, DrawCanvas, result, visible);
-                                    }
-                                    break;
                                 case ViewElement.time:
                                     {
                                         TimeSave time = el as TimeSave;
@@ -1368,7 +1055,7 @@ namespace TrafficTrain
         }
 
 
-        private bool TryField(string key, RW.KTC.ORPO.Berezina.Configuration.Records.TableRecord table, out string value)
+        static bool TryField(string key, RW.KTC.ORPO.Berezina.Configuration.Records.TableRecord table, out string value)
         {
             value = string.Empty;
             foreach (var setting in table.Settings)
@@ -1438,7 +1125,7 @@ namespace TrafficTrain
             }
         }
 
-        private bool CheckServiceImpuls(List<StateValue> impulses)
+        private static bool CheckServiceImpuls(List<StateValue> impulses)
         {
             Viewmode buffer = Viewmode.none;
             switch (impulses[0].ViewTS)
@@ -1468,61 +1155,18 @@ namespace TrafficTrain
             return false;
         }
 
-        /// <summary>
-        /// находим блок участки относящиеся к светофору
-        /// </summary>
-        /// <param name="blocks"></param>
-        /// <param name="nameblock"></param>
-        /// <returns></returns>
-        private List<BlockSection> GetBlockSectionLight(List<BlockSection> blocks, List<string> nameblock)
-        {
-            List<BlockSection> answer = new List<BlockSection>();
-            foreach (string name in nameblock)
-            {
-                foreach (BlockSection block in blocks)
-                {
-                    if (block.NameBlock == name)
-                        answer.Add(block);
-                }
-            }
-            return answer;
-        }
-
-        private Direction GetDirection(int StationNumberLeft, int StationNumberRight, string NamePath, Canvas Draw, ViewDirection view)
-        {
-            try
-            {
-                foreach (UIElement el in Draw.Children)
-                {
-                    if (el is Direction)
-                    {
-                        Direction direction = el as Direction;
-                        if (direction.StationNumberLeft == StationNumberLeft && direction.StationTransition == StationNumberRight && direction.NameTrack == NamePath && view == direction.ViewDirection)
-                        {
-                            return direction;
-                        }
-                    }
-                }
-
-                return null;
-            }
-            catch
-            {
-                return null;
-            }
-        }
 
         public static SCADA.Common.SaveElement.StrageProject GetGrafika(int station)
         {
-            if (LoadProject.ProejctViewStations.ContainsKey(station))
-                return LoadProject.ProejctViewStations[station];
+            if (LoadProject.ProejctViewStations.TryGetValue(station, out var viewStation))
+                return viewStation;
             else return null;
         }
 
         /// <summary>
         /// заполняем массив состояний ТС для каждого активного элемента
         /// </summary>
-        private Dictionary<Viewmode, StateElement> FullImpulsesElement(int station_number, string index, string name_element)
+        private static Dictionary<Viewmode, StateElement> FullImpulsesElement(int station_number, string index, string name_element)
         {
             if (NumberContolTS.Views.Contains(index))
                 return GetImpulses(name_element, station_number);
@@ -1530,7 +1174,7 @@ namespace TrafficTrain
                 return new Dictionary<Viewmode, StateElement>();
         }
 
-        private Dictionary<Viewmode, StateElement> AnalisServiceImpulses(Dictionary<Viewmode, StateElement> impulses)
+        private static Dictionary<Viewmode, StateElement> AnalisServiceImpulses(Dictionary<Viewmode, StateElement> impulses)
         {
             if (!(impulses.ContainsKey(Viewmode.head_left) && impulses.ContainsKey(Viewmode.head_right)))
             {
@@ -1550,32 +1194,21 @@ namespace TrafficTrain
             return impulses;
         }
 
-        private Dictionary<Viewmode, StateElement> GetImpulses(string name_element, int station_number)
+        private static Dictionary<Viewmode, StateElement> GetImpulses(string name_element, int station_number)
         {
             Dictionary<Viewmode, StateElement> impulses = new Dictionary<Viewmode, StateElement>();
             try
             {
                 var isFind = false;
-                if (TsList.ContainsKey(station_number))
+                if (TsList.TryGetValue(station_number,out var tsStation))
                 {
-                    if (TsList[station_number].NamesValue.ContainsKey(name_element))
+                    if (tsStation.NamesValue.TryGetValue(name_element, out var selectName))
                     {
                         isFind = true;
-                        foreach (StateValue value in TsList[station_number].NamesValue[name_element])
+                        foreach (var value in selectName)
                         {
                             if (!impulses.ContainsKey(value.ViewTS))
                             {
-                                //var isAddMessage = false;
-                                //if (!m_messagesRepeat.ContainsKey(station_number))
-                                //    m_messagesRepeat.Add(station_number, new Dictionary<string, IDictionary<Viewmode, IList<string>>>());
-                                //if (!m_messagesRepeat[station_number].ContainsKey(name_element))
-                                //    m_messagesRepeat[station_number].Add(name_element, new Dictionary<Viewmode, IList<string>>());
-                                //if (!m_messagesRepeat[station_number][name_element].ContainsKey(value.ViewTS) && value.Messages != null)
-                                //{
-                                //    m_messagesRepeat[station_number][name_element].Add(value.ViewTS, value.Messages.Values.ToList());
-                                //    isAddMessage = true;
-                                //}
-                                //
                                 impulses.Add(value.ViewTS, new StateElement(/*(isAddMessage) ?*/ value.Messages/* : null*/) { Name = value.ViewTS, Impuls = value.Formula });
                             }
                         }
@@ -1595,7 +1228,7 @@ namespace TrafficTrain
 
         public static void UpdateStation(int newStation, string name)
         {
-            if (m_elementView.ContainsKey(newStation))
+            if (m_elementView.TryGetValue(newStation, out var selectStation))
             {
                 foreach (var element in m_elementView[CurrentStation])
                 {
@@ -1609,7 +1242,7 @@ namespace TrafficTrain
                     }
                 }
                 //
-                foreach (var element in m_elementView[newStation])
+                foreach (var element in selectStation)
                 {
                     if (element.Visibility != Visibility.Collapsed)
                         element.Visibility = Visibility.Visible;
@@ -1630,11 +1263,6 @@ namespace TrafficTrain
                 ProejctGrafic = ProejctViewStations[newStation];
                 if (m_areaMessage != null && m_areaMessage.Visibility == Visibility.Visible)
                     m_areaMessage.ScrollToEnd();
-                //if (ContentHelp != null)
-                //{
-                //    ContentHelp.Visibility = Visibility.Hidden;
-                //    ContentHelp.Text.Visibility = Visibility.Hidden;
-                //}
             }
         }
 
@@ -1845,130 +1473,11 @@ namespace TrafficTrain
                                 elements.Add(m_areaMessage);
                             }
                             break;
-                        //case ViewArea.webBrowser:
-                        //    {
-                        //        var areaWebrowser = new ChromiumWebBrowser();
-                        //        areaWebrowser.ZoomLevelIncrement = area.ZoomLevelIncrement;
-                        //        areaWebrowser.VerticalAlignment = VerticalAlignment.Top;
-                        //        areaWebrowser.HorizontalAlignment = HorizontalAlignment.Left;
-                        //        areaWebrowser.Margin = new Thickness(x, y, 0, 0);
-                        //        areaWebrowser.Width = width;
-                        //        areaWebrowser.Height = height;
-                        //        areaWebrowser.Address = area.Path;
-                        //        areaWebrowser.Visibility = visible;
-                        //        //выводи объекта на панель
-                        //        drawCanvas.Children.Add(areaWebrowser);
-                        //        elements.Add(areaWebrowser);
-                        //    }
-                        //    break;
-                            //case ViewArea.area_station:
-                            //   {
-                            //       if (m_detailStation == null)
-                            //       {
-                            //           m_detailStation = new DetailViewStation(x, y, width, height, ContentHelp);
-                            //           m_detailStation.
-                            //           drawCanvas.Children.Add(m_detailStation);
-                            //       }
-                            //   }
-                            //   break;
                     }
                     break;
                 }
             }
         }
 
-        private List<Figure> GetFigures(List<Point> points)
-        {
-            List<Figure> figures = new List<Figure>();
-            if (points != null && points.Count > 0)
-            {
-                figures.Add(new Figure());
-                //
-                for (int i = 0; i < points.Count; i++)
-                {
-                    if (i == 0)
-                        figures[figures.Count-1].StartPoint = new Point(points[i].X, points[i].Y);
-                    else
-                        figures[figures.Count - 1].Segments.Add(new Segment() { Point = new Point(points[i].X, points[i].Y) });
-                }
-            }
-            //
-            return figures;
-        }
-
-        private void CreateCollectioAbsolute(LinePeregonSave peregon, List<SettingsSegmentBlock> collection, double start, double end, double Lenght)
-        {
-            double lenght = 0;
-            double locationstart = start;
-            try
-            {
-                foreach (Figure f in peregon.Figures)
-                {
-                    for (int i = 0; i < f.Segments.Count; i++)
-                    {
-                        if (i == 0)
-                        {
-                            double L =  Math.Sqrt(Math.Pow(f.Segments[i].Point.X - f.StartPoint.X, 2) + Math.Pow(f.Segments[i].Point.Y - f.StartPoint.Y, 2));
-                            lenght +=L;
-                            if (start < end)
-                            {
-                                double locationend = start + (lenght / Lenght) * (end - start);
-                                collection.Add(new SettingsSegmentBlock() { StartPoint = new Point(f.StartPoint.X, f.StartPoint.Y), EndPoint = new Point(f.Segments[i].Point.X, f.Segments[i].Point.Y), Lenght= L, StartKilomentr = locationstart, EndKilomentr = locationend});
-                                locationstart = locationend;
-                            }
-                            else
-                            {
-                                double locationend = start - (lenght / Lenght) * (start - end);
-                                collection.Add(new SettingsSegmentBlock() { StartPoint = new Point(f.StartPoint.X, f.StartPoint.Y), EndPoint = new Point(f.Segments[i].Point.X, f.Segments[i].Point.Y), Lenght = L, StartKilomentr = locationstart, EndKilomentr = locationend });
-                                locationstart = locationend;
-                            }
-
-                        }
-                        if (i > 0)
-                        {
-                            double L = Math.Sqrt(Math.Pow(f.Segments[i].Point.X - f.Segments[i - 1].Point.X, 2) + Math.Pow(f.Segments[i].Point.Y - f.Segments[i - 1].Point.Y, 2));
-                            lenght += L;
-                            if (start < end)
-                            {
-                                double locationend = start + (lenght / Lenght) * (end - start);
-                                collection.Add(new SettingsSegmentBlock() { StartPoint = new Point(f.Segments[i - 1].Point.X, f.Segments[i - 1].Point.Y), EndPoint = new Point(f.Segments[i].Point.X, f.Segments[i].Point.Y), Lenght = L, StartKilomentr = locationstart, EndKilomentr = locationend });
-                                locationstart = locationend;
-                            }
-                            else
-                            {
-                                double locationend = start - (lenght / Lenght) * (start - end);
-                                collection.Add(new SettingsSegmentBlock() { StartPoint = new Point(f.Segments[i - 1].Point.X, f.Segments[i - 1].Point.Y), EndPoint = new Point(f.Segments[i].Point.X, f.Segments[i].Point.Y), Lenght = L, StartKilomentr = locationstart, EndKilomentr = locationend });
-                                locationstart = locationend;
-                            }
-                        }
-                    }
-                }
-            }
-            catch { }
-        }
-        /// <summary>
-        /// определяем длину перегона
-        /// </summary>
-        /// <param name="peregon"></param>
-        /// <returns></returns>
-        private double LenghtPeregon(LinePeregonSave peregon)
-        {
-            double lenght = 0;
-            try
-            {
-                foreach (Figure f in peregon.Figures)
-                {
-                    for (int i = 0; i < f.Segments.Count; i++)
-                    {
-                        if (i == 0)
-                            lenght += Math.Sqrt(Math.Pow(f.Segments[i].Point.X - f.StartPoint.X, 2) + Math.Pow(f.Segments[i].Point.Y - f.StartPoint.Y, 2));
-                        if (i > 0)
-                            lenght += Math.Sqrt(Math.Pow(f.Segments[i].Point.X - f.Segments[i - 1].Point.X, 2) + Math.Pow(f.Segments[i].Point.Y - f.Segments[i - 1].Point.Y, 2));
-                    }
-                }
-            }
-            catch { return lenght; }
-            return lenght;
-        }
     }
 }

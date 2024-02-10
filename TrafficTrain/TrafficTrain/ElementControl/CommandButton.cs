@@ -261,18 +261,6 @@ namespace TrafficTrain
             }
         }
 
-        IList<Interval> intervals = new List<Interval>();
-        /// <summary>
-        /// Интервалы поездов
-        /// </summary>
-        public IList<Interval> Intervals
-        {
-            get
-            {
-                return intervals;
-            }
-        }
-       
         bool downclick = false;
         /// <summary>
         /// нажата ли клавиша
@@ -289,22 +277,6 @@ namespace TrafficTrain
         /// показать диалоговое окно цвета
         /// </summary>
         public static event NewColor OpenColorDialog;
-        /// <summary>
-        /// событие показывать ли свойство объекта
-        /// </summary>
-        public static event ShowCommand ShowObject;
-        /// <summary>
-        /// событие показывать ли объект
-        /// </summary>
-        public static event CommandObject VisibleObject;
-        /// <summary>
-        /// событие включать или выключать объект
-        /// </summary>
-        public static event OnOffObject OnOffObject;
-        /// <summary>
-        /// событие показывать поездную обстановку
-        /// </summary>
-        public static event FilterNumberTrain TrainLayout;
         /// <summary>
         /// пояснения
         /// </summary>
@@ -345,22 +317,11 @@ namespace TrafficTrain
             _startmargin = new Thickness(marginX, marginY, 0, 0);
             GeometryFigureCopy(geometry);
             //
-            switch (viewpanel)
-            {
-                case ViewPanel.tabletrain:
-                    {
-                        VisibleObject += ShowElementTable;
-                    }
-                    break;
-            }
             if (viewcommand == ViewCommand.style && !MainWindow.Admin)
             {
                 Visibility = System.Windows.Visibility.Collapsed;
                 Text.Visibility = Visibility;
             }
-            //
-            if(viewcommand == ViewCommand.pass || viewcommand == ViewCommand.electro)
-                TrafficTrain.StationPath.CancelShow += CancelShow;
             //устанавливаем цвета
             NewColor();
             LoadColorControl.NewColor += NewColor;
@@ -373,17 +334,6 @@ namespace TrafficTrain
 
         ~CommandButton()
         {
-            switch (viewpanel)
-            {
-                case ViewPanel.tabletrain:
-                    {
-                        VisibleObject -= ShowElementTable;
-                    }
-                    break;
-            }
-            if (viewcommand == ViewCommand.pass)
-                TrafficTrain.StationPath.CancelShow -= CancelShow;
-            //  
             LoadColorControl.NewColor -= NewColor;
         }
 
@@ -391,27 +341,6 @@ namespace TrafficTrain
         private void SetText(double fontsize, double rotate, double marginX, double marginY)
         {
             _text.Text = string.Empty;
-            if (!string.IsNullOrEmpty(nameObject))
-            {
-                string[] names = nameObject.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-                if (names.Length > 0)
-                {
-                    _text.Text = names[0];
-                    if (viewcommand == ViewCommand.viewtrain && names.Length > 1)
-                    {
-                        for (int i = 1; i < names.Length; i++)
-                        {
-                            string[] interval = names[i].Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
-                            if (interval.Length > 1)
-                            {
-                                int min, max;
-                                if (int.TryParse(interval[0], out min) && int.TryParse(interval[1], out max))
-                                    intervals.Add(new Interval(min, max));
-                            }
-                        }
-                    }
-                }
-            }
             _text.Foreground = _color_text_help;
             _text.FontSize = fontsize;
             RotateText = rotate;
@@ -419,25 +348,6 @@ namespace TrafficTrain
             _text.RenderTransform = new RotateTransform(RotateText);
         }
 
-        private void ShowElementTable(EventVisibleElement visible)
-        {
-            if (visible == EventVisibleElement.traintable)
-            {
-                if (viewcommand != ViewCommand.show_table_train)
-                {
-                    if (this.Visibility == System.Windows.Visibility.Visible)
-                    {
-                        this.Visibility = System.Windows.Visibility.Hidden;
-                        this.Text.Visibility = System.Windows.Visibility.Hidden;
-                    }
-                    else
-                    {
-                        this.Visibility = System.Windows.Visibility.Visible;
-                        this.Text.Visibility = System.Windows.Visibility.Visible;
-                    }
-                }
-            }
-        }
 
         /// <summary>
         /// формируем геометрию объкта
@@ -537,18 +447,6 @@ namespace TrafficTrain
             //
             switch (viewcommand)
             {
-                case ViewCommand.diagnostics:
-                    if (YesFlashingDiagnostic())
-                        Fill = _color_yes_message;
-                    else Fill = _color_no_message;
-                    _text.Foreground = _color_text_journal;
-                    break;
-                case ViewCommand.sound:
-                    if (YesFlashingSound())
-                        Fill = _color_yes_message;
-                    else Fill = _color_no_message;
-                    _text.Foreground = _color_text_journal;
-                    break;
                 case ViewCommand.content_exchange:
                     Fill = _color_helpstring_fon;
                     Stroke = _color_helpstring_stroke;
@@ -566,48 +464,6 @@ namespace TrafficTrain
                     _text.Foreground = _color_text_switch_button;
                     break;
             }     
-        }
-
-        private void NewDiagnostic(ViewMessageJournal view)
-        {
-            switch (view)
-            {
-                case ViewMessageJournal.sound:
-                    {
-                        if (viewcommand == ViewCommand.sound)
-                        {
-                            if (YesFlashingSound())
-                            {
-                                if (Fill != _color_yes_message)
-                                    Fill = _color_yes_message;
-                            }
-                            else
-                            {
-                                if (Fill != _color_no_message)
-                                    Fill = _color_no_message;
-                            }
-                        }
-                    }
-                    break;
-                case ViewMessageJournal.diagnostik:
-                    {
-                        if (viewcommand == ViewCommand.diagnostics)
-                        {
-                            if (YesFlashingDiagnostic())
-                            {
-                                if (Fill != _color_yes_message)
-                                    Fill = _color_yes_message;
-                            }
-                            else
-                            {
-                                if (Fill != _color_no_message)
-                                    Fill = _color_no_message;
-                            }
-                        }
-                    }
-                    break;
-            }
-          
         }
      
         /// <summary>
@@ -664,39 +520,6 @@ namespace TrafficTrain
         }
 
 
-        private bool YesFlashingSound()
-        {
-            foreach (MessageInfo message in LoadProject.JournalSoundMessage)
-            {
-                if (!message.OpenMessage)
-                    return true;
-            }
-            //
-            return false;
-        }
-
-        private bool YesFlashingDiagnostic()
-        {
-            foreach (MessageInfo message in LoadProject.JournalDiagnosticMessage)
-            {
-                if (!message.OpenMessage)
-                    return true;
-            }
-            //
-            return false;
-        }
-
-        private void CancelShow(ViewCommand view)
-        {
-            if (viewcommand == ViewCommand.pass || viewcommand == ViewCommand.electro)
-            {
-                if (m_block)
-                {
-                    m_block = !m_block;
-                    UpdateState();
-                }
-            }
-        }
 
         /// <summary>
         /// Центрируем текст по центру

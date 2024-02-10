@@ -309,12 +309,12 @@ namespace TrafficTrain
         /// <returns></returns>
         private StateElement CheckPriorityState(List<Viewmode> priority_control)
         {
-            foreach (Viewmode control in priority_control)
+            foreach (var control in priority_control)
             {
-                if (Impulses.ContainsKey(control))
+                if (Impulses.TryGetValue(control, out var imp))
                 {
-                    if (Impulses[control].state == StatesControl.activ)
-                        return Impulses[control];
+                    if (imp.state == StatesControl.activ)
+                        return imp;
                 }
             }
             return null;
@@ -322,16 +322,12 @@ namespace TrafficTrain
 
         public string InfoElement()
         {
-            return string.Format("{0}", Notes);
+            return Notes;
         }
 
 
         public IList<string> Analis()
         {
-            if(NameLine == "СТП.Achtung")
-            {
-
-            }
             bool update = false;
             var result = new List<string> ();
             foreach (KeyValuePair<Viewmode, StateElement> Imp in Impulses)

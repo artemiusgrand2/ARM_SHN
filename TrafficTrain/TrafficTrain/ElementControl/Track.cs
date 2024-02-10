@@ -175,14 +175,6 @@ namespace TrafficTrain
             }
         }
         /// <summary>
-        /// начальный размер текста
-        /// </summary>
-        double m_startfontsize;
-        /// <summary>
-        /// первоначальное разположение текста
-        /// </summary>
-        Thickness m_startmargin;
-        /// <summary>
         /// коллекция используемых линий
         /// </summary>
         List<Line> _lines = new List<Line>();
@@ -220,46 +212,6 @@ namespace TrafficTrain
         /// </summary>
         public  double RotateText { get; set; }
         /// <summary>
-        /// время последнего занятия
-        /// </summary>
-        DateTime m_timelastactiv ;
-        /// <summary>
-        /// задержка в минутах перед началом мигания после освобождения пути
-        /// </summary>
-        const double _count_time_pause = 2;
-        bool _emptyPath = true;
-        /// <summary>
-        /// показываем является ли  путь не пустым 
-        /// </summary>
-        public bool EmptyPath
-        {
-            get
-            {
-                return _emptyPath;
-            }
-            set
-            {
-                _emptyPath = value;
-            }
-        }
-        /// <summary>
-        /// показывать ли номера поездов
-        /// </summary>
-        bool isvisibletrain = true;
-        /// <summary>
-        /// показывать ли номера путей
-        /// </summary>
-        bool isvisibletrack = true;
-        /// <summary>
-        /// количество обновлений
-        /// </summary>
-        private byte m_updateCurState = 0;
-        private StatesControl m_currentstate = StatesControl.nocontrol;
-        /// <summary>
-        /// текущее состояние пути по занятости
-        /// </summary>
-        public StatesControl CurrentControl { get { return m_currentstate; } }
-        /// <summary>
         /// приоритет отображения фона
         /// </summary>
         List<Viewmode> _priority_fill = new List<Viewmode>() { Viewmode.fencing, Viewmode.occupation, Viewmode.locking, Viewmode.lockingM, Viewmode.lockingY};
@@ -267,10 +219,6 @@ namespace TrafficTrain
         /// приоритет отображения фона
         /// </summary>
         List<Viewmode> _priority_stroke = new List<Viewmode>() { Viewmode.electrification};
-        /// <summary>
-        /// текущее выравнивание текста
-        /// </summary>
-        TextAlignment _current_alignment = TextAlignment.Center;
 
         /// <summary>
         /// обозначение
@@ -280,14 +228,6 @@ namespace TrafficTrain
         /// Индекс слоя
         /// </summary>
         public int ZIntex { get; set; }
-        private byte m_countShowP = 0;
-        /// <summary>
-        /// показывать ли настройки
-        /// </summary>
-        private IDictionary<ViewCommand, bool> m_startShow = new Dictionary<ViewCommand, bool>() { { ViewCommand.electro, false }, { ViewCommand.pass, false } };
-        private ViewCommand m_currentView;
-        public static event ShowCommand CancelShow;
-
         public string NameUl
         {
             get
@@ -311,22 +251,15 @@ namespace TrafficTrain
         {
             nametrack = name;
             m_text.Text = text;
-            //проверяем является ли путь пустым
-            if (iSNullOrEmpty(nametrack))
-                _emptyPath = false;
             //
             m_text.Foreground = _color_path;
             m_text.FontSize = fontsize;
             RotateText = rotate;
             m_text.Margin = new Thickness(marginX, marginY, 0, 0);
             m_text.RenderTransform = new RotateTransform(RotateText);
-            //первоначальные координаты
-            m_startfontsize = fontsize;
-            m_startmargin = new Thickness(marginX, marginY, 0, 0);
             Impulses = AnalisCollectionStateControl(impulses);
             //графика
             GeometryFigureCopy(geometry);
-            m_timelastactiv = DateTime.Now;
             Analis();
             //обработка информации по импульсам и номерам поездов
             if (Impulses.Count > 0)
@@ -335,14 +268,12 @@ namespace TrafficTrain
             }
             //
             LoadColorControl.NewColor += NewColor;
-            CommandButton.ShowObject += ShowObject;
         }
 
         ~StationPath()
         {
             Connections.NewTart -= StartFlashing;
             LoadColorControl.NewColor -= NewColor;
-            CommandButton.ShowObject -= ShowObject;
         }
 
         /// <summary>
@@ -369,67 +300,9 @@ namespace TrafficTrain
 
         public string InfoElement()
         {
-            return string.Format("{0}", Notes);
+            return Notes;
         }
 
-        private string GetTimeOccupation()
-        {
-            if (m_updateCurState >= 2)
-            {
-                return " c " + GetTimeUpdateStatus();
-            }
-            //
-            return string.Empty;
-        }
-
-        private string GetTimeUpdateStatus()
-        {
-            if (Impulses.TryGetValue(Viewmode.occupation, out var imp))
-                return imp.LastUpdate.ToLongTimeString();
-            else return "Время неизвестно !!!";
-        }
-
-        static bool iSNullOrEmpty(string str)
-        {
-            if (str == null)
-                return true;
-            else
-            {
-                if (str.Trim(new char[] { ' ' }).Length == 0)
-                    return true;
-                else return false;
-            }
-        }
-
-        private void ShowObject(ViewCommand view)
-        {
-            if (m_currentView == ViewCommand.none)
-            {
-                switch (view)
-                {
-                    case ViewCommand.electro:
-                        {
-                            if (ViewTraction == Enums.ViewTraction.electric_traction)
-                            {
-                                m_startShow[view] = true;
-                                m_currentView = view;
-                                Stroke = m_color_platform;
-                            }
-                        }
-                        break;
-                    case ViewCommand.pass:
-                        {
-                            if (IsPlatform)
-                            {
-                                m_startShow[view] = true;
-                                m_currentView = view;
-                                Stroke = m_color_platform;
-                            }
-                        }
-                        break;
-                }
-            }
-        }
 
         /// <summary>
         /// формируем геометрию объкта
@@ -498,11 +371,6 @@ namespace TrafficTrain
                     //обнуляем значения
                     Stroke = _colornotcontrolstroke;
                     Fill = _colornotcontrol;
-                    m_currentstate = StatesControl.nocontrol;
-                    if (m_updateCurState <= 1)
-                        m_updateCurState++;
-                    //выравниваем текст по центру
-                    UpdateAlignment(TextAlignment.Center);
                 }
             }
         }
@@ -520,14 +388,6 @@ namespace TrafficTrain
                     //
                     if (state != Imp.Value.state)
                     {
-                        if (Imp.Value.Name == Viewmode.occupation)
-                        {
-                            m_currentstate = Imp.Value.state;
-                            if (m_updateCurState <= 1)
-                                m_updateCurState++;
-                            if (state == StatesControl.activ && Imp.Value.state != StatesControl.activ)
-                                m_timelastactiv = DateTime.Now;
-                        }
                         Imp.Value.Update = true;
                         update = true;
                         result.AddRange(Diagnostic.DiagnosticControl(Imp.Value));
@@ -536,54 +396,26 @@ namespace TrafficTrain
             }
             //обновляем элемент
             if (update)
-            {
                 UpdateElement(true);
-                //анализируем где находится голова поезда
-                AnalisHeadSide();
-            }
+
             //
             return result;
         }
 
 
-        /// <summary>
-        /// анализируем где находится голова поезда
-        /// </summary>
-        private void AnalisHeadSide()
-        {
-   
-            if ((Impulses[Viewmode.head_left].state == StatesControl.activ && Impulses[Viewmode.head_right].state != StatesControl.activ) ||
-                (Impulses[Viewmode.head_left].state != StatesControl.activ && Impulses[Viewmode.head_right].state == StatesControl.activ))
-            {
-                if (Impulses[Viewmode.head_left].state == StatesControl.activ && Impulses[Viewmode.head_right].state != StatesControl.activ)
-                    UpdateAlignment(TextAlignment.Left);
-                else UpdateAlignment(TextAlignment.Right);
-            }
-            else
-                UpdateAlignment(TextAlignment.Center);
-        }
-
-        private void UpdateAlignment(TextAlignment alignment)
-        {
-            if (_current_alignment != alignment)
-            {
-                _current_alignment = alignment;
-               // LocationText();
-            }
-        }
 
         private void UpdateCurrentState(List<Viewmode> list_priority, ref bool update)
         {
-            StateElement control = CheckPriorityState(list_priority);
+            var control = CheckPriorityState(list_priority);
             if (control != null)
                 SetState(control);
             else
             {
-                foreach (Viewmode mode in list_priority)
+                foreach (var mode in list_priority)
                 {
-                    if (Impulses.ContainsKey(mode))
+                    if (Impulses.TryGetValue(mode, out var imp))
                     {
-                        SetState(Impulses[mode]);
+                        SetState(imp);
                         break;
                     }
                 }
@@ -602,7 +434,7 @@ namespace TrafficTrain
                 bool _update_fill = false;
                 bool _update_stroke = false;
                 //
-                foreach (KeyValuePair<Viewmode, StateElement> imp in Impulses)
+                foreach (var imp in Impulses)
                 {
                     if ((CheckUpdate && imp.Value.Update) || !CheckUpdate)
                     {

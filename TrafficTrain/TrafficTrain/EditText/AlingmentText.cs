@@ -3,55 +3,13 @@ using System.Windows;
 using System.Windows.Shapes;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace TrafficTrain.EditText
 {
     class AlingmentText
     {
-        /// <summary>
-        /// Выравниванием номера поездов  по левому краю
-        /// </summary>
-        /// <returns></returns>
-        public static Thickness AlingmentLeft(double ramkaX, double ramkaY, double width, double height, TextBlock text, double RotateText)
-        {
-            if (RotateText == 0 || Math.Abs(RotateText) == 360)
-                return new Thickness(ramkaX, ramkaY + (height - HeightText(text)) / 2, 0, 0);
-            //
-            if (Math.Abs(RotateText) == 90)
-                return new Thickness(ramkaX - (height - HeightText(text)) / 2, ramkaY + (width - WidthText(text)), 0, 0);
-            //
-            if (Math.Abs(RotateText) == 180)
-                return new Thickness(ramkaX, ramkaY - (height - HeightText(text)) / 2, 0, 0);
-            //
-            if (Math.Abs(RotateText) == 270)
-                return new Thickness(ramkaX + (height - HeightText(text)) / 2, ramkaY, 0, 0);
-            //
-            return new Thickness(0, 0, 0, 0);
-        }
 
-        /// <summary>
-        /// Выравниванием номера поездов  по правому краю
-        /// </summary>
-        /// <returns></returns>
-        public static Thickness AlingmentRight(double ramkaX, double ramkaY, double width, double height, TextBlock text, double RotateText)
-        {
-            if (RotateText == 0 || Math.Abs(RotateText) == 360)
-                return new Thickness(ramkaX + (width - WidthText(text)), ramkaY + (height - HeightText(text)) / 2, 0, 0);
-            //
-            if (Math.Abs(RotateText) == 90)
-                return new Thickness(ramkaX - (height - HeightText(text))/2, ramkaY , 0, 0);
-            //
-            if (Math.Abs(RotateText) == 180)
-                return new Thickness(ramkaX - (width - WidthText(text)), ramkaY - (height - HeightText(text)) / 2, 0, 0);
-            //
-            if (Math.Abs(RotateText) == 270)
-                return new Thickness(ramkaX + (height - HeightText(text))/2, ramkaY - (width - WidthText(text)), 0, 0);
-            //
-            return new Thickness(0, 0, 0, 0);
-        }
 
         /// <summary>
         /// Выравнивание название главного пути по центру при изменении длины или ширины

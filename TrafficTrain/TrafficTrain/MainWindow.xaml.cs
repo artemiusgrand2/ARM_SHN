@@ -114,7 +114,7 @@ namespace TrafficTrain
                 var loadproject = new LoadProject();
                 loadproject.Load(DrawCanvas, this);
                 AreaInfo = LoadProject.ContentHelp;
-                settingswindow = new SettingsWindow(this, DrawCanvas, LoadProject.ContentHelp /*loadproject.ContentHelp*/, LoadProject.AreaMessage, loadproject.DetailStation, ViewWindow.mainwindow);
+                settingswindow = new SettingsWindow(this, DrawCanvas, LoadProject.ContentHelp, LoadProject.AreaMessage, ViewWindow.mainwindow);
                 //проверяем показывать ли меню
                 ScroollView(settingswindow);
                 if (Admin)
@@ -183,8 +183,6 @@ namespace TrafficTrain
             {
                 connections.Stop();
                 DataServer.Core.Stop();
-                if (SettingsWindow.WindowStation != null)
-                    SettingsWindow.WindowStation.Close();
                 if (SettingsWindow.WindowColor != null)
                 {
                     SettingsWindow.WindowColor.YesClose = true;
@@ -210,15 +208,6 @@ namespace TrafficTrain
                 combox_exsample.Items.Add(str);
             }
                 )); ;
-        }
-
-        public void UpdateStation(StrageProject grafic)
-        {
-            //CurrentStation = grafic.CurrentStation;
-            //settingswindow.Dispose();
-            //var load = new LoadProject();
-            //load.Load(DrawCanvas, grafic);
-            //settingswindow.UpdateDann(load.ContentHelp, load.AreaMessage, load.DetailStation);
         }
 
     }

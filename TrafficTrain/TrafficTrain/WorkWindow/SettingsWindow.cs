@@ -19,7 +19,6 @@ using SCADA.Common.Enums;
 using SCADA.Common.Strage.SaveElement;
 using SCADA.Common.ImpulsClient;
 
-//using CefSharp.Wpf;
 
 namespace TrafficTrain.WorkWindow
 {
@@ -34,14 +33,6 @@ namespace TrafficTrain.WorkWindow
         /// коллекция коэффициентов масштабирования окон детального вида
         /// </summary>
         Dictionary<ViewWindow, double> _collection_k = new Dictionary<ViewWindow, double>() { { ViewWindow.detailview, 1 }, { ViewWindow.otherwindow, 0.95 }, { ViewWindow.mainwindow, 1 } };
-        /// <summary>
-        /// ширина окна
-        /// </summary>
-        double _width;
-        /// <summary>
-        /// высота окна
-        /// </summary>
-        double _height;
         /// <summary>
         /// группа трансформаций
         /// </summary>
@@ -94,10 +85,6 @@ namespace TrafficTrain.WorkWindow
         /// </summary>
         const double m_scrolmax = 1 / m_scrolminimum;
         /// <summary>
-        /// есть попадание на кнопку станции
-        /// </summary>
-        bool _hitbuttonstation = false;
-        /// <summary>
         /// точка относительного центра координат
         /// </summary>
         Point m_Po = new Point(0, 0);
@@ -119,10 +106,6 @@ namespace TrafficTrain.WorkWindow
         /// </summary>
         private TextBox m_textMessage = null;
         /// <summary>
-        /// форма для отображения детального вида перегона
-        /// </summary>
-        public static ViewStations WindowStation { get; set; }
-        /// <summary>
         /// форма для работы с наборами цветов
         /// </summary>
         public static WindowColor WindowColor { get; set; }
@@ -134,38 +117,6 @@ namespace TrafficTrain.WorkWindow
         /// логирование
         /// </summary>
         readonly ILog log = LogManager.GetLogger(typeof(SettingsWindow));
-        /// <summary>
-        /// настройки формы
-        /// </summary>
-        static Settings _settings = null;
-        /// <summary>
-        /// настройки формы
-        /// </summary>
-        public static Settings Settings
-        {
-            get { return _settings; }
-            set { _settings = value; }
-        }
-        /// <summary>
-        /// нахождение файла справки
-        /// </summary>
-        public static string HelpFile { get; set; }
-        /// <summary>
-        /// проигрывать ли звуковые сообщения
-        /// </summary>
-        public static bool YesPlaySoundMessage { get; set; }
-
-        private DetailViewStation m_detailStation = null;
-        /// <summary>
-        /// область для детального вида станции
-        /// </summary>
-        public DetailViewStation DetailViewStation
-        {
-            get
-            {
-                return m_detailStation;
-            }
-        }
 
         private static DateTime m_lastActive = DateTime.MaxValue;
         /// <summary>
@@ -185,11 +136,10 @@ namespace TrafficTrain.WorkWindow
      
         #endregion
 
-        public SettingsWindow(ContentControl window, Canvas drawcanvas, CommandButton areainfo, TextBox textmessage, DetailViewStation detailStation, ViewWindow viewwindow)
+        public SettingsWindow(ContentControl window, Canvas drawcanvas, CommandButton areainfo, TextBox textmessage, ViewWindow viewwindow)
         {
             FirstSettings(window, drawcanvas, areainfo, viewwindow);
             m_textMessage = textmessage;
-            m_detailStation = detailStation;
             //настраиваем события
             m_content.MouseWheel += window_MouseWheel;
             m_content.KeyDown += window_KeyDown;
@@ -199,21 +149,16 @@ namespace TrafficTrain.WorkWindow
                 m_content.Background = m_colorfon;
                 (m_content as Window).Activated += window_Activated;
                 (m_content as Window).Deactivated += window_Deactivated;
-                (m_content as Window).StateChanged += window_StateChanged;
                 (m_content as Window).Closing += window_Closing;
                 CommandButton.OpenColorDialog += OpenColorDialog;
                 if (m_content is MainWindow)
                 {
-                    StartSettings();
-                    SetSettings(drawcanvas);
-                    //
                     if (m_textMessage != null)
                     {
                         m_textMessage.Foreground = m_color_text_message;
                         m_textMessage.MouseWheel += textblock_message_MouseWheel;
                     }
                 }
-                CommandButton.OnOffObject += OnOffEventRun;
             }
             //
             ImpulsesClientTCP.NewData += NewInfomation;
@@ -230,7 +175,6 @@ namespace TrafficTrain.WorkWindow
                 m_content.MouseWheel += window_MouseWheel;
             }
             m_content.KeyDown += window_KeyDown;
-            m_content.SizeChanged += window_SizeChanged;
             //если элемент является окном
             if (m_content is Window)
                 (m_content as Window).Closing += window_Closing;
@@ -242,16 +186,6 @@ namespace TrafficTrain.WorkWindow
             _viewwindow = viewwindow;
             m_content = window;
             DrawCanvas = drawcanvas;
-            //foreach (var children in drawcanvas.Children)
-            //{
-            //    var findBrowser = children as ChromiumWebBrowser;
-            //    if (findBrowser != null)
-            //    {
-            //        findBrowser.PreviewMouseWheel += FindBrowser_PreviewMouseWheel;
-            //        //findBrowser.FrameLoadEnd += FindBrowser_FrameLoadEnd;
-            //        //findBrowser.PreviewKeyDown += FindBrowser_PreviewKeyDown;
-            //    }
-           // }
             groupTransform.Children.Add(new TranslateTransform());
             DrawCanvas.RenderTransform = groupTransform;
             if (areainfo != null)
@@ -266,61 +200,9 @@ namespace TrafficTrain.WorkWindow
         ~SettingsWindow()
         {
             LoadColorControl.NewColor -= NewColor;
-            CommandButton.OnOffObject -= OnOffEventRun;
             ImpulsesClientTCP.NewData -= NewInfomation;
             ImpulsesClientTCP.ConnectDisconnectionServer -= ConnectCloseServer;
         }
-
-        private void SetSettings(Canvas drawcanvas)
-        {
-            foreach (UIElement el in drawcanvas.Children)
-            {
-                CommandButton command = el as CommandButton;
-                if (command != null)
-                {
-                    if (command.ViewCommand == ViewCommand.update_style)
-                    {
-                        if (_settings != null)
-                        {
-                            if (_settings.IsUpdateStyle)
-                                command.UpdateState();
-                        }
-                    }
-                }
-            }
-        }
-
-
-        //private void FindBrowser_FrameLoadEnd(object sender, CefSharp.FrameLoadEndEventArgs e)
-        //{
-        //    var browser = (ChromiumWebBrowser)sender;
-        //    //DrawCanvas.Dispatcher.Invoke(() =>
-        //    //{
-        //    //    var findBrowser = LoadProject.ProejctGrafic.GraficObjects.Where(x => x.ViewElement == ViewElement.area && (x as AreaSave).Figures[0].StartPoint.X == browser.Margin.Left
-        //    //                      && (x as AreaSave).Figures[0].StartPoint.Y == browser.Margin.Top).FirstOrDefault();
-        //    //    if (findBrowser != null)
-        //    //        browser.ZoomLevel = (findBrowser as AreaSave).ZoomLevel;
-        //    //});
-        //}
-
-        //private void FindBrowser_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        //{
-        //    if (Keyboard.IsKeyDown(Key.LeftShift))
-        //    {
-        //        var browser = sender as ChromiumWebBrowser;
-        //        if (e.Delta > 0)
-        //            browser.ZoomInCommand.Execute(null);
-        //        else
-        //            browser.ZoomOutCommand.Execute(null);
-        //        //
-        //       // var findBrowser = LoadProject.ProejctGrafic.GraficObjects.Where(x => x.ViewElement == ViewElement.area && (x as AreaSave).Figures[0].StartPoint.X == browser.Margin.Left
-        //       //&& (x as AreaSave).Figures[0].StartPoint.Y == browser.Margin.Top).FirstOrDefault();
-        //       // //
-        //       // if (findBrowser != null)
-        //       //     (findBrowser as AreaSave).ZoomLevel = browser.ZoomLevel;
-        //    }
-        //}
-
 
         private void NewInfomation()
         {
@@ -348,159 +230,6 @@ namespace TrafficTrain.WorkWindow
                     }
                 }
             }));
-        }
-
-        public void OnOffEventRun(bool status, ViewCommand view)
-        {
-            if (m_content is MainWindow)
-            {
-                Connections connections = (m_content as MainWindow).Connections;
-                if (connections != null)
-                {
-                    switch (view)
-                    {
-                        case ViewCommand.show_control:
-                            {
-                                if (status)
-                                    connections.StopTs();
-                                else connections.StartTs();
-                            }
-                            break;
-                        case ViewCommand.update_style:
-                            {
-                                if (status)
-                                    connections.StartStyle();
-                                else connections.StopStyle();
-                            }
-                            break;
-                    }
-                }
-            }
-           
-        }
-
-        public void UpdateDann(CommandButton areainfo, TextBox textMessage, DetailViewStation detailStation)
-        {
-            try
-            {
-                if (areainfo == null)
-                    AreaInfo = MainWindow.AreaInfo;
-                else
-                    AreaInfo = areainfo;
-                m_textMessage = textMessage;
-                m_detailStation = detailStation;
-            }
-            catch { }
-        }
-
-        private void ProcessingMessage(string message)
-        {
-            InfoMessageTrain infotrain = new InfoMessageTrain(MessageUpdate);
-            m_content.Dispatcher.Invoke(infotrain, new object[] { message });
-        }
-
-        private void MessageUpdate(string textmessage)
-        {
-            if (!string.IsNullOrEmpty(textmessage))
-                m_textMessage.Text = textmessage;
-        }
-
-        public void SizeStation()
-        {
-            SizeScrollStation(_width, _height, true);
-        }
-
-
-        /// <summary>
-        /// растягиваем картинку станции по экрану
-        /// </summary>
-        /// <param name="widthscreen"></param>
-        /// <param name="heightscreen"></param>
-        private void SizeScrollStation(double widthscreen, double heightscreen, bool scroll)
-        {
-            double centerscreenX = widthscreen / 2;
-            double centerscreenY = heightscreen / 2;
-            //
-            double minYFigure = double.MaxValue;
-            double maxYFigure = double.MinValue;
-            double minXFigure = double.MaxValue;
-            double maxXFigure = double.MinValue;
-            //
-            groupTransform.Children.Clear();
-            groupTransform.Children.Add(new TranslateTransform());
-            foreach (UIElement el in DrawCanvas.Children)
-            {
-                //графические объекты
-                IGraficElement geometry = el as IGraficElement;
-                if (geometry != null)
-                {
-                    SizeMaxMinStation(ref minYFigure, ref maxYFigure, ref minXFigure, ref maxXFigure, geometry.Figure.Figures);
-                    continue;
-                }
-                ////элементы перегоной стрелки
-                System.Windows.Shapes.Path figure = el as System.Windows.Shapes.Path;
-                if (figure != null)
-                {
-                    PathGeometry path = (PathGeometry)figure.Data;
-                    SizeMaxMinStation(ref minYFigure, ref maxYFigure, ref minXFigure, ref maxXFigure, path.Figures);
-                }
-            }
-            //
-            double centerscreenSrationX = (maxXFigure + minXFigure) / 2;
-            double centerscreenSrationY = (maxYFigure + minYFigure) / 2;
-            //
-            NewSize(centerscreenX - centerscreenSrationX, centerscreenY - centerscreenSrationY);
-            //
-            if (scroll)
-            {
-                double heightStation = maxYFigure - minYFigure;
-                double wightStation = maxXFigure - minXFigure;
-                //
-                if ((_width / wightStation) > (_height / heightStation))
-                    ModelScaleWheel((_height / heightStation) * (_collection_k[_viewwindow]), centerscreenX, centerscreenY);
-                else
-                    ModelScaleWheel((_width / wightStation) * (_collection_k[_viewwindow]), centerscreenX, centerscreenY);
-            }
-            m_currentscale = 1;
-        }
-
-        private void SizeMaxMinStation(ref double minYFigure, ref double maxYFigure, ref double minXFigure, ref double maxXFigure, PathFigureCollection Figures)
-        {
-            foreach (PathFigure geo in Figures)
-            {
-                MinMaxValue(ref  minYFigure, ref  maxYFigure, ref minXFigure, ref  maxXFigure, geo.StartPoint);
-                //
-                foreach (PathSegment seg in geo.Segments)
-                {
-                    //сегмент линия
-                    LineSegment lin = seg as LineSegment;
-                    if (lin != null)
-                        MinMaxValue(ref  minYFigure, ref  maxYFigure, ref minXFigure, ref  maxXFigure, lin.Point);
-                    //сегмент арка
-                    ArcSegment arc = seg as ArcSegment;
-                    if (arc != null)
-                        MinMaxValue(ref  minYFigure, ref  maxYFigure, ref minXFigure, ref  maxXFigure, arc.Point);
-                }
-            }
-        }
-
-        private void MinMaxValue(ref double minYFigure, ref double maxYFigure, ref double minXFigure, ref double maxXFigure, Point point)
-        {
-            if (minXFigure > point.X)
-                minXFigure = point.X;
-            if (minYFigure > point.Y)
-                minYFigure = point.Y;
-            //
-            if (maxXFigure < point.X)
-                maxXFigure = point.X;
-            if (maxYFigure < point.Y)
-                maxYFigure = point.Y;
-        }
-
-        private void window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            _width = e.NewSize.Width;
-            _height = e.NewSize.Height;
         }
 
         private void window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -536,30 +265,6 @@ namespace TrafficTrain.WorkWindow
             //
             if (m_textMessage != null)
                 m_textMessage.Foreground = m_color_text_message;
-        }
-
-
-        private void StartSettings()
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(App.Configuration["file_settings"]) && new FileInfo(App.Configuration["file_settings"]).Exists)
-                {
-                    var reader = new XmlTextReader(App.Configuration["file_settings"]);
-                    var deserializer = new XmlSerializer(typeof(Settings));
-                    _settings = (Settings)deserializer.Deserialize(reader);
-                    reader.Close();
-                }
-                if (_settings == null)
-                    _settings = new Settings();
-                //файл справки
-                if (!string.IsNullOrEmpty(App.Configuration["file_help"]) && (new FileInfo(App.Configuration["file_help"]).Exists))
-                    HelpFile = App.Configuration["file_help"];
-                //настраиваем скорость прокрутки
-                YesPlaySoundMessage = true;
-            }
-            catch { }
-
         }
 
         private void window_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -617,8 +322,8 @@ namespace TrafficTrain.WorkWindow
             //если нажата левая клавиша мыши
             if (buttonselect == MouseButton.Left)
             {
-                if (LoadProject.ElementsView.ContainsKey(LoadProject.CurrentStation))
-                    SelectElements.ClickElement(LoadProject.ElementsView[LoadProject.CurrentStation], cursor, m_content);
+                if (LoadProject.ElementsView.TryGetValue(LoadProject.CurrentStation, out var selectStation))
+                    SelectElements.ClickElement(selectStation, cursor, m_content);
             }
         }
 
@@ -634,134 +339,6 @@ namespace TrafficTrain.WorkWindow
                 }
             }
             catch { }
-        }
-
-        private void CloseProgramm()
-        {
-            if (m_content is Window)
-            {
-                (m_content as Window).Close();
-            }
-        }
-
-        private void FullSreenView()
-        {
-            if (m_content is Window)
-            {
-                if (m_content is MainWindow)
-                {
-                    if ((m_content as Window).WindowStyle == System.Windows.WindowStyle.None)
-                        (m_content as Window).WindowStyle = System.Windows.WindowStyle.ToolWindow;
-                    else
-                    {
-                        (m_content as Window).WindowStyle = System.Windows.WindowStyle.None;
-                        (m_content as Window).WindowState = System.Windows.WindowState.Maximized;
-                    }
-                }
-                //
-                if (m_content is ViewStations)
-                {
-                    if ((m_content as Window).WindowState == System.Windows.WindowState.Normal)
-                        (m_content as Window).WindowState = System.Windows.WindowState.Maximized;
-                    else (m_content as Window).WindowState = System.Windows.WindowState.Normal;
-                    SizeScrollStation(_width, _height, true);
-                }
-            }
-        }
-
-        private void CollapseView()
-        {
-            if (m_content is Window)
-            {
-                if (m_content is MainWindow)
-                {
-                    if (WindowStation != null)
-                        WindowStation.Hide();
-                    if (WindowColor != null && WindowColor.Visibility == Visibility.Visible)
-                        WindowColor.Hide();
-                }
-                (m_content as Window).WindowState = System.Windows.WindowState.Minimized;
-            }
-        }
-
-        private void FullSreenStation()
-        {
-            if(m_content is ViewStations)
-                SizeScrollStation(_width, _height, true);
-            //вызываем станцию в отдельном окне
-            if (m_content is DetailViewStation)
-            {
-                SCADA.Common.SaveElement.StrageProject GraficProject = LoadProject.GetGrafika((m_content as DetailViewStation).CurrentStation);
-                if (GraficProject != null)
-                {
-                    if (WindowStation == null)
-                    {
-                        WindowStation = new ViewStations(GraficProject);
-                        WindowStation.Show();
-                    }
-                    else
-                    {
-                        if (GraficProject.CurrentStation != WindowStation.CurrentStation)
-                            WindowStation.UpdateStation(GraficProject);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// сохраняем масштаб
-        /// </summary>
-        /// <param name="Project"></param>
-        private void Save()
-        {
-            try
-            {
-                SCADA.Common.SaveElement.StrageProject Project = LoadProject.SaveAnalis(m_Po, m_currentscale, 0, 0);
-                if (Project != null)
-                {
-                    if (App.Configuration["grafick_project"] != null && !string.IsNullOrEmpty(App.Configuration["grafick_project"]))
-                    {
-                        using (Stream savestream = new FileStream(App.Configuration["grafick_project"], FileMode.Create))
-                        {
-                            // Указываем тип того объекта, который сериализуем
-                            XmlSerializer xml = new XmlSerializer(typeof(SCADA.Common.SaveElement.StrageProject));
-                            // Сериализуем
-                            xml.Serialize(savestream, Project);
-                            savestream.Close();
-                        }
-                        //приводим значение к исходному состоянию
-                        m_currentscale = 1;
-                        m_Po.X = 0; m_Po.Y = 0;
-                    }
-                }
-            }
-            catch (Exception error)
-            {
-                log.Error(error.Message, error);
-            }
-        }
-
-        /// <summary>
-        /// откат к первоначальный координатам
-        /// </summary>
-        private void StartPosition()
-        {
-            for (int i = 0; i < groupTransform.Children.Count; i++)
-            {
-                if (groupTransform.Children[i] is TranslateTransform)
-                {
-                    (groupTransform.Children[i] as TranslateTransform).X = 0;
-                    (groupTransform.Children[i] as TranslateTransform).Y = 0;
-                }
-                //
-                if (groupTransform.Children[i] is ScaleTransform)
-                {
-                    groupTransform.Children.RemoveAt(i);
-                    i--;
-                }
-            }
-            m_currentscale = 1;
-            m_Po.X = 0; m_Po.Y = 0;
         }
 
         private void window_MouseMove(object sender, MouseEventArgs e)
@@ -781,7 +358,7 @@ namespace TrafficTrain.WorkWindow
             }
             else
             {
-                if (CheckHitPoint(e.GetPosition(DrawCanvas)) && LoadProject.ElementsView.ContainsKey(LoadProject.CurrentStation) && SelectElements.FindInfoElement(LoadProject.ElementsView[LoadProject.CurrentStation], e.GetPosition(DrawCanvas), AreaInfo))
+                if (LoadProject.ElementsView.ContainsKey(LoadProject.CurrentStation) && SelectElements.FindInfoElement(LoadProject.ElementsView[LoadProject.CurrentStation], e.GetPosition(DrawCanvas), AreaInfo))
                 {
                     if (m_content.Cursor != Cursors.Hand)
                         m_content.Cursor = Cursors.Hand;
@@ -795,23 +372,6 @@ namespace TrafficTrain.WorkWindow
             //изменяем текущие кординаты
             m_cursorX = e.GetPosition(DrawCanvas).X;
             m_cursorY = e.GetPosition(DrawCanvas).Y;
-        }
-
-        private bool CheckHitPoint(Point point)
-        {
-            if (DetailViewStation != null)
-            {
-                if (m_content is MainWindow)
-                {
-                    if (point.X >= DetailViewStation.Margin.Left && point.X <= (DetailViewStation.Margin.Left + DetailViewStation.Width) &&
-                        point.Y >= DetailViewStation.Margin.Top && point.Y <= (DetailViewStation.Margin.Top + DetailViewStation.Height))
-                    {
-                        return false;
-                    }
-                }
-            }
-            //
-            return true;
         }
 
         /// <summary>
@@ -845,8 +405,6 @@ namespace TrafficTrain.WorkWindow
         {
             try
             {
-                if (WindowStation != null)
-                    WindowStation.Topmost = true;
                 if (WindowColor != null && WindowColor.Visibility == Visibility.Visible)
                     WindowColor.Topmost = true;
               
@@ -857,45 +415,11 @@ namespace TrafficTrain.WorkWindow
         private void window_Deactivated(object sender, EventArgs e)
         {
             try
-            {
-                if (WindowStation != null)
-                    WindowStation.Topmost = false;
+            {;
                 if (WindowColor != null && WindowColor.Visibility == Visibility.Visible)
                     WindowColor.Topmost = false;
             }
             catch (Exception error) { log.Error(error.Message, error);  }
-        }
-
-        private void window_StateChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (m_content != null && (m_content is Window))
-                {
-                    switch ((m_content as Window).WindowState)
-                    {
-                        case System.Windows.WindowState.Maximized:
-                            {
-                                if (WindowStation != null)
-                                    WindowStation.Show();
-                            }
-                            break;
-                        case System.Windows.WindowState.Minimized:
-                            {
-                                if (WindowStation != null)
-                                    WindowStation.Hide();
-                            }
-                            break;
-                        case System.Windows.WindowState.Normal:
-                            {
-                                if (WindowStation != null)
-                                    WindowStation.Show();
-                            }
-                            break;
-                    }
-                }
-            }
-            catch (Exception error) { log.Error(error.Message, error); }
         }
 
         private void window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -917,12 +441,6 @@ namespace TrafficTrain.WorkWindow
                     break;
             }
         }
-
-        private void SetNotSelectTable(DataGrid table)
-        {
-            if (table != null  && table.SelectedIndex != -1)
-                table.SelectedIndex = -1;
-        }
       
         private void window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -930,19 +448,9 @@ namespace TrafficTrain.WorkWindow
             //
             if (m_content != null)
             {
-                //закрывем окно детального вида
-                if (m_content is ViewStations)
-                {
-                    Dispose();
-                    SettingsWindow.WindowStation = null;
-                    return;
-                }
                 //закрываем основное окно
                 if (m_content is MainWindow)
                 {
-                    if (_settings != null)
-                        _settings.IsUpdateStyle = (m_content as MainWindow).Connections.IsStartUpdateStyle;
-                    //
                     if (App.Close)
                     {
                         TrafficTrain.WorkForm.CloseProgramm closewindow = new WorkForm.CloseProgramm();
@@ -954,15 +462,6 @@ namespace TrafficTrain.WorkWindow
                             potokclose.SetApartmentState(System.Threading.ApartmentState.STA);
                             potokclose.Start();
                             (m_content as MainWindow).CloseAll();
-                            if (!string.IsNullOrEmpty(App.Configuration["file_settings"]))
-                            {
-                                using (Stream savestream = new FileStream(App.Configuration["file_settings"], FileMode.Create))
-                                {
-                                    XmlSerializer xml = new XmlSerializer(typeof(Settings));
-                                    xml.Serialize(savestream, _settings);
-                                    savestream.Close();
-                                }
-                            }
                             Dispose();
                         }
                     }
@@ -972,7 +471,7 @@ namespace TrafficTrain.WorkWindow
 
         public void Dispose()
         {
-            foreach (UIElement el in DrawCanvas.Children)
+            foreach (var el in DrawCanvas.Children)
             {
                 if (el is IDisposable)
                     (el as IDisposable).Dispose();
@@ -983,7 +482,7 @@ namespace TrafficTrain.WorkWindow
 
         private void CloseForm()
         {
-            CloseWindowWpf form = new CloseWindowWpf();
+            var form = new CloseWindowWpf();
             form.ShowDialog();
         }
     }

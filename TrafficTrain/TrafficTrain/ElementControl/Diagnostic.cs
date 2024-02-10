@@ -17,8 +17,8 @@ namespace TrafficTrain
             {
                 if (element.state != StatesControl.nocontrol)
                 {
-                    if (element.Messages.ContainsKey(element.state))
-                        result.Add(LoadProject.CreateMessages(element.Messages[element.state], DateTime.Now, DateTime.MinValue));
+                    if (element.Messages.TryGetValue(element.state, out var elementMesages))
+                        result.Add(LoadProject.CreateMessages(elementMesages, DateTime.Now, DateTime.MinValue));
                     ////
                     //if (element.stateActiv != StatesControl.nocontrol)
                     //{

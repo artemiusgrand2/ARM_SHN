@@ -140,18 +140,10 @@
     <Compile Include="Constant\NameControlTU.cs" />
     <Compile Include="Constant\NumberContolTS.cs" />
     <Compile Include="Constant\ViewNameSostNumberTu.cs" />
-    <Compile Include="Constant\ViewTrainArrivalDeparture.cs" />
-    <Compile Include="DataProject\CheckElemet.cs" />
     <Compile Include="DataProject\ColorConfiguration.cs" />
     <Compile Include="DataProject\CommandColor.cs" />
     <Compile Include="DataProject\ConfigurationFile.cs" />
     <Compile Include="DataProject\EnumColor.cs" />
-    <Compile Include="DataProject\Figure.cs" />
-    <Compile Include="DataProject\PointMove.cs" />
-    <Compile Include="DataProject\PointOutputTrain.cs" />
-    <Compile Include="DataProject\PointStation.cs" />
-    <Compile Include="DataProject\Segment.cs" />
-    <Compile Include="DataProject\StateElement.cs" />
     <Compile Include="DataProject\TableColor.cs" />
     <Compile Include="DataServer\DataSource.cs" />
     <Compile Include="DataServer\Core.cs" />
@@ -159,22 +151,14 @@
     <Compile Include="EditText\AlingmentText.cs" />
     <Compile Include="ElementControl\AnalogCell.cs" />
     <Compile Include="ElementControl\AreaPicture.cs" />
-    <Compile Include="ElementControl\BlockSection.cs" />
-    <Compile Include="ElementControl\ButtonStation.cs" />
     <Compile Include="ElementControl\CommandButton.cs" />
     <Compile Include="ElementControl\Diagnostic.cs" />
     <Compile Include="ElementControl\Disconnectors.cs" />
     <Compile Include="ElementControl\HelpElement.cs" />
     <Compile Include="ElementControl\ControlObjec.cs" />
-    <Compile Include="ElementControl\Direction.cs" />
-    <Compile Include="ElementControl\LightShunting.cs" />
-    <Compile Include="ElementControl\LightTrain.cs" />
     <Compile Include="ElementControl\LineHelp.cs" />
-    <Compile Include="ElementControl\Move.cs" />
     <Compile Include="ElementControl\NameStation.cs" />
-    <Compile Include="ElementControl\NumberTrainRamka.cs" />
     <Compile Include="ElementControl\AreaStation.cs" />
-    <Compile Include="ElementControl\SignalRoute.cs" />
     <Compile Include="ElementControl\Track.cs" />
     <Compile Include="ElementControl\TextHelp.cs" />
     <Compile Include="ElementControl\TimeElement.cs" />
@@ -182,10 +166,6 @@
     <Compile Include="Interface\Interface.cs" />
     <Compile Include="LoadProject\LoadColorControl.cs" />
     <Compile Include="LoadProject\LoadData.cs" />
-    <Compile Include="LoadProject\LoadMacro.cs" />
-    <Compile Include="LoadProject\LoadMoveBlock.cs" />
-    <Compile Include="LoadProject\Macro.cs" />
-    <Compile Include="LoadProject\Settings.cs" />
     <Compile Include="MainControl\ControlColor.xaml.cs">
       <DependentUpon>ControlColor.xaml</DependentUpon>
     </Compile>
@@ -196,9 +176,6 @@
       <DependentUpon>ControlColorStatus.xaml</DependentUpon>
     </Compile>
     <Compile Include="Themes\MesToColorConverter.cs" />
-    <Compile Include="MainControl\DetailViewStation.xaml.cs">
-      <DependentUpon>DetailViewStation.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Window\AddNewColorWindow.xaml.cs">
       <DependentUpon>AddNewColorWindow.xaml</DependentUpon>
     </Compile>
@@ -210,9 +187,6 @@
     </Compile>
     <Compile Include="Window\StartWpf.xaml.cs">
       <DependentUpon>StartWpf.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Window\ViewStations.xaml.cs">
-      <DependentUpon>ViewStations.xaml</DependentUpon>
     </Compile>
     <Compile Include="Window\WindowColor.xaml.cs">
       <DependentUpon>WindowColor.xaml</DependentUpon>
@@ -271,10 +245,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MainControl\DetailViewStation.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Window\AddNewColorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -288,10 +258,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Window\StartWpf.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Window\ViewStations.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
