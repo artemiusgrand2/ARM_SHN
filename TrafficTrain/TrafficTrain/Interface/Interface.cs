@@ -26,10 +26,6 @@ namespace ARM_SHN.Interface
     public interface IGraficElement
     {
         /// <summary>
-        /// Фигура
-        /// </summary>
-        PathGeometry Figure { get; }
-        /// <summary>
         /// Пояснения
         /// </summary>
         string Notes { get; set; }

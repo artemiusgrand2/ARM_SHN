@@ -460,9 +460,6 @@ namespace ARM_SHN.WorkWindow
                             e.Cancel = true;
                         else
                         {
-                            System.Threading.Thread potokclose = new System.Threading.Thread(CloseForm);
-                            potokclose.SetApartmentState(System.Threading.ApartmentState.STA);
-                            potokclose.Start();
                             (m_content as MainWindow).CloseAll();
                             Dispose();
                         }
@@ -482,10 +479,5 @@ namespace ARM_SHN.WorkWindow
             DrawCanvas.Children.Clear();
         }
 
-        private void CloseForm()
-        {
-            var form = new CloseWindowWpf();
-            form.ShowDialog();
-        }
     }
 }

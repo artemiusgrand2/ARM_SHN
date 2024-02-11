@@ -4,9 +4,9 @@
         Title="MainWindow" Height="65" Width="265" WindowStyle="None" WindowStartupLocation="CenterScreen" ShowInTaskbar="False" AllowsTransparency="True" Background="Transparent" Topmost="True" MouseLeftButtonDown="Window_MouseLeftButtonDown">
     <Border  Style="{StaticResource MyBorderStyle}">
         <Grid>
-            <Label Content="Закрыть приложение ?" FontWeight="Bold" FontSize="15"  HorizontalAlignment="Center"  VerticalAlignment="Top" />
-            <Button  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="99,33,0,0" Height="25" Width="75" TabIndex="0"  Name="button_OK" Content="ДА" Click="button_OK_Click"></Button>
-            <Button  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="180,33,0,0" Height="25" Width="75"  Name="button_Cancel" Content="НЕТ" Click="button_Cancel_Click" ></Button>
+            <Label Content="Закрыть приложение ?" FontWeight="Bold" FontSize="16"  HorizontalAlignment="Center"  VerticalAlignment="Top" />
+            <Button  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="90,33,0,0" Height="25" Width="75" TabIndex="0"  Name="button_OK" Content="ДА" Click="button_OK_Click"></Button>
+            <Button  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="170,33,0,0" Height="25" Width="75"  Name="button_Cancel" Content="НЕТ" Click="button_Cancel_Click" ></Button>
         </Grid>
     </Border>
 </Window>

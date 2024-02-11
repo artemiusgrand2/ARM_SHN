@@ -185,10 +185,6 @@ namespace ARM_SHN
         }
 
         private static Object thisLock = new Object();
-        /// <summary>
-        /// список повторяющихся сообщений по названиям объектов
-        /// </summary>
-       // private static IDictionary<int, IDictionary<string, IDictionary<Viewmode, IList<string>>>> m_messagesRepeat = new Dictionary<int, IDictionary<string, IDictionary<Viewmode, IList<string>>>>();
 
         private IDictionary<string, FieldType> m_nameTypesFiled = new Dictionary<string, FieldType>() { { "float", FieldType.floatType }, { "int", FieldType.intType } };
 
@@ -692,9 +688,7 @@ namespace ARM_SHN
             }
             //если элемент поддекживает индикацию
             if (indicEl != null && indicEl.Impulses.Count > 0)
-            {
                 m_indications.Add(element as IIndicationEl);
-            }
         }
 
         private int SortElement(BaseSave x, BaseSave y)
@@ -704,7 +698,7 @@ namespace ARM_SHN
             else return 1;
         }
 
-        private void GetNameElement(string name, out string textShow, out string nameKey)
+        private static void GetNameElement(string name, out string textShow, out string nameKey)
         {
             if (!string.IsNullOrEmpty(name))
             {
@@ -719,7 +713,7 @@ namespace ARM_SHN
             }
         }
 
-        private bool GetStationAnalog(ref int stationCode)
+        private static bool GetStationAnalog(ref int stationCode)
         {
             foreach (var station in DataServer.Core.Stations)
             {
@@ -746,18 +740,18 @@ namespace ARM_SHN
             if (GetStationAnalog(ref stationSource))
             {
                 stationResult = stationSource;
-                if (DataServer.Core.Stations.ContainsKey(stationSource))
+                if (DataServer.Core.Stations.TryGetValue(stationSource, out var selectStation))
                 {
                     var cells = data.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
                     if (cells.Length >= 2)
                     {
                         if (int.TryParse(cells[0], out tableId))
                         {
-                            if (DataServer.Core.Stations[stationSource].ContainsKey(tableId))
+                            if (selectStation.TryGetValue(tableId, out var selectTable))
                             {
                                 type = GetFieldType(stationSource, tableId);
                                 item = data.Replace(cells[0] + ".", string.Empty).Trim();
-                                if (DataServer.Core.Stations[stationSource][tableId].TryItem(item))
+                                if (selectTable.TryItem(item))
                                 {
                                     return true;
                                 }
@@ -875,15 +869,11 @@ namespace ARM_SHN
                                 break;
                             case ViewElement.chiefroad:
                                 {
-                                    RoadStation track = el as RoadStation;
+                                    var track = el as RoadStation;
                                     switch (track.View)
                                     {
                                         case ViewTrack.analogCell:
                                             {
-                                                if (el.StationNumber == 14 && nameKey == "IBAP.U")
-                                                {
-
-                                                }
                                                 var rows = FullImpulsesElement((int)el.StationNumber, NumberContolTS.analogCell, string.Format("{0}-{1}", NumberContolTS.analogCell, nameKey));
                                                 switch (rows.Count)
                                                 {
@@ -907,16 +897,12 @@ namespace ARM_SHN
                                                                 find = GetIdItemTable(el.StationNumber, row.Value.Impuls, ref tableId, ref item, nameKey, ref type, ref station);
                                                                 format = (row.Value.Messages.ContainsKey(StatesControl.activ)) ? row.Value.Messages[StatesControl.activ] : string.Empty;
                                                                 factor = (row.Value.Messages.ContainsKey(StatesControl.pasiv)) ? row.Value.Messages[StatesControl.pasiv] : string.Empty;
-                                                                if (row.Value.Messages.ContainsKey(StatesControl.nocontrol))
+                                                                if (row.Value.Messages.TryGetValue(StatesControl.nocontrol, out var selectMessage))
                                                                 {
-                                                                    if (m_nameTypesFiled.ContainsKey(row.Value.Messages[StatesControl.nocontrol].ToLower()))
-                                                                    {
-                                                                        type = m_nameTypesFiled[row.Value.Messages[StatesControl.nocontrol].ToLower()];
-                                                                    }
+                                                                    if (m_nameTypesFiled.TryGetValue(selectMessage.ToLower(), out var selectType))
+                                                                        type = selectType;
                                                                     else
-                                                                    {
-                                                                        m_log.Error(string.Format("Неверный тип данных {0} для  аналоговая янейка '{1}' на станции {2} (возможные типы - {3})", row.Value.Messages[StatesControl.nocontrol], nameKey, el.StationNumber, GetListStringNamesFieldType()));
-                                                                    }
+                                                                        m_log.Error(string.Format("Неверный тип данных {0} для  аналоговая янейка '{1}' на станции {2} (возможные типы - {3})", selectMessage, nameKey, el.StationNumber, GetListStringNamesFieldType()));
                                                                 }
                                                                 break;
                                                             }
@@ -1034,9 +1020,9 @@ namespace ARM_SHN
                                 string value;
                                 if (TryField("FieldType", table, out value))
                                 {
-                                    if (m_nameTypesFiled.ContainsKey(value.ToLower()))
+                                    if (m_nameTypesFiled.TryGetValue(value.ToLower(), out var selectTypeField))
                                     {
-                                        return m_nameTypesFiled[value.ToLower()];
+                                        return selectTypeField;
                                     }
                                 }
                             }
@@ -1070,11 +1056,11 @@ namespace ARM_SHN
         /// <summary>
         /// создание коллекции служебных импульсов
         /// </summary>
-        private void FullServiceImpuls()
+        private static void FullServiceImpuls()
         {
-            foreach (KeyValuePair<int, StationTableTs> station in TsList)
+            foreach (var station in TsList)
             {
-                foreach (KeyValuePair<string, List<StateValue>> names in station.Value.NamesValue)
+                foreach (var names in station.Value.NamesValue)
                 {
                     string[] split_name = names.Key.Split(new char[] { '-' });
                     if (split_name.Length == 2 && split_name[0] == NumberContolTS.service_impuls)
@@ -1088,9 +1074,9 @@ namespace ARM_SHN
                                 //
                                 if (!TsServiceList[station.Key].NamesValue.ContainsKey(split_name[1]))
                                 {
-                                    if (Connections.ClientImpulses.Data.Stations.ContainsKey(station.Key))
+                                    if (Connections.ClientImpulses.Data.Stations.TryGetValue(station.Key, out var selectStation))
                                     {
-                                        if (Connections.ClientImpulses.Data.Stations[station.Key].TS.AddImpuls(split_name[1]))
+                                        if (selectStation.TS.AddImpuls(split_name[1]))
                                         {
                                             TsServiceList[station.Key].NamesValue.Add(split_name[1], new Dictionary<Viewmode, string>());
                                             foreach (StateValue state in names.Value)
@@ -1330,7 +1316,7 @@ namespace ARM_SHN
                         CreateDirDiagnostics(pathDefult, string.Empty);
                     else
                     {
-                        m_log.Error(string.Format("Нельзя создать католог {0} для диагностики", path));
+                        m_log.Error($"Нельзя создать католог {path} для диагностики");
                         return;
                     }
                 }
@@ -1392,7 +1378,7 @@ namespace ARM_SHN
             CommandColor.SetAllColor();
         }
   
-        private PathGeometry GetPathGeometry(List<Figure> Figures)
+        private static PathGeometry GetPathGeometry(List<Figure> Figures)
         {
             PathGeometry geo = new PathGeometry();
             foreach (Figure figure in Figures)
@@ -1445,7 +1431,7 @@ namespace ARM_SHN
                             }
                             break;
                          case ViewArea.area_message:
-                            m_log.Info(string.Format("Область справки подгружена"));
+                            m_log.Info("Область справки подгружена");
                             if (m_areaMessage == null)
                             {
                                 m_areaMessage = new TextBox()

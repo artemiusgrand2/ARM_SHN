@@ -183,9 +183,6 @@
     <Compile Include="Window\CloseProgramm.xaml.cs">
       <DependentUpon>CloseProgramm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Window\CloseWindowWpf.xaml.cs">
-      <DependentUpon>CloseWindowWpf.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Window\StartWpf.xaml.cs">
       <DependentUpon>StartWpf.xaml</DependentUpon>
     </Compile>
@@ -251,10 +248,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Window\CloseProgramm.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Window\CloseWindowWpf.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

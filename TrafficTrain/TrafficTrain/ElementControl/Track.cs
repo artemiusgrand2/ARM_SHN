@@ -49,11 +49,6 @@ namespace ARM_SHN.ElementControl
                 _figure = value;
             }
         }
-        ///////
-        /// <summary>
-        /// показывет выбран ли элемент для построения команды
-        /// </summary>
-        public bool SelectElement { get; set; }
        
         //////основные свойства пути
         /// <summary>

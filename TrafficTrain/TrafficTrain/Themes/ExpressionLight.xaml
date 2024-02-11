@@ -103,14 +103,14 @@
 
     <Style x:Key="MyBorderStyle" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource SelectedBackgroundBrush}" />
-        <Setter Property="BorderBrush" Value="Brown" />
+        <Setter Property="BorderBrush" Value="RosyBrown" />
         <Setter Property="BorderThickness" Value="3" />
-        <Setter Property="CornerRadius" Value="0,20,0,20" />
+        <Setter Property="CornerRadius" Value="20,0,20,0" />
     </Style>
 
     <Style x:Key="MyBorderStyleView" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource SelectedBackgroundBrush}" />
-        <Setter Property="BorderBrush" Value="Brown" />
+        <Setter Property="BorderBrush" Value="RosyBrown" />
         <Setter Property="BorderThickness" Value="3" />
     </Style>
 

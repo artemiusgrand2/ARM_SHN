@@ -5,7 +5,7 @@
     <Border  Style="{StaticResource MyBorderStyle}">
         <Grid>
             <Label Name="label_apm" Content="" FontWeight="Bold" FontSize="15"    HorizontalAlignment="Left" VerticalAlignment="Top" />
-            <Label Name="label_progress" FontWeight="Bold" FontSize="12" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"  Foreground="Black" />
+            <Label Name="label_progress" FontWeight="Bold" FontSize="16" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"  Foreground="Black" />
         </Grid>
     </Border>
 </Window>
