@@ -1,26 +1,16 @@
 ﻿using System;
-using System.Text;
 using System.Windows.Controls;
 
-using TrafficTrain.Interface;
-using TrafficTrain.Delegate;
-using TrafficTrain.Constant;
-using SCADA.Common.Enums;
+using ARM_SHN.Interface;
+using ARM_SHN.ElementControl;
 
-namespace TrafficTrain
+namespace ARM_SHN.CommandsElement
 {
     /// <summary>
     /// класс отвечает за составление комманд, анализ и их выполнение
     /// </summary>
     class Commands
     {
-        #region Переменные и свойства
-        /// <summary>
-        /// информация о правильности построения команды
-        /// </summary>
-        public static event Info InfoCommand;
-        #endregion
-
         /// <summary>
         /// анализируем новую точку для команду
         /// </summary>

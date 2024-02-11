@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using TrafficTrain;
+using ARM_SHN;
 using RW.KTC.ORPO.Berezina.DataStream.Common.Interfaces;
 using RW.KTC.ORPO.Berezina.Server.Common.Interfaces;
 using RW.KTC.ORPO.Berezina.Communication.Protocol.Dsccp;
@@ -10,7 +10,7 @@ using RW.KTC.ORPO.Berezina.Communication.Protocol.Dsccp.Answers;
 using RW.KTC.ORPO.Berezina.Communication.Protocol.Dsccp.Enums;
 using RW.KTC.ORPO.Berezina.Communication.Protocol.Dsccp.Converters;
 
-namespace TrafficTrain.DataServer
+namespace ARM_SHN.DataServer
 {
     public class DataSource
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TrafficTrain.Constant
+namespace ARM_SHN.Constant
 {
     /// <summary>
     /// зарезервированные слова

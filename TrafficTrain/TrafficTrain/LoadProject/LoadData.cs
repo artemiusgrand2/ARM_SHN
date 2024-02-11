@@ -12,13 +12,15 @@ using System.Windows.Media;
 using System.Windows;
 using System.Threading;
 
-using TrafficTrain.Enums;
-using TrafficTrain.Constant;
-using TrafficTrain.Interface;
-using TrafficTrain.WorkWindow;
-using TrafficTrain.Delegate;
-using TrafficTrain.DataGrafik;
-using TrafficTrain.DataServer;
+using ARM_SHN.Enums;
+using ARM_SHN.Constant;
+using ARM_SHN.Interface;
+using ARM_SHN.WorkWindow;
+using ARM_SHN.Delegate;
+using ARM_SHN.DataGrafik;
+using ARM_SHN.DataServer;
+using ARM_SHN.ElementControl;
+using ARM_SHN.CommandsElement;
 
 using SCADA.Common.Enums;
 using SCADA.Common.SaveElement;
@@ -30,7 +32,7 @@ using log4net;
 
 //using CefSharp.Wpf;
 
-namespace TrafficTrain
+namespace ARM_SHN
 {
 
     /// <summary>
@@ -428,13 +430,11 @@ namespace TrafficTrain
             //проверяем информацию по импульсам телесигнализации
             try
             {
-
                 if (!string.IsNullOrEmpty(App.Configuration["filestationTS"]))
                 {
                     if (new FileInfo(App.Configuration["filestationTS"]).Exists)
                     {
-
-                        List<string> spisokstation = GetStrLineFileRead(App.Configuration["filestationTS"], Encoding.UTF8);
+                        var spisokstation = GetStrLineFileRead(App.Configuration["filestationTS"], Encoding.UTF8);
                         foreach (string st in spisokstation)
                         {
                             try
@@ -455,7 +455,7 @@ namespace TrafficTrain
                                             try
                                             {
                                                 //не смотрим комментарии
-                                                if (row.IndexOf("#") == -1)
+                                                if (row.IndexOf('#') == -1)
                                                 {
                                                     string[] cells = row.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
                                                     if (cells.Length >= 4 )
@@ -561,7 +561,7 @@ namespace TrafficTrain
         /// <summary>
         /// загрузка детальные виды станций
         /// </summary>
-        private void LoadViewStations()
+        private static void LoadViewStations()
         {
             //проверяем информацию по импульсам телесигнализации
             try
@@ -614,32 +614,29 @@ namespace TrafficTrain
                 m_log.Error(error.Message);
             }
         }
-        
-     
+
+
         /// <summary>
         /// анализируем данные проекта станции
         /// </summary>
         /// <param name="name">название элемента</param>
         /// <returns></returns>
-        private void RepetitionElement(string viewObject, string name, string state, string folmula, int station_number, string messageActiv, string messagePasiv, string messageNotControl)
+        private static void RepetitionElement(string viewObject, string name, string state, string folmula, int station_number, string messageActiv, string messagePasiv, string messageNotControl)
         {
-            if (TsList.ContainsKey(station_number))
+            if (TsList.TryGetValue(station_number, out var selectStationTS))
             {
                 if (NumberContolTS.Views.Contains(viewObject))
                 {
-                    string sost_name = string.Format("{0}-{1}", viewObject, name);
-                    if (!TsList[station_number].NamesValue.ContainsKey(sost_name))
-                        TsList[station_number].NamesValue.Add(sost_name, new List<StateValue>());
+                    string sost_name = $"{viewObject}-{name}";
+                    if (!selectStationTS.NamesValue.ContainsKey(sost_name))
+                        selectStationTS.NamesValue.Add(sost_name, new List<StateValue>());
                     //
-                    Viewmode viewTS = Viewmode.none;
-                    ViewmodeCommand viewTU = ViewmodeCommand.none;
-                    if(viewObject != NumberContolTS.auto_supervisory )
-                      viewTS = TrafficTrain.Constant.NameControlTS.GetStateTS(name, state, station_number, m_log);
-                    if (viewTS == Viewmode.none && viewObject == NumberContolTS.auto_supervisory)
-                        viewTU = NameControlAnalis.GetStateAnalisTU(name, state, station_number, m_log);
-                    if (viewTS != Viewmode.none || viewTU != ViewmodeCommand.none)
+                    var viewTS = Viewmode.none;
+                    if (viewObject != NumberContolTS.auto_supervisory)
+                        viewTS = ARM_SHN.Constant.NameControlTS.GetStateTS(name, state, station_number, m_log);
+                    if (viewTS != Viewmode.none)
                     {
-                        var newState = new StateValue(folmula, viewTS, viewTU);
+                        var newState = new StateValue(folmula, viewTS, ViewmodeCommand.none);
                         newState.CheckFormula(string.Format("Объект {0}, станция {1}", name, station_number));
                         if (!string.IsNullOrEmpty(messageActiv))
                             newState.Messages.Add(StatesControl.activ, messageActiv);
@@ -649,9 +646,9 @@ namespace TrafficTrain
                         if (!string.IsNullOrEmpty(messageNotControl))
                             newState.Messages.Add(StatesControl.nocontrol, messageNotControl);
                         //
-                        var findState = TsList[station_number].NamesValue[sost_name].Where(x => x.ViewTS == newState.ViewTS).FirstOrDefault();
+                        var findState = selectStationTS.NamesValue[sost_name].FirstOrDefault(x => x.ViewTS == newState.ViewTS);
                         if (findState == null)
-                            TsList[station_number].NamesValue[sost_name].Add(newState);
+                            selectStationTS.NamesValue[sost_name].Add(newState);
                         else
                             m_log.Info(string.Format("Для объекта {0} на станции {1} тип контроля - {2} повторяется, текущее значение для контроля- {3}", name, station_number, state, findState.Formula));
                     }
@@ -663,7 +660,7 @@ namespace TrafficTrain
             }
         }
 
-        private void SetSettingsObject(IGraficElement element, BaseSave baseSave, Canvas DrawCanvas, IList<UIElement> elements, Visibility visible)
+        private static void SetSettingsObject(IGraficElement element, BaseSave baseSave, Canvas DrawCanvas, IList<UIElement> elements, Visibility visible)
         {
             if (((UIElement)element).Visibility != Visibility.Collapsed)
                 ((UIElement)element).Visibility = visible;
@@ -808,15 +805,15 @@ namespace TrafficTrain
             {
                 Project.GraficObjects.Sort(SortElement);
                 foreach (var el in Project.GraficObjects)
+                {
+                    try
                     {
-                        try
+                        string textShow, nameKey;
+                        GetNameElement(el.Name, out textShow, out nameKey);
+                        //
+                        switch (el.ViewElement)
                         {
-                            string textShow,nameKey ;
-                            GetNameElement(el.Name, out textShow, out nameKey);
-                            //
-                            switch (el.ViewElement)
-                            {
-                                case ViewElement.line:
+                            case ViewElement.line:
                                 {
                                     LineHelpSave line = el as LineHelpSave;
                                     LineHelp newelement = new LineHelp(GetPathGeometry(el.Figures), line.WeightStroke * SystemParameters.CaretWidth, line.NameColor,
@@ -827,195 +824,195 @@ namespace TrafficTrain
                                     if (newelement.StationControl > 0)
                                         newelement.Analis();
                                 }
-                                    break;
-                                case ViewElement.texthelp:
+                                break;
+                            case ViewElement.texthelp:
+                                {
+                                    TextHelpSave text = el as TextHelpSave;
+                                    TextHelp newelement = new TextHelp(GetPathGeometry(el.Figures), text.Left * System.Windows.SystemParameters.CaretWidth,
+                                                                    text.Top * System.Windows.SystemParameters.CaretWidth, text.FontSize * System.Windows.SystemParameters.CaretWidth, text.Text);
+                                    //
+                                    newelement.Text.RenderTransform = new RotateTransform(text.Angle);
+                                    newelement.Text.MaxWidth = text.Width * System.Windows.SystemParameters.CaretWidth;
+                                    newelement.Text.MaxHeight = text.Height * System.Windows.SystemParameters.CaretWidth;
+                                    SetSettingsObject(newelement, el, DrawCanvas, result, visible);
+                                }
+                                break;
+                            case ViewElement.buttoncommand:
+                                {
+                                    ButtonCommandSave command = el as ButtonCommandSave;
+                                    CommandButton newelement = new CommandButton(GetPathGeometry(el.Figures), nameKey, command.HelpText,
+                                                                                      command.Xinsert * System.Windows.SystemParameters.CaretWidth,
+                                                                                      command.Yinsert * System.Windows.SystemParameters.CaretWidth,
+                                                                                      command.TextSize * System.Windows.SystemParameters.CaretWidth, command.Angle, command.ViewCommand, command.ViewPanel);
+
+                                    newelement.Text.FontWeight = FontWeights.Bold;
+                                    //выводи объекта на панель
+                                    if (command.ViewCommand == ViewCommand.content_help)
+                                        command.ZIndex = int.MaxValue - 1;
+                                    SetSettingsObject(newelement, el, DrawCanvas, result, visible);
+                                    //
+                                    switch (command.ViewCommand)
                                     {
-                                        TextHelpSave text = el as TextHelpSave;
-                                        TextHelp newelement = new TextHelp(GetPathGeometry(el.Figures), text.Left * System.Windows.SystemParameters.CaretWidth,
-                                                                        text.Top * System.Windows.SystemParameters.CaretWidth, text.FontSize * System.Windows.SystemParameters.CaretWidth, text.Text);
-                                        //
-                                        newelement.Text.RenderTransform = new RotateTransform(text.Angle);
-                                        newelement.Text.MaxWidth = text.Width * System.Windows.SystemParameters.CaretWidth;
-                                        newelement.Text.MaxHeight = text.Height * System.Windows.SystemParameters.CaretWidth;
-                                        SetSettingsObject(newelement, el, DrawCanvas, result, visible);
+                                        case ViewCommand.content_help:
+                                            if (ContentHelp == null)
+                                                ContentHelp = newelement;
+                                            break;
                                     }
-                                    break;
-                                case ViewElement.buttoncommand:
+                                }
+                                break;
+                            case ViewElement.ramka:
+                                {
+                                    RamkaStation newelement = new RamkaStation(GetPathGeometry(el.Figures));
+                                    SetSettingsObject(newelement, el, DrawCanvas, result, visible);
+                                }
+                                break;
+                            case ViewElement.disconnectors:
+                                {
+                                    Disconnectors newelement = new Disconnectors(GetPathGeometry(el.Figures), nameKey, FullImpulsesElement((int)el.StationNumber, NumberContolTS.disconnectors,
+                                                                               string.Format("{0}-{1}", NumberContolTS.disconnectors, nameKey)), el.TypeDisconnector);
+                                    SetSettingsObject(newelement, el, DrawCanvas, result, visible);
+                                }
+                                break;
+                            case ViewElement.chiefroad:
+                                {
+                                    RoadStation track = el as RoadStation;
+                                    switch (track.View)
                                     {
-                                        ButtonCommandSave command = el as ButtonCommandSave;
-                                        CommandButton newelement = new CommandButton(GetPathGeometry(el.Figures), nameKey, command.HelpText,
-                                                                                          command.Xinsert * System.Windows.SystemParameters.CaretWidth,
-                                                                                          command.Yinsert * System.Windows.SystemParameters.CaretWidth,
-                                                                                          command.TextSize * System.Windows.SystemParameters.CaretWidth, command.Angle, command.ViewCommand, command.ViewPanel);
-                                       
-                                        newelement.Text.FontWeight = FontWeights.Bold;
-                                        //выводи объекта на панель
-                                        if (command.ViewCommand == ViewCommand.content_help)
-                                            command.ZIndex = int.MaxValue - 1;
-                                        SetSettingsObject(newelement, el, DrawCanvas, result, visible); 
-                                        //
-                                        switch (command.ViewCommand)
-                                        {
-                                            case ViewCommand.content_help:
-                                                if (ContentHelp == null)
-                                                    ContentHelp = newelement;
-                                                break;
-                                        }
-                                    }
-                                    break;
-                                case ViewElement.ramka:
-                                    {
-                                        RamkaStation newelement = new RamkaStation(GetPathGeometry(el.Figures));
-                                        SetSettingsObject(newelement, el, DrawCanvas, result, visible);
-                                    }
-                                    break;
-                                case ViewElement.disconnectors:
-                                    {
-                                        Disconnectors newelement = new Disconnectors(GetPathGeometry(el.Figures), nameKey, FullImpulsesElement((int)el.StationNumber, NumberContolTS.disconnectors,
-                                                                                   string.Format("{0}-{1}", NumberContolTS.disconnectors, nameKey)), el.TypeDisconnector);
-                                        SetSettingsObject(newelement, el, DrawCanvas, result, visible);
-                                    }
-                                    break;
-                                case ViewElement.chiefroad:
-                                    {
-                                        RoadStation track = el as RoadStation;
-                                        switch (track.View)
-                                        {
-                                            case ViewTrack.analogCell:
-                                                {
-                                                if(el.StationNumber == 14 &&  nameKey== "IBAP.U")
+                                        case ViewTrack.analogCell:
+                                            {
+                                                if (el.StationNumber == 14 && nameKey == "IBAP.U")
                                                 {
 
                                                 }
-                                                    var rows = FullImpulsesElement((int)el.StationNumber, NumberContolTS.analogCell, string.Format("{0}-{1}", NumberContolTS.analogCell, nameKey));
-                                                    switch (rows.Count)
-                                                    {
-                                                        case 0:
+                                                var rows = FullImpulsesElement((int)el.StationNumber, NumberContolTS.analogCell, string.Format("{0}-{1}", NumberContolTS.analogCell, nameKey));
+                                                switch (rows.Count)
+                                                {
+                                                    case 0:
+                                                        {
+                                                            m_log.Error(string.Format("Стыковка аналоговая янейка '{0}' на станции {1} не описана в проекте.", nameKey, el.StationNumber));
+                                                        }
+                                                        break;
+                                                    case 1:
+                                                        {
+                                                            var format = string.Empty;
+                                                            var factor = string.Empty;
+                                                            int tableId = 0;
+                                                            string item = string.Empty;
+                                                            var type = FieldType.UintType;
+                                                            var find = false;
+                                                            var station = el.StationNumber;
+                                                            //
+                                                            foreach (var row in rows)
                                                             {
-                                                                m_log.Error(string.Format("Стыковка аналоговая янейка '{0}' на станции {1} не описана в проекте.", nameKey, el.StationNumber));
-                                                            }
-                                                            break;
-                                                        case 1:
-                                                            {
-                                                                var format = string.Empty;
-                                                                var factor = string.Empty;
-                                                                int tableId = 0;
-                                                                string item = string.Empty;
-                                                                var type = FieldType.UintType;
-                                                                var find = false;
-                                                                var station = el.StationNumber;
-                                                                //
-                                                                foreach (var row in rows)
+                                                                find = GetIdItemTable(el.StationNumber, row.Value.Impuls, ref tableId, ref item, nameKey, ref type, ref station);
+                                                                format = (row.Value.Messages.ContainsKey(StatesControl.activ)) ? row.Value.Messages[StatesControl.activ] : string.Empty;
+                                                                factor = (row.Value.Messages.ContainsKey(StatesControl.pasiv)) ? row.Value.Messages[StatesControl.pasiv] : string.Empty;
+                                                                if (row.Value.Messages.ContainsKey(StatesControl.nocontrol))
                                                                 {
-                                                                    find = GetIdItemTable(el.StationNumber,  row.Value.Impuls, ref tableId, ref item, nameKey, ref type, ref station);
-                                                                    format = (row.Value.Messages.ContainsKey(StatesControl.activ)) ? row.Value.Messages[StatesControl.activ] : string.Empty;
-                                                                    factor = (row.Value.Messages.ContainsKey(StatesControl.pasiv)) ? row.Value.Messages[StatesControl.pasiv] : string.Empty;
-                                                                    if (row.Value.Messages.ContainsKey(StatesControl.nocontrol))
+                                                                    if (m_nameTypesFiled.ContainsKey(row.Value.Messages[StatesControl.nocontrol].ToLower()))
                                                                     {
-                                                                        if (m_nameTypesFiled.ContainsKey(row.Value.Messages[StatesControl.nocontrol].ToLower()))
-                                                                        {
-                                                                            type = m_nameTypesFiled[row.Value.Messages[StatesControl.nocontrol].ToLower()];
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            m_log.Error(string.Format("Неверный тип данных {0} для  аналоговая янейка '{1}' на станции {2} (возможные типы - {3})", row.Value.Messages[StatesControl.nocontrol], nameKey, el.StationNumber, GetListStringNamesFieldType()));
-                                                                        }
+                                                                        type = m_nameTypesFiled[row.Value.Messages[StatesControl.nocontrol].ToLower()];
                                                                     }
-                                                                    break;
+                                                                    else
+                                                                    {
+                                                                        m_log.Error(string.Format("Неверный тип данных {0} для  аналоговая янейка '{1}' на станции {2} (возможные типы - {3})", row.Value.Messages[StatesControl.nocontrol], nameKey, el.StationNumber, GetListStringNamesFieldType()));
+                                                                    }
                                                                 }
-                                                                //
-                                                                var newelement = new AnalogCell(station, GetPathGeometry(el.Figures), nameKey,
-                                                                track.Xinsert * System.Windows.SystemParameters.CaretWidth,
-                                                                track.Yinsert * System.Windows.SystemParameters.CaretWidth,
-                                                                track.TextSize * System.Windows.SystemParameters.CaretWidth, track.Angle, tableId, item, format, factor, type);
-                                                                newelement.Text.FontWeight = FontWeights.Bold;
-                                                                newelement.IsFind = find;
-                                                                m_analogGrafic.Add(newelement);
-                                                                //
-                                                                SetSettingsObject(newelement, el, DrawCanvas, result, visible);
+                                                                break;
                                                             }
-                                                            break;
-                                                        default:
-                                                            {
-                                                                m_log.Error(string.Format("Стыковка аналоговая янейка '{0}' на станции {1} несколько раз описана в проекте.", nameKey, el.StationNumber));
-                                                            }
-                                                            break;
-                                                    }
+                                                            //
+                                                            var newelement = new AnalogCell(station, GetPathGeometry(el.Figures), nameKey,
+                                                            track.Xinsert * System.Windows.SystemParameters.CaretWidth,
+                                                            track.Yinsert * System.Windows.SystemParameters.CaretWidth,
+                                                            track.TextSize * System.Windows.SystemParameters.CaretWidth, track.Angle, tableId, item, format, factor, type);
+                                                            newelement.Text.FontWeight = FontWeights.Bold;
+                                                            newelement.IsFind = find;
+                                                            m_analogGrafic.Add(newelement);
+                                                            //
+                                                            SetSettingsObject(newelement, el, DrawCanvas, result, visible);
+                                                        }
+                                                        break;
+                                                    default:
+                                                        {
+                                                            m_log.Error(string.Format("Стыковка аналоговая янейка '{0}' на станции {1} несколько раз описана в проекте.", nameKey, el.StationNumber));
+                                                        }
+                                                        break;
                                                 }
-                                                break;
-                                            case ViewTrack.helpelement:
-                                                {
-                                                    var newelement = new HelpElement(GetPathGeometry(el.Figures), textShow, nameKey,
-                                             track.Xinsert * System.Windows.SystemParameters.CaretWidth,
-                                             track.Yinsert * System.Windows.SystemParameters.CaretWidth,
-                                             track.TextSize * System.Windows.SystemParameters.CaretWidth, track.Angle,
-                                             FullImpulsesElement((int)el.StationNumber, NumberContolTS.activ_element, string.Format("{0}-{1}", NumberContolTS.activ_element, nameKey)));
-                                                    newelement.Text.FontWeight = FontWeights.Bold;
-                                                    //
-                                                    SetSettingsObject(newelement, el, DrawCanvas, result, visible);
-                                                }
-                                                break;
-                                            case ViewTrack.track:
-                                                {
-                                                    var newelement = new StationPath(GetPathGeometry(el.Figures), textShow, nameKey,
-                                                                                     track.Xinsert * System.Windows.SystemParameters.CaretWidth,
-                                                                                     track.Yinsert * System.Windows.SystemParameters.CaretWidth,
-                                                                                     track.TextSize * System.Windows.SystemParameters.CaretWidth, track.Angle,
-                                                                                     AnalisServiceImpulses(FullImpulsesElement((int)el.StationNumber, NumberContolTS.big_path,
-                                                                                     string.Format("{0}-{1}", NumberContolTS.big_path, nameKey))));
-                                                    newelement.Text.FontWeight = FontWeights.Bold;
-                                                    //проверяем есть ли электрофикация пути
-                                                    if (newelement.Impulses.ContainsKey(Viewmode.electrification))
-                                                        newelement.ViewTraction = ViewTraction.electric_traction;
-                                                    //проверяем есть ли на пути пассжирская платформа
-                                                    if (newelement.Impulses.ContainsKey(Viewmode.pass))
-                                                        newelement.IsPlatform = true;
-                                                    SetSettingsObject(newelement, el, DrawCanvas, result, visible);
-                                                }
-                                                break;
-                                        }
+                                            }
+                                            break;
+                                        case ViewTrack.helpelement:
+                                            {
+                                                var newelement = new ARM_SHN.ElementControl.HelpElement(GetPathGeometry(el.Figures), textShow, nameKey,
+                                         track.Xinsert * System.Windows.SystemParameters.CaretWidth,
+                                         track.Yinsert * System.Windows.SystemParameters.CaretWidth,
+                                         track.TextSize * System.Windows.SystemParameters.CaretWidth, track.Angle,
+                                         FullImpulsesElement((int)el.StationNumber, NumberContolTS.activ_element, string.Format("{0}-{1}", NumberContolTS.activ_element, nameKey)));
+                                                newelement.Text.FontWeight = FontWeights.Bold;
+                                                //
+                                                SetSettingsObject(newelement, el, DrawCanvas, result, visible);
+                                            }
+                                            break;
+                                        case ViewTrack.track:
+                                            {
+                                                var newelement = new StationPath(GetPathGeometry(el.Figures), textShow, nameKey,
+                                                                                 track.Xinsert * System.Windows.SystemParameters.CaretWidth,
+                                                                                 track.Yinsert * System.Windows.SystemParameters.CaretWidth,
+                                                                                 track.TextSize * System.Windows.SystemParameters.CaretWidth, track.Angle,
+                                                                                 AnalisServiceImpulses(FullImpulsesElement((int)el.StationNumber, NumberContolTS.big_path,
+                                                                                 string.Format("{0}-{1}", NumberContolTS.big_path, nameKey))));
+                                                newelement.Text.FontWeight = FontWeights.Bold;
+                                                //проверяем есть ли электрофикация пути
+                                                if (newelement.Impulses.ContainsKey(Viewmode.electrification))
+                                                    newelement.ViewTraction = ViewTraction.electric_traction;
+                                                //проверяем есть ли на пути пассжирская платформа
+                                                if (newelement.Impulses.ContainsKey(Viewmode.pass))
+                                                    newelement.IsPlatform = true;
+                                                SetSettingsObject(newelement, el, DrawCanvas, result, visible);
+                                            }
+                                            break;
                                     }
-                                    break;
-                                case ViewElement.namestation:
-                                    {
-                                        NameStationSave namestation = el as NameStationSave;
-                                        NameStation newelement = new NameStation(GetPathGeometry(el.Figures), nameKey,
-                                                                                     namestation.Left * System.Windows.SystemParameters.CaretWidth,
-                                                                                     namestation.Top * System.Windows.SystemParameters.CaretWidth,
-                                                                                     namestation.FontSize * System.Windows.SystemParameters.CaretWidth);
-                                        //
-                                        newelement.Text.RenderTransform = new RotateTransform(namestation.Angle);
-                                        newelement.Text.MaxWidth = namestation.Width * System.Windows.SystemParameters.CaretWidth;
-                                        newelement.Text.MaxHeight = namestation.Height * System.Windows.SystemParameters.CaretWidth;
-                                        //выводи объекта на панель
-                                        SetSettingsObject(newelement, el, DrawCanvas, result, visible);
-                                    }
-                                    break;
-                                case ViewElement.time:
-                                    {
-                                        TimeSave time = el as TimeSave;
-                                        TimeElement newelement = new TimeElement(GetPathGeometry(el.Figures),
-                                                                             time.Left * System.Windows.SystemParameters.CaretWidth,
-                                                                             time.Top * System.Windows.SystemParameters.CaretWidth,
-                                                                             time.FontSize * System.Windows.SystemParameters.CaretWidth, win);
-                                        //
-                                        newelement.Text.RenderTransform = new RotateTransform(time.Angle);
-                                        newelement.Text.MaxWidth = time.Width * System.Windows.SystemParameters.CaretWidth;
-                                        newelement.Text.MaxHeight = time.Height * System.Windows.SystemParameters.CaretWidth;
-                                        //
-                                        //выводи объекта на панель
-                                        SetSettingsObject(newelement, el, DrawCanvas, result, visible); 
-                                    }
-                                    break;
-                                case ViewElement.area:
-                                    {
-                                        AreaSave area = el as AreaSave;
-                                        CreateArea(area, area.View, DrawCanvas, result, visible);
-                                    }
-                                    break;
-                            }
+                                }
+                                break;
+                            case ViewElement.namestation:
+                                {
+                                    NameStationSave namestation = el as NameStationSave;
+                                    NameStation newelement = new NameStation(GetPathGeometry(el.Figures), nameKey,
+                                                                                 namestation.Left * System.Windows.SystemParameters.CaretWidth,
+                                                                                 namestation.Top * System.Windows.SystemParameters.CaretWidth,
+                                                                                 namestation.FontSize * System.Windows.SystemParameters.CaretWidth);
+                                    //
+                                    newelement.Text.RenderTransform = new RotateTransform(namestation.Angle);
+                                    newelement.Text.MaxWidth = namestation.Width * System.Windows.SystemParameters.CaretWidth;
+                                    newelement.Text.MaxHeight = namestation.Height * System.Windows.SystemParameters.CaretWidth;
+                                    //выводи объекта на панель
+                                    SetSettingsObject(newelement, el, DrawCanvas, result, visible);
+                                }
+                                break;
+                            case ViewElement.time:
+                                {
+                                    TimeSave time = el as TimeSave;
+                                    TimeElement newelement = new TimeElement(GetPathGeometry(el.Figures),
+                                                                         time.Left * System.Windows.SystemParameters.CaretWidth,
+                                                                         time.Top * System.Windows.SystemParameters.CaretWidth,
+                                                                         time.FontSize * System.Windows.SystemParameters.CaretWidth, win);
+                                    //
+                                    newelement.Text.RenderTransform = new RotateTransform(time.Angle);
+                                    newelement.Text.MaxWidth = time.Width * System.Windows.SystemParameters.CaretWidth;
+                                    newelement.Text.MaxHeight = time.Height * System.Windows.SystemParameters.CaretWidth;
+                                    //
+                                    //выводи объекта на панель
+                                    SetSettingsObject(newelement, el, DrawCanvas, result, visible);
+                                }
+                                break;
+                            case ViewElement.area:
+                                {
+                                    AreaSave area = el as AreaSave;
+                                    CreateArea(area, area.View, DrawCanvas, result, visible);
+                                }
+                                break;
                         }
-                        catch (Exception error) { m_log.Error(error.Message); }
+                    }
+                    catch (Exception error) { m_log.Error(error.Message); }
                 }
             }
             //
@@ -1113,7 +1110,7 @@ namespace TrafficTrain
                             else
                             {
                                 m_log.Info(string.Format("У служебного импульса {0} станции {1} неверные состояния (одно должно быть типа {2}, другое типа {3})",
-                                                        split_name[1], station.Key, TrafficTrain.Constant.NameControlTS.impuls_activ, TrafficTrain.Constant.NameControlTS.impuls_pasiv));
+                                                        split_name[1], station.Key, ARM_SHN.Constant.NameControlTS.impuls_activ, ARM_SHN.Constant.NameControlTS.impuls_pasiv));
                             }
                         }
                         else

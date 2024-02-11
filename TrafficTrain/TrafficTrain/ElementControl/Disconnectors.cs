@@ -5,19 +5,19 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Controls;
 
-using TrafficTrain.Interface;
-using TrafficTrain.WorkWindow;
+using ARM_SHN.Interface;
+using ARM_SHN.WorkWindow;
 
 using SCADA.Common.Enums;
 using SCADA.Common.SaveElement;
 using SCADA.Common.ImpulsClient;
 
-namespace TrafficTrain
+namespace ARM_SHN.ElementControl
 {
     /// <summary>
     /// класс описывающий разъединители
     /// </summary>
-    class Disconnectors : Shape, IGraficElement, ISelectElement, IInfoElement, IDisposable, IIndicationEl
+    class Disconnectors : Shape, IGraficElement, ISelectElement, IInfoElement, IIndicationEl
     {
 
         #region Переменные и свойства
@@ -108,43 +108,6 @@ namespace TrafficTrain
         /// </summary>
         double _strokethickness = 1.3 * SystemParameters.CaretWidth;
         /// <summary>
-        /// коллекция используемых линий
-        /// </summary>
-        List<Line> _lines = new List<Line>();
-        public List<Line> Lines
-        {
-            get
-            {
-                return _lines;
-            }
-        }
-        /// <summary>
-        /// Тип разъеденителя
-        /// </summary>
-        //TypeDisconnectors Type{get;set;}
-        /// <summary>
-        /// коллекция используемых точек
-        /// </summary>
-        PointCollection _points = new PointCollection();
-        public PointCollection Points
-        {
-            get
-            {
-                return _points;
-            }
-        }
-        /// <summary>
-        /// центр фигуры
-        /// </summary>
-        Point _pointCenter = new Point();
-        public Point PointCenter
-        {
-            get
-            {
-                return _pointCenter;
-            }
-        }
-        /// <summary>
         /// приоритет отображения фона
         /// </summary>
         List<Viewmode> _priority_fill = new List<Viewmode>() { Viewmode.occupation, Viewmode.locking };
@@ -186,18 +149,7 @@ namespace TrafficTrain
             GeometryFigureCopy(geometry);
             //обработка импульсов
             if (!string.IsNullOrEmpty(NameDisconnector) && Impulses.Count > 0)
-            {
                 Analis();
-            }
-            //LoadColorControl.NewColor += NewColor;
-        }
-
-        public void Dispose()
-        {
-            if (!string.IsNullOrEmpty(NameDisconnector) && Impulses.Count > 0)
-            {
-                //LoadColorControl.NewColor -= NewColor;
-            }
         }
 
         /// <summary>
@@ -206,10 +158,10 @@ namespace TrafficTrain
         /// <param name="impulses"></param>
         private Dictionary<Viewmode, StateElement> AnalisCollectionStateControl(Dictionary<Viewmode, StateElement> impulses)
         {
-            foreach (KeyValuePair<Viewmode, StateElement> control in impulses)
+            foreach (var control in impulses)
             {
                 //смотрим с каким графическим объектом работает контроль
-                foreach (Viewmode stroke_element in _priority_stroke)
+                foreach (var stroke_element in _priority_stroke)
                 {
                     if (stroke_element == control.Value.Name)
                     {
@@ -238,14 +190,14 @@ namespace TrafficTrain
         /// <param name="geometry"></param>
         private void GeometryFigureCopy(PathGeometry geometry)
         {
-            foreach (PathFigure geo in geometry.Figures)
+            foreach (var geo in geometry.Figures)
             {
-                PathFigure newfigure = new PathFigure() { IsClosed = true };
+                var newfigure = new PathFigure() { IsClosed = true };
                 newfigure.StartPoint = new Point(geo.StartPoint.X, geo.StartPoint.Y);
                 foreach (PathSegment seg in geo.Segments)
                 {
                     //сегмент арка
-                    ArcSegment arc = seg as ArcSegment;
+                    var arc = seg as ArcSegment;
                     if (arc != null)
                     {
                         newfigure.Segments.Add(new ArcSegment() { Point = new Point(arc.Point.X, arc.Point.Y), Size = new Size(arc.Size.Width, arc.Size.Height) });
@@ -271,10 +223,8 @@ namespace TrafficTrain
             {
                 if (!ImpulsesClientTCP.Connect)
                 {
-                    foreach (KeyValuePair<Viewmode, StateElement> imp in Impulses)
-                    {
+                    foreach (var imp in Impulses)
                         imp.Value.state = StatesControl.nocontrol;
-                    }
                     //
                     Stroke = m_colornotcontrolstroke;
                     Fill = m_colornotcontrol;
@@ -288,11 +238,11 @@ namespace TrafficTrain
 
         public IList<string> Analis()
         {
-            bool update = false;
+            var update = false;
             var result = new List<string>();
-            foreach (KeyValuePair<Viewmode, StateElement> Imp in Impulses)
+            foreach (var Imp in Impulses)
             {
-                StatesControl state = Imp.Value.state;
+                var state = Imp.Value.state;
                 Imp.Value.state = Connections.ClientImpulses.Data.GetStateControl(StationControl, Imp.Value.Impuls);
                 //
                 if (state != Imp.Value.state)
@@ -311,16 +261,16 @@ namespace TrafficTrain
 
         private void UpdateCurrentState(List<Viewmode> list_priority, ref bool update)
         {
-            StateElement control = CheckPriorityState(list_priority);
+            var control = CheckPriorityState(list_priority);
             if (control != null)
                 SetState(control);
             else
             {
                 foreach (Viewmode mode in list_priority)
                 {
-                    if (Impulses.ContainsKey(mode))
+                    if (Impulses.TryGetValue(mode, out var imp))
                     {
-                        SetState(Impulses[mode]);
+                        SetState(imp);
                         break;
                     }
                 }
@@ -335,10 +285,10 @@ namespace TrafficTrain
         {
             if (Impulses.Count > 0)
             {
-                bool _update_fill = false;
-                bool _update_stroke = false;
+                var _update_fill = false;
+                var _update_stroke = false;
                 //
-                foreach (KeyValuePair<Viewmode, StateElement> imp in Impulses)
+                foreach (var imp in Impulses)
                 {
                     if ((CheckUpdate && imp.Value.Update) || !CheckUpdate)
                     {
@@ -389,12 +339,12 @@ namespace TrafficTrain
         /// <returns></returns>
         private StateElement CheckPriorityState(List<Viewmode> priority_control)
         {
-            foreach (Viewmode control in priority_control)
+            foreach (var control in priority_control)
             {
-                if (Impulses.ContainsKey(control))
+                if (Impulses.TryGetValue(control, out var imp))
                 {
-                    if (Impulses[control].state == StatesControl.activ)
-                        return Impulses[control];
+                    if (imp.state == StatesControl.activ)
+                        return imp;
                 }
             }
             return null;
@@ -442,36 +392,5 @@ namespace TrafficTrain
             }
         }
 
-        /// <summary>
-        /// создаем коллекцию линий и точек
-        /// </summary>
-        public void CreateCollectionLines()
-        {
-            _points.Clear();
-            _lines.Clear();
-            foreach (PathFigure geo in _figure.Figures)
-            {
-                _points.Add(geo.StartPoint);
-                foreach (PathSegment seg in geo.Segments)
-                {
-                    //сегмент линия
-                    LineSegment lin = seg as LineSegment;
-                    if (lin != null)
-                        _points.Add(lin.Point);
-                    //сегмент арка
-                    ArcSegment arc = seg as ArcSegment;
-                    if (arc != null)
-                        _points.Add(arc.Point);
-                }
-            }
-            //
-            for (int i = 0; i < _points.Count; i++)
-            {
-                if (i < _points.Count - 1)
-                    _lines.Add(new Line() { X1 = _points[i].X, Y1 = _points[i].Y, X2 = _points[i + 1].X, Y2 = _points[i + 1].Y });
-                else if (i == _points.Count - 1)
-                    _lines.Add(new Line() { X1 = _points[i].X, Y1 = _points[i].Y, X2 = _points[0].X, Y2 = _points[0].Y });
-            }
-        }
     }
 }

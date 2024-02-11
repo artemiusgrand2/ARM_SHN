@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TrafficTrain.DataGrafik
+namespace ARM_SHN.DataGrafik
 {
     [Serializable]
     public class ConfigurationFile

@@ -11,16 +11,18 @@ using System.Windows.Media;
 using System.Xml.Serialization;
 using System.Configuration;
 using log4net;
-using TrafficTrain.Interface;
-using TrafficTrain.Enums;
-using TrafficTrain.Delegate;
+using ARM_SHN.Interface;
+using ARM_SHN.Enums;
+using ARM_SHN.Delegate;
+using ARM_SHN.ElementControl;
+using ARM_SHN.CommandsElement;
 
 using SCADA.Common.Enums;
 using SCADA.Common.Strage.SaveElement;
 using SCADA.Common.ImpulsClient;
 
 
-namespace TrafficTrain.WorkWindow
+namespace ARM_SHN.WorkWindow
 {
     class SettingsWindow
     {
@@ -453,7 +455,7 @@ namespace TrafficTrain.WorkWindow
                 {
                     if (App.Close)
                     {
-                        TrafficTrain.WorkForm.CloseProgramm closewindow = new WorkForm.CloseProgramm();
+                        ARM_SHN.WorkForm.CloseProgramm closewindow = new WorkForm.CloseProgramm();
                         if (!(bool)closewindow.ShowDialog())
                             e.Cancel = true;
                         else

@@ -2,10 +2,10 @@
 using System.Configuration;
 using System.Timers;
 
-using TrafficTrain.Delegate;
+using ARM_SHN.Delegate;
 using SCADA.Common.ImpulsClient;
 
-namespace TrafficTrain.WorkWindow
+namespace ARM_SHN.WorkWindow
 {
     public delegate void NewTaktEvent();
 

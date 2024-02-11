@@ -4,15 +4,15 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using TrafficTrain.Interface;
-using TrafficTrain.WorkWindow;
-using TrafficTrain.EditText;
+using ARM_SHN.Interface;
+using ARM_SHN.WorkWindow;
+using ARM_SHN.EditText;
 
 using SCADA.Common.Enums;
 using SCADA.Common.SaveElement;
 using SCADA.Common.ImpulsClient;
 
-namespace TrafficTrain
+namespace ARM_SHN.ElementControl
 {
     /// <summary>
     /// класс индикации шильд
@@ -137,39 +137,7 @@ namespace TrafficTrain
         /// первоначальное разположение текста
         /// </summary>
         Thickness m_startmargin;
-        /// <summary>
-        /// коллекция используемых линий
-        /// </summary>
-        List<Line> _lines = new List<Line>();
-        public List<Line> Lines
-        {
-            get
-            {
-                return _lines;
-            }
-        }
-        /// <summary>
-        /// коллекция используемых точек
-        /// </summary>
-        PointCollection _points = new PointCollection();
-        public PointCollection Points
-        {
-            get
-            {
-                return _points;
-            }
-        }
-        /// <summary>
-        /// центр фигуры
-        /// </summary>
-        Point _pointCenter = new Point();
-        public Point PointCenter
-        {
-            get
-            {
-                return _pointCenter;
-            }
-        }
+  
         /// <summary>
         /// поворот текста
         /// </summary>
@@ -297,7 +265,7 @@ namespace TrafficTrain
             }
         }
 
-        private List<Brush> SetColorsFlashing(Viewmode mode)
+        private static List<Brush> SetColorsFlashing(Viewmode mode)
         {
             switch (mode)
             {
@@ -369,9 +337,9 @@ namespace TrafficTrain
         public IList<string> Analis()
         {
             bool update = false;
-            foreach (KeyValuePair<Viewmode, StateElement> Imp in Impulses)
+            foreach (var Imp in Impulses)
             {
-                StatesControl state = Imp.Value.state;
+                var state = Imp.Value.state;
                 Imp.Value.state = Connections.ClientImpulses.Data.GetStateControl(StationControl, Imp.Value.Impuls);
                 //
                 if (state != Imp.Value.state)
@@ -389,16 +357,16 @@ namespace TrafficTrain
 
         private void UpdateCurrentState(List<Viewmode> list_priority, ref bool update)
         {
-            StateElement control = CheckPriorityState(list_priority);
+            var control = CheckPriorityState(list_priority);
             if (control != null)
                 SetState(control);
             else
             {
-                foreach (Viewmode mode in list_priority)
+                foreach (var mode in list_priority)
                 {
-                    if (Impulses.ContainsKey(mode))
+                    if (Impulses.TryGetValue(mode, out var imp))
                     {
-                        SetState(Impulses[mode]);
+                        SetState(imp);
                         break;
                     }
                 }
@@ -416,7 +384,7 @@ namespace TrafficTrain
                 bool _update_fill = false;
                 bool _update_stroke = false;
                 //
-                foreach (KeyValuePair<Viewmode, StateElement> imp in Impulses)
+                foreach (var imp in Impulses)
                 {
                     if ((CheckUpdate && imp.Value.Update) || !CheckUpdate)
                     {
@@ -459,12 +427,12 @@ namespace TrafficTrain
         /// <returns></returns>
         private StateElement CheckPriorityState(List<Viewmode> priority_control)
         {
-            foreach (Viewmode control in priority_control)
+            foreach (var control in priority_control)
             {
-                if (Impulses.ContainsKey(control))
+                if (Impulses.TryGetValue(control, out var imp))
                 {
-                    if (Impulses[control].state == StatesControl.activ)
-                        return Impulses[control];
+                    if (imp.state == StatesControl.activ)
+                        return imp;
                 }
             }
             return null;
@@ -516,67 +484,10 @@ namespace TrafficTrain
                             case ViewElementDraw.fill:
                                 Fill = _colornotcontrol;
                                 break;
-                            //case ViewElementDraw.stroke:
-                            //    Stroke = _colornotcontrolstroke;
-                            //    break;
                         }
                         break;
                 }
             } 
         }
-
-        /// <summary>
-        /// создаем коллекцию линий и точек
-        /// </summary>
-        public void CreateCollectionLines()
-        {
-            _points.Clear();
-            _lines.Clear();
-            foreach (PathFigure geo in _figure.Figures)
-            {
-                _points.Add(geo.StartPoint);
-                foreach (PathSegment seg in geo.Segments)
-                {
-                    //сегмент линия
-                    LineSegment lin = seg as LineSegment;
-                    if (lin != null)
-                        _points.Add(lin.Point);
-                    //сегмент арка
-                    ArcSegment arc = seg as ArcSegment;
-                    if (arc != null)
-                        _points.Add(arc.Point);
-                }
-            }
-            //
-            double Xmin = double.MaxValue;
-            double Xmax = double.MinValue;
-            double Ymin = double.MaxValue;
-            double Ymax = double.MinValue;
-            //
-            for (int i = 0; i < _points.Count; i++)
-            {
-                if (_points[i].X > Xmax)
-                    Xmax = _points[i].X;
-                //
-                if (_points[i].X < Xmin)
-                    Xmin = _points[i].X;
-                //
-                if (_points[i].Y > Ymax)
-                    Ymax = _points[i].Y;
-                //
-                if (_points[i].Y < Ymin)
-                    Ymin = _points[i].Y;
-                //
-                if (i < _points.Count - 1)
-                    _lines.Add(new Line() { X1 = _points[i].X, Y1 = _points[i].Y, X2 = _points[i + 1].X, Y2 = _points[i + 1].Y });
-                else if (i == _points.Count - 1)
-                    _lines.Add(new Line() { X1 = _points[i].X, Y1 = _points[i].Y, X2 = _points[0].X, Y2 = _points[0].Y });
-            }
-            //
-            _pointCenter.X = Xmin + (Xmax - Xmin) / 2;
-            _pointCenter.Y = Ymin + (Ymax - Ymin) / 2;
-            //
-        }
-
     }
 }

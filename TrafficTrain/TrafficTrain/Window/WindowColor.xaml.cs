@@ -13,9 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml;
 using System.Xml.Serialization;
-using TrafficTrain.DataGrafik;
+using ARM_SHN.DataGrafik;
 
-namespace TrafficTrain
+namespace ARM_SHN
 {
     public delegate void AddColor();
     public delegate void UpdateColorValue(string name);

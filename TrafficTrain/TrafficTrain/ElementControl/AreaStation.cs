@@ -2,9 +2,9 @@
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using TrafficTrain.Interface;
+using ARM_SHN.Interface;
 
-namespace TrafficTrain
+namespace ARM_SHN.ElementControl
 {
     /// <summary>
     /// Класс описывающий геометрию рамку станции

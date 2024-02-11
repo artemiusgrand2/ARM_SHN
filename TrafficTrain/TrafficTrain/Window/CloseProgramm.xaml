@@ -1,4 +1,4 @@
-﻿<Window x:Class="TrafficTrain.WorkForm.CloseProgramm"
+﻿<Window x:Class="ARM_SHN.WorkForm.CloseProgramm"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="65" Width="265" WindowStyle="None" WindowStartupLocation="CenterScreen" ShowInTaskbar="False" AllowsTransparency="True" Background="Transparent" Topmost="True" MouseLeftButtonDown="Window_MouseLeftButtonDown">

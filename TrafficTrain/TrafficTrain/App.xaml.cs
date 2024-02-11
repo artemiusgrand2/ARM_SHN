@@ -9,7 +9,7 @@ using System.IO;
 using RW.KTC.ORPO.Berezina.Common.Helpers;
 using System.Linq;
 
-namespace TrafficTrain
+namespace ARM_SHN
 {
     
     public partial class App : Application

@@ -1,4 +1,4 @@
-﻿<Window x:Class="TrafficTrain.WindowColor"
+﻿<Window x:Class="ARM_SHN.WindowColor"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Цветовая палитра"   Closing="Window_Closing" Icon="/TrafficTrain;component/Images/lightning-icon_34399.ico"

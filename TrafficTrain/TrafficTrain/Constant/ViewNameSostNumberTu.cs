@@ -1,5 +1,5 @@
 ﻿
-namespace TrafficTrain.Constant
+namespace ARM_SHN.Constant
 {
     /// <summary>
     /// возможные условные обозначения видов элеметов управления

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace TrafficTrain.Enums
+namespace ARM_SHN.Enums
 {
     /// <summary>
     /// различные виды пути в зависимости от тяги

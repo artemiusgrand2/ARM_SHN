@@ -4,44 +4,17 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using TrafficTrain.Interface;
-using TrafficTrain.Enums;
-using TrafficTrain.Delegate;
-using TrafficTrain.WorkWindow;
-using TrafficTrain.EditText;
+using ARM_SHN.Interface;
+using ARM_SHN.Enums;
+using ARM_SHN.Delegate;
+using ARM_SHN.WorkWindow;
+using ARM_SHN.EditText;
 using SCADA.Common.Enums;
 
-namespace TrafficTrain
+namespace ARM_SHN.ElementControl
 {
 
-    public struct Interval
-    {
-        int start;
-        public int Start
-        {
-            get
-            {
-                return start;
-            }
-        }
-
-        int end;
-        public int End
-        {
-            get
-            {
-                return end;
-            }
-        }
-
-        public Interval(int start, int end)
-        {
-            this.start = start;
-            this.end = end;
-        }
-    }
-
-    public class CommandButton : Shape, IGraficElement, ISelectElement,  IInfoElement, IText
+    public class CommandButton : Shape, IDisposable, IGraficElement, ISelectElement,  IInfoElement, IText
     {
         #region Переменные и свойства
         /////геометрия элемента
@@ -329,14 +302,14 @@ namespace TrafficTrain
 
         public string InfoElement()
         {
-            return string.Format("{0}", Notes);
+            return Notes;
         }
 
-        ~CommandButton()
+
+        public void Dispose()
         {
             LoadColorControl.NewColor -= NewColor;
         }
-
 
         private void SetText(double fontsize, double rotate, double marginX, double marginY)
         {
@@ -465,61 +438,6 @@ namespace TrafficTrain
                     break;
             }     
         }
-     
-        /// <summary>
-        /// создаем коллекцию линий и точек
-        /// </summary>
-        public void CreateCollectionLines()
-        {
-            _points.Clear();
-            _lines.Clear();
-            foreach (PathFigure geo in _figure.Figures)
-            {
-                _points.Add(geo.StartPoint);
-                foreach (PathSegment seg in geo.Segments)
-                {
-                    //сегмент линия
-                    LineSegment lin = seg as LineSegment;
-                    if (lin != null)
-                        _points.Add(lin.Point);
-                    //сегмент арка
-                    ArcSegment arc = seg as ArcSegment;
-                    if (arc != null)
-                        _points.Add(arc.Point);
-                }
-            }
-            //
-            double Xmin = double.MaxValue;
-            double Xmax = double.MinValue;
-            double Ymin = double.MaxValue;
-            double Ymax = double.MinValue;
-            //
-            for (int i = 0; i < _points.Count; i++)
-            {
-                if (_points[i].X > Xmax)
-                    Xmax = _points[i].X;
-                //
-                if (_points[i].X < Xmin)
-                    Xmin = _points[i].X;
-                //
-                if (_points[i].Y > Ymax)
-                    Ymax = _points[i].Y;
-                //
-                if (_points[i].Y < Ymin)
-                    Ymin = _points[i].Y;
-                //
-                if (i < _points.Count - 1)
-                    _lines.Add(new Line() { X1 = _points[i].X, Y1 = _points[i].Y, X2 = _points[i + 1].X, Y2 = _points[i + 1].Y });
-                else if (i == _points.Count - 1)
-                    _lines.Add(new Line() { X1 = _points[i].X, Y1 = _points[i].Y, X2 = _points[0].X, Y2 = _points[0].Y });
-            }
-            //
-            _pointCenter.X = Xmin + (Xmax - Xmin) / 2;
-            _pointCenter.Y = Ymin + (Ymax - Ymin) / 2;
-            //
-        }
-
-
 
         /// <summary>
         /// Центрируем текст по центру
@@ -540,6 +458,5 @@ namespace TrafficTrain
             //
         }
 
-      
     }
 }

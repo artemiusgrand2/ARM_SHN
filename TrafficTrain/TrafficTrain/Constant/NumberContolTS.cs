@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TrafficTrain.Constant
+namespace ARM_SHN.Constant
 {
 
     /// <summary>

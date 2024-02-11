@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media;
 
-namespace TrafficTrain
+namespace ARM_SHN
 {
     /// <summary>
     /// цветовая расцветка таблицы автопилота

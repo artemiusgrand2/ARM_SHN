@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using SCADA.Common.Enums;
 
-namespace TrafficTrain.Constant
+namespace ARM_SHN.Constant
 {
     /// <summary>
     /// возможные условные обозначения контролей
@@ -11,19 +11,10 @@ namespace TrafficTrain.Constant
     public  struct NameControlTS
     {
         //Виды состояния кнопки станции
-        public const string seasonal_management = "cезонное управление";
-        public const string start_seasonal_management = "передача на сезонное управление";
-        public const string reserve_control = "резервное управление";
-        public const string supervisory_control = "диспетчерское управление";
+     
         public const string not_station = "нет связи со станцией";
         public const string fire = "пожар";
-        public const string autonomous_control = "автономное управление";
-        public const string not_supervisory_control = "диспетчерский круг";
-        public const string auto_pilot = "автопилот";
         //Виды состояния элемента перегонной стрелки
-        public const string departure = "отправление";
-        public const string resolution_of_origin = "разрешение отправления";
-        public const string waiting_for_departure = "ожидание отправления";
         //Виды состояния элемента сигнал
         public const string passage = "проезд";
         public const string signal = "сигнал";
@@ -56,14 +47,9 @@ namespace TrafficTrain.Constant
         public const string auto_run = "авто действие";
         public const string electrification = "электро";
         public const string pass = "пасс";
-        public const string fencing = "ограждение";
         //Виды состояния элемента переезд
         public const string closing = "закрытие";
         public const string closing_button = "закрытие кнопкой";
-        //Виды состояния элемента КГУ
-        public const string play_KGU = "обрыв контура";
-        //Виды состояния элемента КТСМ
-        public const string play_KTCM = "срабатывание ктсм";
         //Виды состояния общие для всех
         public const string occupation = "занятие";
         public const string fault = "неисправность";
@@ -74,9 +60,6 @@ namespace TrafficTrain.Constant
         //Для искусственного импульса
         public const string impuls_activ = "а";
         public const string impuls_pasiv = "п";
-        //------
-        public const string head_left = "cлева";
-        public const string head_right = "cправа";
 
         /// <summary>
         /// проверяем состояние с уже имеющимися
@@ -107,16 +90,12 @@ namespace TrafficTrain.Constant
                         return Viewmode.lockingY;
                     case closing_button:
                         return Viewmode.closing_button;
-                    case departure:
-                        return Viewmode.departure;
                     case electrification:
                         return Viewmode.electrification;
                     case pass:
                         return Viewmode.pass;
                     case fault:
                         return Viewmode.fault;
-                    case fencing:
-                        return Viewmode.fencing;
                     case fire:
                         return Viewmode.fire;
                     case installation:
@@ -131,26 +110,8 @@ namespace TrafficTrain.Constant
                         return Viewmode.occupation;
                     case passage:
                         return Viewmode.passage;
-                    case play_KGU:
-                        return Viewmode.play_control_object;
-                    case play_KTCM:
-                        return Viewmode.play_control_object;
-                    case reserve_control:
-                        return Viewmode.reserve_control;
-                    case resolution_of_origin:
-                        return Viewmode.resolution_of_origin;
-                    case seasonal_management:
-                        return Viewmode.seasonal_management;
                     case signal:
                         return Viewmode.signal;
-                    case start_seasonal_management:
-                        return Viewmode.start_seasonal_management;
-                    case supervisory_control:
-                        return Viewmode.supervisory_control;
-                    case waiting_for_departure:
-                        return Viewmode.waiting_for_departure;
-                    case autonomous_control:
-                        return Viewmode.autonomous_control;
                     case controlWhite:
                         return Viewmode.controlWhite;
                     case controlRed:
@@ -161,18 +122,10 @@ namespace TrafficTrain.Constant
                         return Viewmode.controlRedF;
                     case controlYellowF:
                         return Viewmode.controlYellowF;
-                    case auto_pilot:
-                        return Viewmode.auto_pilot;
                     case impuls_activ:
                         return Viewmode.impuls_activ;
                     case impuls_pasiv:
                         return Viewmode.impuls_pasiv;
-                    case head_left:
-                        return Viewmode.head_left;
-                    case head_right:
-                        return Viewmode.head_right;
-                    case not_supervisory_control:
-                        return Viewmode.not_supervisory_control;
                     default:
                         log.Info(string.Format("Неправильное состояния {0} для описания объекта {1} на станции {2}", namestate, name, stationnumber));
                         break;

@@ -4,9 +4,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Collections.Generic;
-using TrafficTrain.Interface;
+using ARM_SHN.Interface;
 
-namespace TrafficTrain
+namespace ARM_SHN.ElementControl
 {
     /// <summary>
     /// Класс описывающий геометрию рамку станции
@@ -66,39 +66,6 @@ namespace TrafficTrain
         /// обозначение
         /// </summary>
         public string Nodes { get; set; }
-        /// <summary>
-        /// коллекция используемых линий
-        /// </summary>
-        List<Line> _lines = new List<Line>();
-        public List<Line> Lines
-        {
-            get
-            {
-                return _lines;
-            }
-        }
-        /// <summary>
-        /// коллекция используемых точек
-        /// </summary>
-        PointCollection _points = new PointCollection();
-        public PointCollection Points
-        {
-            get
-            {
-                return _points;
-            }
-        }
-        /// <summary>
-        /// центр фигуры
-        /// </summary>
-        Point _pointCenter = new Point();
-        public Point PointCenter
-        {
-            get
-            {
-                return _pointCenter;
-            }
-        }
         /// <summary>
         /// пояснения
         /// </summary>
@@ -199,51 +166,6 @@ namespace TrafficTrain
 
             }
             catch { }
-        }
-
-        /// <summary>
-        /// создаем коллекцию линий и точек
-        /// </summary>
-        public void CreateCollectionLines()
-        {
-            _points.Clear();
-            _lines.Clear();
-            foreach (PathFigure geo in _figure.Figures)
-            {
-                _points.Add(geo.StartPoint);
-                foreach (PathSegment seg in geo.Segments)
-                {
-                    //сегмент линия
-                    LineSegment lin = seg as LineSegment;
-                    if (lin != null)
-                        _points.Add(lin.Point);
-                    //сегмент арка
-                    ArcSegment arc = seg as ArcSegment;
-                    if (arc != null)
-                        _points.Add(arc.Point);
-                }
-            }
-            //
-            double x_summa = 0;
-            double y_summa = 0;
-            //
-            for (int i = 0; i < _points.Count; i++)
-            {
-                x_summa += _points[i].X;
-                y_summa += _points[i].Y;
-                //
-                if (i < _points.Count - 1)
-                    _lines.Add(new Line() { X1 = _points[i].X, Y1 = _points[i].Y, X2 = _points[i + 1].X, Y2 = _points[i + 1].Y });
-                else if (i == _points.Count - 1)
-                    _lines.Add(new Line() { X1 = _points[i].X, Y1 = _points[i].Y, X2 = _points[0].X, Y2 = _points[0].Y });
-            }
-            //
-            if (_points.Count != 0)
-            {
-                _pointCenter.X = x_summa / _points.Count;
-                _pointCenter.Y = y_summa / _points.Count;
-            }
-            //
         }
 
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-using TrafficTrain;
+using ARM_SHN;
 using RW.KTC.ORPO.Berezina.DataStream.Common;
 using RW.KTC.ORPO.Berezina.DataStream.Common.Interfaces;
 using RW.KTC.ORPO.Berezina.Configuration;
@@ -12,7 +12,7 @@ using RW.KTC.ORPO.Berezina.Server.Core.BusinessObjects;
 using RW.KTC.ORPO.Berezina.Common.Interfaces;
 using RW.KTC.ORPO.Berezina.Server.Common.Interfaces;
 
-namespace TrafficTrain.DataServer
+namespace ARM_SHN.DataServer
 {
     public class Core
     {

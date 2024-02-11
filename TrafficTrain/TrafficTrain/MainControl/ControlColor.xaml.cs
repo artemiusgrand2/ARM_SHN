@@ -11,9 +11,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using TrafficTrain.DataGrafik;
+using ARM_SHN.DataGrafik;
 
-namespace TrafficTrain
+namespace ARM_SHN
 {
     /// <summary>
     /// Контрол управления цветом

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using TrafficTrain.DataGrafik;
-using TrafficTrain.WorkWindow;
-using TrafficTrain.Delegate;
+using ARM_SHN.DataGrafik;
+using ARM_SHN.WorkWindow;
+using ARM_SHN.Delegate;
+using ARM_SHN.ElementControl;
 
-namespace TrafficTrain
+namespace ARM_SHN
 {
     class LoadColorControl
     {
@@ -137,14 +138,14 @@ namespace TrafficTrain
                 ControlColorElement active_line = new ControlColorElement("Активная линия", new List<ControlColorStatus>() { status1, status2, status3, status4, status5, status6, status7 });
                 MainPanel.Children.Add(active_line);
                 //шильда
-                status1 = new ControlColorStatus("Контроль Красного", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.AccidentFon, window, HelpElement._colorRed, EnumColor.HelpElementAccidentFon) });
-                status2 = new ControlColorStatus("Контроль Желтого", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.AccidentDGAStroke, window, HelpElement._colorYellow, EnumColor.HelpElementAccidentDGAStroke) });
-                status3 = new ControlColorStatus("Потеря контроля - фон", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.NotControlFon, window, HelpElement._colornotcontrol, EnumColor.HelpElementNotControlFon) });
-                status4 = new ControlColorStatus("Потеря контроля - рамка", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.NotControlStroke, window, HelpElement._colornotcontrolstroke, EnumColor.HelpElementNotControlStroke) });
-                status5 = new ControlColorStatus("По умолчанию - фон", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.DefultFon, window, HelpElement._color_fon_defult, EnumColor.HelpElementDefultFon) });
-                status6 = new ControlColorStatus("По умолчанию - рамка", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.DefultStroke, window, HelpElement._color_stroke_defult, EnumColor.HelpElementDefultStroke) });
-                status7 = new ControlColorStatus("Контроль белого", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.OnWeightFon, window, HelpElement._colorWhite, EnumColor.HelpElementOnWeightFon) });
-                status8 = new ControlColorStatus("Текст", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.Text, window, HelpElement._colortext, EnumColor.HelpElementText) });
+                status1 = new ControlColorStatus("Контроль Красного", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.AccidentFon, window, ARM_SHN.ElementControl.HelpElement._colorRed, EnumColor.HelpElementAccidentFon) });
+                status2 = new ControlColorStatus("Контроль Желтого", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.AccidentDGAStroke, window, ARM_SHN.ElementControl.HelpElement._colorYellow, EnumColor.HelpElementAccidentDGAStroke) });
+                status3 = new ControlColorStatus("Потеря контроля - фон", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.NotControlFon, window, ARM_SHN.ElementControl.HelpElement._colornotcontrol, EnumColor.HelpElementNotControlFon) });
+                status4 = new ControlColorStatus("Потеря контроля - рамка", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.NotControlStroke, window, ARM_SHN.ElementControl.HelpElement._colornotcontrolstroke, EnumColor.HelpElementNotControlStroke) });
+                status5 = new ControlColorStatus("По умолчанию - фон", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.DefultFon, window, ARM_SHN.ElementControl.HelpElement._color_fon_defult, EnumColor.HelpElementDefultFon) });
+                status6 = new ControlColorStatus("По умолчанию - рамка", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.DefultStroke, window, ARM_SHN.ElementControl.HelpElement._color_stroke_defult, EnumColor.HelpElementDefultStroke) });
+                status7 = new ControlColorStatus("Контроль белого", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.OnWeightFon, window, ARM_SHN.ElementControl.HelpElement._colorWhite, EnumColor.HelpElementOnWeightFon) });
+                status8 = new ControlColorStatus("Текст", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.HelpElement.Text, window, ARM_SHN.ElementControl.HelpElement._colortext, EnumColor.HelpElementText) });
                 ControlColorElement help_element = new ControlColorElement("Шильда", new List<ControlColorStatus>() { status1, status2, status3, status4, status5, status6, status7, status8 });
                 MainPanel.Children.Add(help_element);
                 //справочный текст и время

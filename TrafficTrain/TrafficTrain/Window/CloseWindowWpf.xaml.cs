@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Timers;
 
-namespace TrafficTrain
+namespace ARM_SHN
 {
     /// <summary>
     /// Interaction logic for CloseWindowWpf.xaml

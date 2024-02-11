@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using SCADA.Common.Enums;
 using SCADA.Common.SaveElement;
 
-namespace TrafficTrain.Interface
+namespace ARM_SHN.Interface
 {
 
     public interface IText
@@ -58,22 +58,6 @@ namespace TrafficTrain.Interface
     public interface ISelectElement
     {
         /// <summary>
-        /// коллекция линий
-        /// </summary>
-        List<Line> Lines { get; }
-        /// <summary>
-        /// коллекция вершин
-        /// </summary>
-        PointCollection Points { get; }
-        /// <summary>
-        /// ценр фигуры
-        /// </summary>
-        Point PointCenter { get; }
-        /// <summary>
-        /// создаем коллекция линий
-        /// </summary>
-        void CreateCollectionLines();
-        /// <summary>
         /// толщина элемента
         /// </summary>
         double StrokeThickness { get; set; }
@@ -83,12 +67,5 @@ namespace TrafficTrain.Interface
         string FileClick { get; set; }
         string NameUl { get; }
     }
-
-    public interface IActriveControl
-    {
-        void Analis();
-        void ServerClosing();
-    }
-
 
 }

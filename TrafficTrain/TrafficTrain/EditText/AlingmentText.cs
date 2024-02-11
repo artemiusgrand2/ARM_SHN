@@ -4,8 +4,9 @@ using System.Windows.Shapes;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Text;
+using SCADA.Common.Models;
 
-namespace TrafficTrain.EditText
+namespace ARM_SHN.EditText
 {
     class AlingmentText
     {
@@ -30,6 +31,41 @@ namespace TrafficTrain.EditText
                 return new Thickness(ramkaX + (height - HeightText(text)) / 2, ramkaY - (width - WidthText(text)) / 2, 0, 0);
             //
             return new Thickness(0, 0, 0, 0);
+        }
+
+        public static Thickness AlingmentCenter(double ramkaX, double ramkaY, double width, double height, GraficElementTextModel textModel, double RotateText)
+        {
+            if (RotateText == 0 || Math.Abs(RotateText) == 360)
+                return new Thickness(ramkaX + (width - GetWidthText(textModel)) / 2, ramkaY + (height - GetHeightText(textModel)) / 2, 0, 0);
+            //
+            if (Math.Abs(RotateText) == 90)
+                return new Thickness(ramkaX - (height - GetHeightText(textModel)) / 2, ramkaY + (width - GetWidthText(textModel)) / 2, 0, 0);
+            //
+            if (Math.Abs(RotateText) == 180)
+                return new Thickness(ramkaX - (width - GetWidthText(textModel)) / 2, ramkaY - (height - GetHeightText(textModel)) / 2, 0, 0);
+            //
+            if (Math.Abs(RotateText) == 270)
+                return new Thickness(ramkaX + (height - GetHeightText(textModel)) / 2, ramkaY - (width - GetWidthText(textModel)) / 2, 0, 0);
+            //
+            return new Thickness(0, 0, 0, 0);
+        }
+
+        public static double GetWidthText(GraficElementTextModel textModel)
+        {
+            return GetFormattedText(textModel).Width;
+        }
+
+        public static double GetHeightText(GraficElementTextModel textModel)
+        {
+            return GetFormattedText(textModel).Height;
+        }
+
+        private static FormattedText GetFormattedText(GraficElementTextModel textModel)
+        {
+            var typeface = new Typeface(textModel.FontFamily, textModel.FontStyle, textModel.FontWeight, textModel.FontStretch);
+            var brush = new SolidColorBrush();
+            var formatedText = new FormattedText(textModel.Text, System.Globalization.CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, textModel.FontSize, brush);
+            return formatedText;
         }
 
         /// <summary>
@@ -75,6 +111,15 @@ namespace TrafficTrain.EditText
         {
             double fontsizeWr = textKw * ramka.Width / _text.Length;
             double fontsizeHr = ramka.Height * textKh;
+            if ((fontsizeHr) >= (fontsizeWr))
+                return fontsizeWr;
+            else return fontsizeHr;
+        }
+
+        public static double FontSizeText(double textKw, double textKh, double width, double height, string _text, double RotateText)
+        {
+            double fontsizeWr = textKw * width / _text.Length;
+            double fontsizeHr = height * textKh;
             if ((fontsizeHr) >= (fontsizeWr))
                 return fontsizeWr;
             else return fontsizeHr;

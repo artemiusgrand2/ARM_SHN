@@ -6,7 +6,7 @@ using System.Windows.Threading;
 using SCADA.Common.Enums;
 using SCADA.Common.SaveElement;
 
-namespace TrafficTrain
+namespace ARM_SHN.ElementControl
 {
     public class Diagnostic
     {

@@ -4,13 +4,14 @@ using System.Windows;
 using System.IO;
 using System.Configuration;
 using SCADA.Common.SaveElement;
-using TrafficTrain.WorkWindow;
-using TrafficTrain.Enums;
-using TrafficTrain.Constant;
-using TrafficTrain.Interface;
+using ARM_SHN.WorkWindow;
+using ARM_SHN.Enums;
+using ARM_SHN.Constant;
+using ARM_SHN.Interface;
+using ARM_SHN.ElementControl;
 using log4net;
 
-namespace TrafficTrain
+namespace ARM_SHN
 {
     public partial class MainWindow : Window
     {

@@ -4,11 +4,11 @@ using System.Windows;
 using System.Windows.Shapes;
 using System.Windows.Controls;
 using System.Windows.Media;
-using TrafficTrain.Interface;
-using TrafficTrain.Enums;
-using TrafficTrain.Delegate;
+using ARM_SHN.Interface;
+using ARM_SHN.ElementControl;
 
-namespace TrafficTrain
+
+namespace ARM_SHN.CommandsElement
 {
     /// <summary>
     /// выбираем перегон или элементы для отправки команды ТУ

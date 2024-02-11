@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Media;
-using TrafficTrain.DataGrafik;
-using TrafficTrain.WorkWindow;
+using ARM_SHN.DataGrafik;
+using ARM_SHN.WorkWindow;
+using ARM_SHN.ElementControl;
 
-namespace TrafficTrain
+namespace ARM_SHN
 {
     class CommandColor
     {
@@ -695,24 +696,6 @@ namespace TrafficTrain
                 case EnumColor.TrackTrainPlanText:
                     StationPath._color_train_plan = new SolidColorBrush(color);
                     break;
-                case EnumColor.ControlObjectFaultStroke:
-                    ControlObject._color_fault = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ControlObjectNotControlStroke:
-                    ControlObject._colornotcontrolstroke = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ControlObjectDefultStroke:
-                    ControlObject._color_normal = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ControlObjectPlayFon:
-                    ControlObject._color_break = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ControlObjectNotControlFon:
-                    ControlObject._colornotcontrol = new SolidColorBrush(color);
-                    break;
-                case EnumColor.ControlObjectDefultFon:
-                    ControlObject._color_fon_defult = new SolidColorBrush(color);
-                    break;
                 case EnumColor.ActiveLineActiveStroke:
                     LineHelp._color_active = new SolidColorBrush(color);
                     break;
@@ -741,28 +724,28 @@ namespace TrafficTrain
                 //    CenterDirection._color_occupation = new SolidColorBrush(color);
                     break;
                 case EnumColor.HelpElementAccidentFon:
-                    HelpElement._colorRed = new SolidColorBrush(color);
+                    ARM_SHN.ElementControl.HelpElement._colorRed = new SolidColorBrush(color);
                     break;
                 case EnumColor.HelpElementAccidentDGAStroke:
-                    HelpElement._colorYellow = new SolidColorBrush(color);
+                    ARM_SHN.ElementControl.HelpElement._colorYellow = new SolidColorBrush(color);
                     break;
                 case EnumColor.HelpElementNotControlFon:
-                    HelpElement._colornotcontrol = new SolidColorBrush(color);
+                    ARM_SHN.ElementControl.HelpElement._colornotcontrol = new SolidColorBrush(color);
                     break;
                 case EnumColor.HelpElementNotControlStroke:
-                    HelpElement._colornotcontrolstroke = new SolidColorBrush(color);
+                    ARM_SHN.ElementControl.HelpElement._colornotcontrolstroke = new SolidColorBrush(color);
                     break;
                 case EnumColor.HelpElementDefultFon:
-                    HelpElement._color_fon_defult = new SolidColorBrush(color);
+                    ARM_SHN.ElementControl.HelpElement._color_fon_defult = new SolidColorBrush(color);
                     break;
                 case EnumColor.HelpElementDefultStroke:
-                    HelpElement._color_stroke_defult = new SolidColorBrush(color);
+                    ARM_SHN.ElementControl.HelpElement._color_stroke_defult = new SolidColorBrush(color);
                     break;
                 case EnumColor.HelpElementOnWeightFon:
-                    HelpElement._colorWhite = new SolidColorBrush(color);
+                    ARM_SHN.ElementControl.HelpElement._colorWhite = new SolidColorBrush(color);
                     break;
                 case EnumColor.HelpElementText:
-                    HelpElement._colortext = new SolidColorBrush(color);
+                    ARM_SHN.ElementControl.HelpElement._colortext = new SolidColorBrush(color);
                     break;
                 case EnumColor.HelpTextAndTimeTimeFon:
                     TimeElement._color_fon = new SolidColorBrush(color);

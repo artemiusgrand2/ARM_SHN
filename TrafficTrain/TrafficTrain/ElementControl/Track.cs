@@ -4,23 +4,23 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using TrafficTrain.EditText;
-using TrafficTrain.Interface;
-using TrafficTrain.Enums;
-using TrafficTrain.Constant;
-using TrafficTrain.WorkWindow;
-using TrafficTrain.Delegate;
+using ARM_SHN.EditText;
+using ARM_SHN.Interface;
+using ARM_SHN.Enums;
+using ARM_SHN.Constant;
+using ARM_SHN.WorkWindow;
+using ARM_SHN.Delegate;
 
 using SCADA.Common.Enums;
 using SCADA.Common.SaveElement;
 using SCADA.Common.ImpulsClient;
 
-namespace TrafficTrain
+namespace ARM_SHN.ElementControl
 {
     /// <summary>
     /// класс описывающий станционный путь
     /// </summary>
-    public class StationPath : Shape,  IGraficElement, ISelectElement, IInfoElement, IText, IIndicationEl
+    public class StationPath : Shape, IDisposable, IGraficElement, ISelectElement, IInfoElement, IText, IIndicationEl
     {
         #region Переменные и свойства
         /////геометрия элемента
@@ -175,39 +175,6 @@ namespace TrafficTrain
             }
         }
         /// <summary>
-        /// коллекция используемых линий
-        /// </summary>
-        List<Line> _lines = new List<Line>();
-        public List<Line> Lines
-        {
-            get
-            {
-                return _lines;
-            }
-        }
-        /// <summary>
-        /// коллекция используемых точек
-        /// </summary>
-        PointCollection _points = new PointCollection();
-        public PointCollection Points
-        {
-            get
-            {
-                return _points;
-            }
-        }
-        /// <summary>
-        /// центр фигуры
-        /// </summary>
-        Point _pointCenter = new Point();
-        public Point PointCenter
-        {
-            get
-            {
-                return _pointCenter;
-            }
-        }
-        /// <summary>
         /// поворот текста
         /// </summary>
         public  double RotateText { get; set; }
@@ -261,18 +228,12 @@ namespace TrafficTrain
             //графика
             GeometryFigureCopy(geometry);
             Analis();
-            //обработка информации по импульсам и номерам поездов
-            if (Impulses.Count > 0)
-            {
-                Connections.NewTart += StartFlashing;
-            }
             //
             LoadColorControl.NewColor += NewColor;
         }
 
-        ~StationPath()
+        public void Dispose()
         {
-            Connections.NewTart -= StartFlashing;
             LoadColorControl.NewColor -= NewColor;
         }
 
@@ -350,9 +311,7 @@ namespace TrafficTrain
             //
             if (m_text.Text == NameTrack)
                 m_text.Foreground = _color_path;
-
         }
-
 
         public void ServerClose()
         {
@@ -363,7 +322,7 @@ namespace TrafficTrain
                     Stroke = m_colordiesel_traction;
                 else
                 {
-                    foreach (KeyValuePair<Viewmode, StateElement> imp in Impulses)
+                    foreach (var imp in Impulses)
                     {
                         imp.Value.state = StatesControl.nocontrol;
                         imp.Value.LastUpdate = DateTime.Now;
@@ -383,7 +342,7 @@ namespace TrafficTrain
             {
                 if (Imp.Value.Name != Viewmode.electrification)
                 {
-                    StatesControl state = Imp.Value.state;
+                    var state = Imp.Value.state;
                     Imp.Value.state = Connections.ClientImpulses.Data.GetStateControl(StationControl, Imp.Value.Impuls);
                     //
                     if (state != Imp.Value.state)
@@ -474,13 +433,6 @@ namespace TrafficTrain
         }
 
 
-        private void SetText(string numbertrain)
-        {
-            if (m_text.Text != numbertrain)
-                m_text.Text = numbertrain;
-        }
-
-
         /// <summary>
         /// находим более приоритетное состояние из представленного перечьня
         /// </summary>
@@ -488,12 +440,12 @@ namespace TrafficTrain
         /// <returns></returns>
         private StateElement CheckPriorityState(List<Viewmode> priority_control)
         {
-            foreach (Viewmode control in priority_control)
+            foreach (var control in priority_control)
             {
-                if (Impulses.ContainsKey(control))
+                if (Impulses.TryGetValue(control, out var imp))
                 {
-                    if (Impulses[control].state == StatesControl.activ)
-                        return Impulses[control];
+                    if (imp.state == StatesControl.activ)
+                        return imp;
                 }
             }
             return null;
@@ -527,9 +479,6 @@ namespace TrafficTrain
                             case Viewmode.lockingY:
                                 Fill = _color_lokingY;
                                 break;
-                            //case Viewmode.electrification:
-                            //    Stroke = _colorelectric_traction;
-                            //    break;
                         }
                         break;
                     case StatesControl.pasiv:
@@ -552,63 +501,6 @@ namespace TrafficTrain
             }
         }
 
-        /// <summary>
-        /// создаем коллекцию линий и точек
-        /// </summary>
-        public void CreateCollectionLines()
-        {
-            _points.Clear();
-            _lines.Clear();
-            foreach (PathFigure geo in _figure.Figures)
-            {
-                _points.Add(geo.StartPoint);
-                foreach (PathSegment seg in geo.Segments)
-                {
-                    //сегмент линия
-                    LineSegment lin = seg as LineSegment;
-                    if (lin != null)
-                        _points.Add(lin.Point);
-                    //сегмент арка
-                    ArcSegment arc = seg as ArcSegment;
-                    if (arc != null)
-                        _points.Add(arc.Point);
-                }
-            }
-            //
-            double x_summa = 0;
-            double y_summa = 0;
-            //
-            for (int i = 0; i < _points.Count; i++)
-            {
-                x_summa += _points[i].X;
-                y_summa += _points[i].Y;
-                //
-                if (i < _points.Count - 1)
-                    _lines.Add(new Line() { X1 = _points[i].X, Y1 = _points[i].Y, X2 = _points[i + 1].X, Y2 = _points[i + 1].Y });
-                else if (i == _points.Count - 1)
-                    _lines.Add(new Line() { X1 = _points[i].X, Y1 = _points[i].Y, X2 = _points[0].X, Y2 = _points[0].Y });
-            }
-            //
-            if (_points.Count != 0)
-            {
-                _pointCenter.X = x_summa / _points.Count;
-                _pointCenter.Y = y_summa / _points.Count;
-            }
-            //
-        }
-
-
-        private void StartFlashing()
-        {
-            Dispatcher.Invoke(new Action(() => Flashing()));
-        }
-        /// <summary>
-        /// обрабатываем мирцание
-        /// </summary>
-        private void Flashing()
-        {
-           
-        }
 
         /// <summary>
         /// определяем занят ли в данный момент путь
@@ -616,9 +508,9 @@ namespace TrafficTrain
         /// <returns></returns>
         public string OccupationPath()
         {
-            if (Impulses.ContainsKey(Viewmode.occupation))
+            if (Impulses.TryGetValue(Viewmode.occupation, out var imp))
             {
-                switch (Impulses[Viewmode.occupation].state)
+                switch (imp.state)
                 {
                     case StatesControl.activ:
                         return "занят";

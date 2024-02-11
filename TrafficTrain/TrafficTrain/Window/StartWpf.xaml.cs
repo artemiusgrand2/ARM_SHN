@@ -2,9 +2,9 @@
 using System.Windows;
 using System.Windows.Media;
 using System.Threading;
-using TrafficTrain.WorkWindow;
+using ARM_SHN.WorkWindow;
 
-namespace TrafficTrain
+namespace ARM_SHN
 {
     public partial class StartWpf : Window
     {

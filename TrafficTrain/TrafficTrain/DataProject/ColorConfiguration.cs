@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TrafficTrain.DataGrafik
+namespace ARM_SHN.DataGrafik
 {
     /// <summary>
     /// цветовая натройка экрана

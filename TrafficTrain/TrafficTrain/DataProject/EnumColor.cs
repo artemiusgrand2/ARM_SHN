@@ -1,5 +1,5 @@
 ﻿
-namespace TrafficTrain.DataGrafik
+namespace ARM_SHN.DataGrafik
 {
    public enum EnumColor
     {
