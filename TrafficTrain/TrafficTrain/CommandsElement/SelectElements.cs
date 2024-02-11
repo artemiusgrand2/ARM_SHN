@@ -27,10 +27,18 @@ namespace ARM_SHN.CommandsElement
                 var command = el as ISelectElement;
                 if (command != null)
                 {
-                    if (el.IsMouseOver)
+                    if (CheckIsMouseOver(el))
                         return Commands.AnalisCommand(command, content);
                 }
             }
+            //
+            return false;
+        }
+
+        public static bool CheckIsMouseOver(UIElement el)
+        {
+            if (el.IsMouseOver || ((el is IText) && (el as IText).Text.IsMouseOver))
+                return true;
             //
             return false;
         }
@@ -44,7 +52,7 @@ namespace ARM_SHN.CommandsElement
                 var command = el as ISelectElement;
                 if(command != null)
                 {
-                    if (el.IsMouseOver || ((el is IText) && (el as IText).Text.IsMouseOver))
+                    if (CheckIsMouseOver(el))
                         if (el is IInfoElement)
                             selectElement.Add(el as IInfoElement);
                 }
