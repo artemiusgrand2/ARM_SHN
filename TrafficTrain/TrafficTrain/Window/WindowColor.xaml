@@ -1,7 +1,7 @@
 ﻿<Window x:Class="ARM_SHN.WindowColor"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Цветовая палитра"   Closing="Window_Closing" Icon="/TrafficTrain;component/Images/lightning-icon_34399.ico"
+        Title="Цветовая палитра"   Closing="Window_Closing" Icon="/Images/lightning-icon_34399.ico" 
         ShowInTaskbar="False" WindowStartupLocation="CenterScreen" Visibility="Hidden" Background="{StaticResource SelectedBackgroundBrush}" >
     <Grid>
 

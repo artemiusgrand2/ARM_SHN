@@ -1,7 +1,7 @@
 ﻿<Window x:Class="ARM_SHN.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="АРМ ШН"  WindowState="Maximized"   Topmost="True"   IsTabStop="False"   Visibility="Hidden" WindowStyle="None" Icon="Images/lightning-icon_34399.ico" >
+        Title="АРМ ШН"  WindowState="Maximized"   Topmost="True"   IsTabStop="False"   Visibility="Hidden" WindowStyle="None" Icon="/Images/lightning-icon_34399.ico" >
     <Grid Name="MainGrid">
         <ComboBox Name="combox_exsample"   HorizontalAlignment="Left"  VerticalAlignment="Bottom"  Visibility="Hidden"/>
         <Canvas Name="DrawCanvas" HorizontalAlignment="Left"  VerticalAlignment="Top" />
