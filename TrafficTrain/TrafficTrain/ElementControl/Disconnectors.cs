@@ -17,62 +17,12 @@ namespace ARM_SHN.ElementControl
     /// <summary>
     /// класс описывающий разъединители
     /// </summary>
-    class Disconnectors : Shape, IGraficElement, ISelectElement, IInfoElement, IIndicationEl
+    class Disconnectors : BaseGraficElement, ISelectElement, IInfoElement, IIndicationEl
     {
 
         #region Переменные и свойства
-        /////геометрия элемента
-        /// <summary>
-        /// отрисовываемая геометрия
-        /// </summary>
-        protected override Geometry DefiningGeometry
-        {
-            get
-            {
-                return _figure;
-            }
-        }
-        private PathGeometry _figure = new PathGeometry();
-        /// <summary>
-        /// геометрическое иписание фигуры
-        /// </summary>
-        public PathGeometry Figure
-        {
-            get
-            {
-                return _figure;
-            }
-            set
-            {
-                _figure = value;
-            }
-        }
+     
         ///////
-        //////основные свойства переезда
-        /// <summary>
-        /// шестизначный номер станции к которой принадлежит путь
-        /// </summary>
-        public int StationControl { get; set; }
-        private int m_stationRight = -1;
-        /// <summary>
-        /// шестизначный номер станции справа
-        /// </summary>
-        public int StationTransition
-        {
-            get
-            {
-                return m_stationRight;
-            }
-            set
-            {
-                m_stationRight = value;
-            }
-        }
-        /// <summary>
-        /// название разъеденителя
-        /// </summary>
-        public string NameDisconnector { get; set; }
-        ////////
 
         //////цветовая палитра
         /// <summary>
@@ -104,10 +54,6 @@ namespace ARM_SHN.ElementControl
         /// </summary>
         public Dictionary<Viewmode, StateElement> Impulses { get; set; }
         /// <summary>
-        /// толщина контура объкта
-        /// </summary>
-        double _strokethickness = 1.3 * SystemParameters.CaretWidth;
-        /// <summary>
         /// приоритет отображения фона
         /// </summary>
         List<Viewmode> _priority_fill = new List<Viewmode>() { Viewmode.occupation, Viewmode.locking };
@@ -115,23 +61,15 @@ namespace ARM_SHN.ElementControl
         /// приоритет отображения рамки
         /// </summary>
         List<Viewmode> _priority_stroke = new List<Viewmode>();
-        /// <summary>
-        /// пояснения
-        /// </summary>
-        public string Notes { get; set; }
-        /// <summary>
-        /// Индекс слоя
-        /// </summary>
-        public int ZIntex { get; set; }
 
         public string NameUl
         {
             get
             {
-                return NameDisconnector;
+                return NameObject;
             }
         }
-
+        public int StationTransition { get; set; }
         public string FileClick { get; set; } = string.Empty;
         #endregion
 
@@ -141,14 +79,18 @@ namespace ARM_SHN.ElementControl
         /// <param name="stationnumber">шестизначный номер станции</param>
         /// <param name="geometry">геометрия объекта</param>
         /// <param name="name">название объекта</param>
-        public Disconnectors(PathGeometry geometry, string name, Dictionary<Viewmode, StateElement> impulses, TypeDisconnectors type)
+        public Disconnectors(PathGeometry geometry, string name, Dictionary<Viewmode, StateElement> impulses, TypeDisconnectors type):
+             base(name, ViewElement.disconnectors, geometry)
         {
-            NameDisconnector = name;
-            //Type = type;
+            ViewModel.StrokeThickness = (1.3 * SystemParameters.CaretWidth * LoadProject.ProejctGrafic.Scroll);
             Impulses = AnalisCollectionStateControl(impulses);
-            GeometryFigureCopy(geometry);
+            if (Impulses.Count == 0)
+            {
+                ViewModel.Stroke = m_colornotcontrolstroke;
+                ViewModel.Fill = m_colornotcontrol;
+            }
             //обработка импульсов
-            if (!string.IsNullOrEmpty(NameDisconnector) && Impulses.Count > 0)
+            if (!string.IsNullOrEmpty(NameObject) && Impulses.Count > 0)
                 Analis();
         }
 
@@ -184,38 +126,6 @@ namespace ARM_SHN.ElementControl
             UpdateColor();
         }
 
-        /// <summary>
-        /// формируем геометрию объкта
-        /// </summary>
-        /// <param name="geometry"></param>
-        private void GeometryFigureCopy(PathGeometry geometry)
-        {
-            foreach (var geo in geometry.Figures)
-            {
-                var newfigure = new PathFigure() { IsClosed = true };
-                newfigure.StartPoint = new Point(geo.StartPoint.X, geo.StartPoint.Y);
-                foreach (PathSegment seg in geo.Segments)
-                {
-                    //сегмент арка
-                    var arc = seg as ArcSegment;
-                    if (arc != null)
-                    {
-                        newfigure.Segments.Add(new ArcSegment() { Point = new Point(arc.Point.X, arc.Point.Y), Size = new Size(arc.Size.Width, arc.Size.Height) });
-                        continue;
-                    }
-                }
-                _figure.Figures.Add(newfigure);
-            }
-            //
-            if (Impulses.Count == 0)
-            {
-                Stroke = m_colornotcontrolstroke;
-                Fill = m_colornotcontrol;
-            }
-            //
-            _strokethickness *= LoadProject.ProejctGrafic.Scroll;
-            StrokeThickness = _strokethickness;
-        }
 
         public void ServerClose()
         {
@@ -226,13 +136,11 @@ namespace ARM_SHN.ElementControl
                     foreach (var imp in Impulses)
                         imp.Value.state = StatesControl.nocontrol;
                     //
-                    Stroke = m_colornotcontrolstroke;
-                    Fill = m_colornotcontrol;
+                    ViewModel.Stroke = m_colornotcontrolstroke;
+                    ViewModel.Fill = m_colornotcontrol;
                 }
                 else
-                {
-                    Stroke = m_colorStrokeDefult;
-                }
+                    ViewModel.Stroke = m_colorStrokeDefult;
             }
         }
 
@@ -312,17 +220,17 @@ namespace ARM_SHN.ElementControl
                 if (!CheckUpdate)
                 {
                     if (!_update_stroke)
-                        Stroke = m_colornotcontrolstroke;
+                        ViewModel.Stroke = m_colornotcontrolstroke;
                     if (!_update_fill)
-                        Fill = m_colornotcontrol;
+                        ViewModel.Fill = m_colornotcontrol;
                 }
             }
             else
             {
                 if (!CheckUpdate)
                 {
-                    Stroke = m_colornotcontrolstroke;
-                    Fill = m_colornotcontrol;
+                    ViewModel.Stroke = m_colornotcontrolstroke;
+                    ViewModel.Fill = m_colornotcontrol;
                 }
             }
         }
@@ -365,10 +273,10 @@ namespace ARM_SHN.ElementControl
                         switch (control.Name)
                         {
                             case Viewmode.occupation:
-                                Fill = m_colorOccupation;
+                                ViewModel.Fill = m_colorOccupation;
                                 break;
                             case Viewmode.locking:
-                                Fill = m_colorLocking;
+                                ViewModel.Fill = m_colorLocking;
                                 break;
                         }
                         break;
@@ -376,7 +284,7 @@ namespace ARM_SHN.ElementControl
                         switch (control.ViewControlDraw)
                         {
                             case ViewElementDraw.fill:
-                                Fill = m_colorDefult;
+                                ViewModel.Fill = m_colorDefult;
                                 break;
                         }
                         break;
@@ -384,7 +292,7 @@ namespace ARM_SHN.ElementControl
                         switch (control.ViewControlDraw)
                         {
                             case ViewElementDraw.fill:
-                                Fill = m_colornotcontrol;
+                                ViewModel.Fill = m_colornotcontrol;
                                 break; 
                         }
                         break;

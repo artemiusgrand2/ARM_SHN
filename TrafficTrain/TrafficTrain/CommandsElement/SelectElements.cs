@@ -35,7 +35,7 @@ namespace ARM_SHN.CommandsElement
             return false;
         }
 
-        public static bool CheckIsMouseOver(UIElement el)
+        static bool CheckIsMouseOver(UIElement el)
         {
             if (el.IsMouseOver || ((el is IText) && (el as IText).Text.IsMouseOver))
                 return true;
@@ -71,15 +71,14 @@ namespace ARM_SHN.CommandsElement
                 {
                     commandbutton.Visibility = Visibility.Visible;
                     commandbutton.Text.Visibility = Visibility.Visible;
+                    commandbutton.ViewModel.Text = note;
+                    commandbutton.LocationText();
                 }
                 else if (commandbutton.Visibility == Visibility.Visible)
                 {
                     commandbutton.Visibility = Visibility.Collapsed;
                     commandbutton.Text.Visibility = Visibility.Collapsed;
                 }
-                //
-                commandbutton.Text.Text = note;
-                commandbutton.LocationText();
             }
             //
             return result;

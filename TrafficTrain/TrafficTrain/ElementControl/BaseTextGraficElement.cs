@@ -35,23 +35,26 @@ namespace ARM_SHN.ElementControl
 
         public new GraficElementTextModel ViewModel { get; private set; }
 
+        public override bool IsMouseOver
+        {
+            get
+            {
+                return base.IsMouseOver || Text.IsMouseOver;
+            }
+        }
+
         public BaseTextGraficElement(PathGeometry geometry, double rotate = 0) : base(geometry)
         {
-            ViewModel = new GraficElementTextModel();
+            ViewModel = new GraficElementTextModel(); 
             SetBindins(ViewModel);
             RotateText = rotate;
         }
 
-        public BaseTextGraficElement(string name, int stationNumber, ViewElement view, TypeView typeView, PathGeometry geometry, double rotate = 0) : base(name, stationNumber, view, typeView, geometry)
+        public BaseTextGraficElement(string name,  ViewElement view, PathGeometry geometry, double rotate = 0) : base(name, view,geometry)
         {
-            ViewModel = new GraficElementTextModel(name, stationNumber, view, typeView);
+            ViewModel = new GraficElementTextModel(name, view);
             SetBindins(ViewModel);
             RotateText = rotate;
-        }
-
-        protected override bool CheckMouseOver()
-        {
-            return base.IsMouseOver || this.Text.IsMouseOver;
         }
 
         protected override void SetBindins(GraficElementModel model)
@@ -111,34 +114,20 @@ namespace ARM_SHN.ElementControl
         }
 
 
-        //private void LocationText()
-        //{
-        //    //центрируем надпись
-        //    double width = AlingmentText.LenghtStorona(((ArcSegment)(DefiningGeometry as PathGeometry).Figures[0].Segments[_figure.Figures[0].Segments.Count - 2]).Point, _figure.Figures[0].StartPoint);
-        //    double height = AlingmentText.LenghtStorona(((ArcSegment)_figure.Figures[0].Segments[2]).Point, _figure.Figures[0].StartPoint);
-        //    m_text.FontSize = AlingmentText.FontSizeText(_ktextweight, _ktextheight,
-        //        new Rectangle()
-        //        {
-        //            Width = width,
-        //            Height = height
-        //        },
-        //    m_text.Text, RotateText);
-        //    m_text.Margin = AlingmentText.AlingmentCenter(_figure.Figures[0].StartPoint.X, _figure.Figures[0].StartPoint.Y, width, height, m_text, RotateText);
-        //}
-
         /// <summary>
         /// Центрируем текст по центру
         /// </summary>
         public void LocationText()
         {
-            ViewModel.FontSize = AlingmentText.FontSizeText(ConstantValue.Kwtext, ConstantValue.Khtext, Width, Height,
+            ViewModel.FontSize = AlingmentText.FontSizeText(ConstantValue.Kwtext, ConstantValue.Khtext, _width, _height,
             ViewModel.Text, RotateText);
             switch (_current_alignment)
             {
                 default:
-                    ViewModel.Margin = AlingmentText.AlingmentCenter((DefiningGeometry as PathGeometry).Figures[0].StartPoint.X, (DefiningGeometry as PathGeometry).Figures[0].StartPoint.Y, Width, Height, ViewModel, RotateText);
+                    ViewModel.Margin = AlingmentText.AlingmentCenter(_startPoint.X, _startPoint.Y, _width, _height, ViewModel, RotateText);
                     break;
             }
+
         }
     }
 }

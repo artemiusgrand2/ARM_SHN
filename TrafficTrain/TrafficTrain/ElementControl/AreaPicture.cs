@@ -5,42 +5,17 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Collections.Generic;
 using ARM_SHN.Interface;
+using System.Reflection;
 
 namespace ARM_SHN.ElementControl
 {
     /// <summary>
     /// Класс описывающий геометрию рамку станции
     /// </summary>
-    public  class AreaPicture : Shape, IGraficElement, ISelectElement, IInfoElement
+    public  class AreaPicture : BaseGraficElement, ISelectElement, IInfoElement
     {
         #region Переменные и свойства
-        /////геометрия элемента
-        /// <summary>
-        /// отрисовываемая геометрия
-        /// </summary>
-        protected override Geometry DefiningGeometry
-        {
-            get
-            {
-                return _figure;
-            }
-        }
-
-        private PathGeometry _figure = new PathGeometry();
-        /// <summary>
-        /// геометрическое иписание фигуры
-        /// </summary>
-        public PathGeometry Figure
-        {
-            get
-            {
-                return _figure;
-            }
-            set
-            {
-                _figure = value;
-            }
-        }
+      
         //////цветовая палитра
         /// <summary>
         /// цвет заливки
@@ -66,20 +41,7 @@ namespace ARM_SHN.ElementControl
         /// обозначение
         /// </summary>
         public string Nodes { get; set; }
-        /// <summary>
-        /// пояснения
-        /// </summary>
-        public string Notes { get; set; }
-        /// <summary>
-        /// Индекс слоя
-        /// </summary>
-        public int ZIntex { get; set; }
-
-
-        /// <summary>
-        /// шестизначный номер станции контроля
-        /// </summary>
-        public int StationControl { get; set; }
+     
         /// <summary>
         /// шестизначный номер станции перехода
         /// </summary>
@@ -100,11 +62,15 @@ namespace ARM_SHN.ElementControl
         /// Конструктор
         /// </summary>
         /// <param name="geometry">геометрия объекта</param>
-        public AreaPicture(PathGeometry geometry, string path, double angle)
+        public AreaPicture(PathGeometry geometry, string path, double angle) : base(geometry)
         {
             this.path = path;
             this.angle = angle;
-            GeometryFigureCopy(geometry);
+            ViewModel.Stroke = _colorstroke;
+            if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
+                SetFillColor(path);
+            else
+                ViewModel.Fill = _colorfill;
         }
 
         public string InfoElement()
@@ -114,40 +80,10 @@ namespace ARM_SHN.ElementControl
 
         private void NewColor()
         {
-            Fill = _colorfill;
-            Stroke = _colorstroke;
+            ViewModel.Fill = _colorfill;
+            ViewModel.Stroke = _colorstroke;
         }
-        /// <summary>
-        /// формируем геометрию объкта
-        /// </summary>
-        /// <param name="geometry"></param>
-        private void GeometryFigureCopy(PathGeometry geometry)
-        {
-            foreach (PathFigure geo in geometry.Figures)
-            {
-                PathFigure newfigure = new PathFigure() { IsClosed = true };
-                newfigure.StartPoint = new Point(geo.StartPoint.X, geo.StartPoint.Y);
-                foreach (PathSegment seg in geo.Segments)
-                {
-                    //сегмент линия
-                    LineSegment lin = seg as LineSegment;
-                    if (lin != null)
-                    {
-                        newfigure.Segments.Add(new LineSegment() { Point = new Point(lin.Point.X, lin.Point.Y) });
-                        continue;
-                    }
-                }
-                _figure.Figures.Add(newfigure);
-            }
-            Stroke = _colorstroke;
-            if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
-                SetFillColor(path);
-            else
-                Fill = _colorfill;
-            //
-            _strokethickness *= LoadProject.ProejctGrafic.Scroll;
-            StrokeThickness = _strokethickness;
-        }
+       
 
         private void SetFillColor(string path)
         {
@@ -162,7 +98,7 @@ namespace ARM_SHN.ElementControl
                 RotateTransform transform = new RotateTransform(angle);
                 tb.Transform = transform;
                 tb.EndInit();
-                Fill = new ImageBrush(tb);
+                ViewModel.Fill = new ImageBrush(tb);
 
             }
             catch { }

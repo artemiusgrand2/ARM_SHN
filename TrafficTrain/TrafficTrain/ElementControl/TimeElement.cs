@@ -11,32 +11,10 @@ using ARM_SHN.WorkWindow;
 
 namespace ARM_SHN.ElementControl
 {
-    class TimeElement : Shape, IGraficElement, IText, IInfoElement
+    class TimeElement : BaseTextGraficElement, IText, IInfoElement
     {
         #region Переменные и свойства
-        /////геометрия элемента
-        /// <summary>
-        /// отрисовываемая геометрия
-        /// </summary>
-        protected override Geometry DefiningGeometry
-        {
-            get
-            {
-                return _figure;
-            }
-        }
-        private PathGeometry _figure = new PathGeometry();
-        /// <summary>
-        /// геометрическое иписание фигуры
-        /// </summary>
-        public PathGeometry Figure
-        {
-            get
-            {
-                return _figure;
-            }
-        }
-
+        
         //////цветовая фона
         public static Brush _color_fon = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
         /// <summary>
@@ -47,44 +25,6 @@ namespace ARM_SHN.ElementControl
         /// цвет рамки
         /// </summary>
         public static Brush _color_stroke = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
-        //////
-
-        private TextBlock _text = new TextBlock(){ FontWeight = FontWeights.Bold, TextWrapping = TextWrapping.Wrap, TextAlignment = TextAlignment.Center };
-        /// <summary>
-        /// тескт названия объекта
-        /// </summary>
-        public TextBlock Text
-        {
-            get
-            {
-                return _text;
-            }
-            set
-            {
-                _text = value;
-            }
-        }
-        /// <summary>
-        /// начальный размер текста
-        /// </summary>
-        double _startfontsize;
-        /// <summary>
-        /// первоначальное разположение текста
-        /// </summary>
-        Thickness _startmargin;
-        /// <summary>
-        /// обозначение
-        /// </summary>
-        public string Notes { get; set; }
-
-        /// <summary>
-        /// Индекс слоя
-        /// </summary>
-        public int ZIntex { get; set; }
-
-        Window win;
-
-        static bool isActive = false;
 
         public string NameUl
         {
@@ -94,8 +34,6 @@ namespace ARM_SHN.ElementControl
             }
         }
 
-        public int StationNumber { get; set; }
-
         #endregion
 
         /// <summary>
@@ -104,22 +42,23 @@ namespace ARM_SHN.ElementControl
         /// <param name="stationnumber">шестизначный номер станции</param>
         /// <param name="geometry">геометрия объекта</param>
         /// <param name="name">название объекта</param>
-        public TimeElement(PathGeometry geometry, double marginX, double marginY, double fontsize, Window win)
-        {
-            this.win = win;
-            _text.FontSize = fontsize;
-            _text.Margin = new Thickness(marginX, marginY,0,0);
-            _startfontsize = fontsize;
-            _startmargin = new Thickness(marginX, marginY, 0, 0);
-            Flashing();
+        public TimeElement(PathGeometry geometry, double marginX, double marginY, double fontsize):base(geometry)
+        {;
+            ViewModel.FontSize = fontsize;
+            ViewModel.Margin = new Thickness(marginX, marginY, 0, 0);
+            ViewModel.FontWeight = FontWeights.Bold;
+            ViewModel.TextWrapping = TextWrapping.Wrap;
+            ViewModel.TextAlignment = TextAlignment.Center;
             //
-            GeometryFigureCopy(geometry);
+            ViewModel.Stroke = _color_stroke;
+            Fill = _color_fon;
+            ViewModel.Foreground = _color_text;
             //обработка времени
             Connections.NewSecond += StartTime;
             LoadColorControl.NewColor += NewColor;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Connections.NewSecond -= StartTime;
             LoadColorControl.NewColor -= NewColor;
@@ -127,14 +66,14 @@ namespace ARM_SHN.ElementControl
 
         private void NewColor()
         {
-            Stroke = _color_stroke;
-            _text.Foreground = _color_text;
-            Fill = _color_fon;
+            ViewModel.Stroke = _color_stroke;
+            ViewModel.Foreground = _color_text;
+            ViewModel.Fill = _color_fon;
         }
 
         public string InfoElement()
         {
-            string result = string.Format("{0}", DateTime.Now.Day);
+            var result = string.Format("{0}", DateTime.Now.Day);
             switch (DateTime.Now.Month)
             {
                 case 1:
@@ -201,69 +140,13 @@ namespace ARM_SHN.ElementControl
                     break;
             }
             //
-            return string.Format("{0} {1}", result, Notes);
+            return $"{result} {Notes}";
         }
 
         private void StartTime()
         {
-            Dispatcher.Invoke(new Action(() => Flashing()));
-        }
-        /// <summary>
-        /// обработка времени
-        /// </summary>
-        private void Flashing()
-        {
-            if (!isActive)
-            {
-                if (win.Visibility == System.Windows.Visibility.Visible)
-                {
-                    win.Activate();
-                    isActive = !isActive;
-                }
-            }
-            string hour, minute, second;
-            if (DateTime.Now.Hour < 10)
-                hour = string.Format("0{0}", DateTime.Now.Hour);
-            else hour = DateTime.Now.Hour.ToString();
-            //
-            if (DateTime.Now.Minute < 10)
-                minute = string.Format("0{0}", DateTime.Now.Minute);
-            else minute = DateTime.Now.Minute.ToString();
-            //
-            if (DateTime.Now.Second < 10)
-                second = string.Format("0{0}", DateTime.Now.Second);
-            else second = DateTime.Now.Second.ToString();
-            //
-            _text.Text = string.Format("{0:D2}.{1:D2}.{2} {3:D2}:{4:D2}:{5:D2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year.ToString().Substring(2), DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            ViewModel.Text = string.Format("{0:D2}.{1:D2}.{2} {3:D2}:{4:D2}:{5:D2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year.ToString().Remove(0, 2), DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
         }
 
-        /// <summary>
-        /// формируем геометрию объкта
-        /// </summary>
-        /// <param name="geometry"></param>
-        private void GeometryFigureCopy(PathGeometry geometry)
-        {
-            foreach (PathFigure geo in geometry.Figures)
-            {
-                PathFigure newfigure = new PathFigure() {  IsClosed = true};
-                newfigure.StartPoint = new Point(geo.StartPoint.X, geo.StartPoint.Y);
-                foreach (PathSegment seg in geo.Segments)
-                {
-                    //сегмент линия
-                    LineSegment lin = seg as LineSegment;
-                    if (lin != null)
-                    {
-                        newfigure.Segments.Add(new LineSegment() { Point = new Point(lin.Point.X, lin.Point.Y) });
-                        continue;
-                    }
-                }
-                _figure.Figures.Add(newfigure);
-            }
-            //делаем элемент бесцветным
-            Stroke =  _color_stroke;
-            Fill = _color_fon;
-            _text.Foreground = _color_text;
-            //
-        }
     }
 }

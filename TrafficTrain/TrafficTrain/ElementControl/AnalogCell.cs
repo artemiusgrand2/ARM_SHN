@@ -12,6 +12,7 @@ using ARM_SHN.EditText;
 
 using SCADA.Common.Enums;
 using SCADA.Common.SaveElement;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace ARM_SHN.ElementControl
@@ -19,66 +20,15 @@ namespace ARM_SHN.ElementControl
     /// <summary>
     /// класс индикации шильд
     /// </summary>
-    class AnalogCell : Shape, IGraficElement, IDisposable, IText, ISelectElement, IInfoElement
+    class AnalogCell : BaseTextGraficElement, IText, ISelectElement, IInfoElement
     {
         #region Переменные и свойства
-        /////геометрия элемента
-        /// <summary>
-        /// отрисовываемая геометрия
-        /// </summary>
-        protected override Geometry DefiningGeometry
-        {
-            get
-            {
-                return _figure;
-            }
-        }
-        private PathGeometry _figure = new PathGeometry();
-        /// <summary>
-        /// геометрическое иписание фигуры
-        /// </summary>
-        public PathGeometry Figure
-        {
-            get
-            {
-                return _figure;
-            }
-            set
-            {
-                _figure = value;
-            }
-        }
+       
 
-        //////основные свойства пути
-
-        private int m_stationControl = -1;
-        /// <summary>
-        /// шестизначный номер станции контроля
-        /// </summary>
-        public int StationControl
-        {
-            get
-            {
-                return m_stationControl;
-            }
-            set
-            {
-               // m_stationControl = value;
-            }
-        }
         /// <summary>
         /// шестизначный номер станции перехода
         /// </summary>
         public int StationTransition { get; set; }
-        /// <summary>
-        /// название станции
-        /// </summary>
-        public string StationName { get; set; }
-        /// <summary>
-        /// название элемента
-        /// </summary>
-        public string NameElement { get; set; }
-        ////////
 
         //////цветовая палитра
         /// <summary>
@@ -97,49 +47,13 @@ namespace ARM_SHN.ElementControl
         /// </summary>
         double m_strokethickness = 1 * SystemParameters.CaretWidth;
 
-        private TextBlock m_text = new TextBlock();
-        /// <summary>
-        /// тескт названия объекта
-        /// </summary>
-        public TextBlock Text
-        {
-            get
-            {
-                return m_text;
-            }
-            set
-            {
-                m_text = value;
-            }
-        }
-        static double _ktextweight = 1.6;
-        static double _ktextheight = 0.8;
-        /// <summary>
-        /// начальный размер текста
-        /// </summary>
-        double m_startfontsize;
-        /// <summary>
-        /// первоначальное разположение текста
-        /// </summary>
-        Thickness m_startmargin;
-        /// <summary>
-        /// поворот текста
-        /// </summary>
-        public double RotateText { get; set; }
-        /// <summary>
-        /// пояснения
-        /// </summary>
-        public string Notes { get; set; }
-        /// <summary>
-        /// Индекс слоя
-        /// </summary>
-        public int ZIntex { get; set; }
+ 
 
         public string NameUl
         {
             get
             {
-                return NameElement;
+                return NameObject;
             }
         }
         private string m_noData = "--";
@@ -178,25 +92,23 @@ namespace ARM_SHN.ElementControl
         /// <param name="stationnumber">шестизначный номер станции</param>
         /// <param name="geometry">геометрия объекта</param>
         /// <param name="name">название объекта</param>
-        public AnalogCell(int station, PathGeometry geometry, string name, double marginX, double marginY, double fontsize, double rotate, int tableId, string nameItem, string format, string factor, FieldType type)
+        public AnalogCell(PathGeometry geometry, string name, double marginX, double marginY, double fontsize, double rotate, int tableId, string nameItem, string format, string factor, FieldType type)
+            :base(name, ViewElement.analogCell, geometry, rotate)
         {
-            m_stationControl = station;
-            NameElement = name;
+            ViewModel.Text = m_noData;
+            ViewModel.Foreground = m_colortext;
+            ViewModel.FontSize = fontsize;
+            ViewModel.Margin = new Thickness(marginX, marginY, 0, 0);
+            ViewModel.RenderTransform = new RotateTransform(RotateText);
+            ViewModel.StrokeThickness = LoadProject.ProejctGrafic.Scroll * SystemParameters.CaretWidth;
+            ViewModel.Fill = m_color_fon_defult;
+            ViewModel.Stroke = m_color_stroke_defult;
+            //
             m_tableId = tableId;
             m_nameItem = nameItem;
-            m_text.Foreground = m_colortext;
-            m_text.FontSize = fontsize;
-            RotateText = rotate;
             m_type = type;
-            m_text.Margin = new Thickness(marginX, marginY, 0, 0);
-            m_text.RenderTransform = new RotateTransform(RotateText);
             m_factor = AnalisFactor(factor);
             AnalisFormat(format);
-            //первоначальные координаты
-            m_startfontsize = fontsize;
-            m_startmargin = new Thickness(marginX, marginY, 0, 0);
-            GeometryFigureCopy(geometry);
-            m_text.Text = m_noData;
             LocationText();
         }
 
@@ -229,35 +141,31 @@ namespace ARM_SHN.ElementControl
             return result;
         }
 
-        public void Dispose() { }
 
         public void AnalisNewData()
         {
-            Dispatcher.Invoke(new Action(() =>
+            if (IsFind)
             {
-                if (IsFind)
+                if (Core.Stations.TryGetValue(StationControl, out var stationfind))
                 {
-                    if (Core.Stations.TryGetValue(StationControl, out var stationfind))
+                    if (stationfind.TryGetValue(m_tableId, out var tablefind))
                     {
-                        if (stationfind.TryGetValue(m_tableId, out var tablefind))
+                        var data = tablefind.GetValue(m_nameItem);
+                        //
+                        if (data.Count > 0)
                         {
-                            var data = tablefind.GetValue(m_nameItem);
-                            //
-                            if (data.Count > 0)
+                            bool isNotValue;
+                            double val = GetValue(data[0].Value, out isNotValue);
+                            var valStr = (isNotValue) ? m_noData : GetFormatString(tablefind.Corrector * val * m_factor);
+                            if (valStr != ViewModel.Text)
                             {
-                                bool isNotValue;
-                                double val = GetValue(data[0].Value, out isNotValue);
-                                var valStr = (isNotValue) ? m_noData : GetFormatString(tablefind.Corrector * val* m_factor);
-                                if (valStr != m_text.Text)
-                                {
-                                    m_text.Text = valStr;
-                                    LocationText();
-                                }
+                                ViewModel.Text = valStr;
+                                LocationText();
                             }
                         }
                     }
                 }
-            }));
+            }
         }
 
         private string GetFormatString(double data)
@@ -344,57 +252,6 @@ namespace ARM_SHN.ElementControl
             return buffer.ToArray();
         }
 
-        /// <summary>
-        /// формируем геометрию объкта
-        /// </summary>
-        /// <param name="geometry"></param>
-        private void GeometryFigureCopy(PathGeometry geometry)
-        {
-            foreach (PathFigure geo in geometry.Figures)
-            {
-                PathFigure newfigure = new PathFigure() { IsClosed = true };
-                newfigure.StartPoint = new Point(geo.StartPoint.X, geo.StartPoint.Y);
-                foreach (PathSegment seg in geo.Segments)
-                {
-                    //сегмент линия
-                    LineSegment lin = seg as LineSegment;
-                    if (lin != null)
-                    {
-                        newfigure.Segments.Add(new LineSegment() { Point = new Point(lin.Point.X, lin.Point.Y) });
-                        continue;
-                    }
-                    //сегмент арка
-                    ArcSegment arc = seg as ArcSegment;
-                    if (arc != null)
-                    {
-                        newfigure.Segments.Add(new ArcSegment() { Point = new Point(arc.Point.X, arc.Point.Y), Size = new Size(arc.Size.Width, arc.Size.Height) });
-                        continue;
-                    }
-                }
-                _figure.Figures.Add(newfigure);
-            }
-            //
-            Fill = m_color_fon_defult;
-            Stroke = m_color_stroke_defult;
-            m_strokethickness *= LoadProject.ProejctGrafic.Scroll;
-            StrokeThickness = m_strokethickness;
-        }
-
-
-        private void LocationText()
-        {
-            //центрируем надпись
-            double width = AlingmentText.LenghtStorona(((ArcSegment)_figure.Figures[0].Segments[_figure.Figures[0].Segments.Count - 2]).Point, _figure.Figures[0].StartPoint);
-            double height = AlingmentText.LenghtStorona(((ArcSegment)_figure.Figures[0].Segments[2]).Point, _figure.Figures[0].StartPoint);
-            m_text.FontSize = AlingmentText.FontSizeText(_ktextweight, _ktextheight,
-                new Rectangle()
-                {
-                    Width = width,
-                    Height = height
-                },
-            m_text.Text, RotateText);
-            m_text.Margin = AlingmentText.AlingmentCenter(_figure.Figures[0].StartPoint.X, _figure.Figures[0].StartPoint.Y, width, height, m_text, RotateText);
-        }
-
+    
     }
 }

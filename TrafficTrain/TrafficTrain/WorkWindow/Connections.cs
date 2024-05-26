@@ -70,8 +70,7 @@ namespace ARM_SHN.WorkWindow
         private void Takt_Elapsed(object sender, ElapsedEventArgs e)
         {
             Taktupdate = !Taktupdate;
-            if (NewTart != null)
-                NewTart();
+            NewTart?.Invoke();
         }
 
         /// <summary>

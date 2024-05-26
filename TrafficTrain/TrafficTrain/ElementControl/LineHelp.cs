@@ -11,75 +11,20 @@ using ARM_SHN.WorkWindow;
 using SCADA.Common.Enums;
 using SCADA.Common.SaveElement;
 using SCADA.Common.ImpulsClient;
+using System.Windows.Media.Media3D;
 
 namespace ARM_SHN.ElementControl
 {
     /// <summary>
     /// класс описывающий вспомагательную линию
     /// </summary>
-    class LineHelp : Shape, IGraficElement, IInfoElement, ISelectElement, IDisposable, IIndicationEl
+    class LineHelp : BaseGraficElement, IInfoElement, ISelectElement, IIndicationEl
     {
         #region Переменные и свойства
-        /////геометрия элемента
-        /// <summary>
-        /// отрисовываемая геометрия
-        /// </summary>
-        protected override Geometry DefiningGeometry
-        {
-            get
-            {
-                return m_figure;
-            }
-        }
-        private PathGeometry m_figure = new PathGeometry();
-        /// <summary>
-        /// геометрическое иписание фигуры
-        /// </summary>
-        public PathGeometry Figure
-        {
-            get
-            {
-                return m_figure;
-            }
-            set
-            {
-                m_figure = value;
-            }
-        }
-      
-        /// <summary>
-        /// толщина контура объкта по умолчанию
-        /// </summary>
-        double m_strokethickness = 1 * SystemParameters.CaretWidth;
-        /// <summary>
-        /// Имя цвета
-        /// </summary>
-        public string NameColor { get; set; }
-        //////основные свойства 
-        /// <summary>
-        /// шестизначный номер станции к которой принадлежит активная линия
-        /// </summary>
-        public int StationControl { get; set; }
-
-        private int m_stationRight = -1;
         /// <summary>
         /// шестизначный номер станции справа
         /// </summary>
-        public int StationTransition
-        {
-            get
-            {
-                return m_stationRight;
-            }
-            set
-            {
-                m_stationRight = value;
-            }
-        }
-        /// <summary>
-        /// название активной линии
-        /// </summary>
-        public string NameLine { get; set; }
+        public int StationTransition { get; set; }
         /// <summary>
         /// коллекция возможных состояний элемента станционный путь
         /// </summary>
@@ -134,20 +79,12 @@ namespace ARM_SHN.ElementControl
         /// приоритет отображения фона
         /// </summary>
         List<Viewmode> _priority_stroke = new List<Viewmode>() { Viewmode.occupation, Viewmode.cutting, Viewmode.locking, Viewmode.lockingM, Viewmode.lockingY, Viewmode.passage };
-        /// <summary>
-        /// пояснения
-        /// </summary>
-        public string Notes { get; set; }
 
         private IDictionary<StatesControl, string> m_messages = new Dictionary<StatesControl, string>();
-        /// <summary>
-        /// Индекс слоя
-        /// </summary>
-        public int ZIntex { get; set; }
 
         private bool m_visible = true;
 
-        public bool IsVisible
+        public new bool IsVisible
         {
             get
             {
@@ -159,7 +96,7 @@ namespace ARM_SHN.ElementControl
         {
             get
             {
-                return NameLine;
+                return NameObject;
             }
         }
 
@@ -170,12 +107,9 @@ namespace ARM_SHN.ElementControl
         /// Конструктор
         /// </summary>
         /// <param name="geometry">геометрия объекта</param>
-        public LineHelp(PathGeometry geometry, double Weight, string namecolor, string name, Dictionary<Viewmode, StateElement> impulses, bool isVisible)
+        public LineHelp(PathGeometry geometry, double weight, string namecolor, string name, Dictionary<Viewmode, StateElement> impulses, bool isVisible):
+            base(name, ViewElement.line, geometry, false)
         {
-            if (namecolor == null)
-                NameColor = string.Empty;
-            else NameColor = namecolor;
-            NameLine = name;
             Impulses = AnalisCollectionStateControl(impulses);
             m_visible = isVisible;
             NewColor();
@@ -185,16 +119,16 @@ namespace ARM_SHN.ElementControl
                 Connections.NewTart += StartFlashing;
             }
             //
-            GeometryFigureCopy(geometry, Weight);
+            if (weight < 1)
+                weight = LoadProject.ProejctGrafic.Scroll * SystemParameters.CaretWidth;
+            ViewModel.StrokeThickness = weight;
             LoadColorControl.NewColor += NewColor;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             if (Impulses.Count > 0)
-            {
                 Connections.NewTart -= StartFlashing;
-            }
             //
             LoadColorControl.NewColor -= NewColor;
         }
@@ -205,7 +139,7 @@ namespace ARM_SHN.ElementControl
         /// <param name="impulses"></param>
         private Dictionary<Viewmode, StateElement> AnalisCollectionStateControl(Dictionary<Viewmode, StateElement> impulses)
         {
-            foreach (KeyValuePair<Viewmode, StateElement> control in impulses)
+            foreach (var control in impulses)
             {
                 //смотрим с каким графическим объектом работает контроль
                 foreach (var stroke_element in _priority_stroke)
@@ -223,7 +157,7 @@ namespace ARM_SHN.ElementControl
 
         private void StartFlashing()
         {
-            Dispatcher.Invoke(new Action(() => Flashing()));
+            Flashing();
         }
         /// <summary>
         /// обрабатываем мирцание
@@ -245,7 +179,7 @@ namespace ARM_SHN.ElementControl
                     switch (control.ViewControlDraw)
                     {
                         case ViewElementDraw.stroke:
-                            Stroke = brushes[0];
+                            ViewModel.Stroke = brushes[0];
                             break;
                     }
                 }
@@ -253,7 +187,7 @@ namespace ARM_SHN.ElementControl
                     switch (control.ViewControlDraw)
                     {
                         case ViewElementDraw.stroke:
-                            Stroke = brushes[1];
+                            ViewModel.Stroke = brushes[1];
                             break;
                     }
             }
@@ -309,9 +243,9 @@ namespace ARM_SHN.ElementControl
                     if (Imp.Key == Viewmode.passage)
                     {
                         if (Imp.Value.state == StatesControl.activ)
-                            Canvas.SetZIndex(this, int.MaxValue);
+                            ViewModel.ZIndex = int.MaxValue;
                         else
-                            Canvas.SetZIndex(this, int.MinValue);
+                            ViewModel.ZIndex = int.MinValue;
                     }
                     //
                      result.AddRange(Diagnostic.DiagnosticControl(Imp.Value));
@@ -372,13 +306,13 @@ namespace ARM_SHN.ElementControl
                 if (!CheckUpdate)
                 {
                     if (!_update_stroke)
-                        Stroke = _colornotcontrol;
+                        ViewModel.Stroke = _colornotcontrol;
                 }
             }
             else
             {
                 if (!CheckUpdate)
-                    Stroke = _colornotcontrol;
+                    ViewModel.Stroke = _colornotcontrol;
             }
         }
 
@@ -396,19 +330,19 @@ namespace ARM_SHN.ElementControl
                         switch (control.Name)
                         {
                             case Viewmode.locking:
-                                Stroke = _colorlocking;
+                                ViewModel.Stroke = _colorlocking;
                                 break;
                             case Viewmode.lockingM:
-                                Stroke = _colorlockingM;
+                                ViewModel.Stroke = _colorlockingM;
                                 break;
                             case Viewmode.lockingY:
-                                Stroke = _colorlockingY;
+                                ViewModel.Stroke = _colorlockingY;
                                 break;
                             case Viewmode.occupation:
-                                Stroke = _color_active;
+                                ViewModel.Stroke = _color_active;
                                 break;
                             case Viewmode.passage:
-                                Stroke = _color_pasive;
+                                ViewModel.Stroke = _color_pasive;
                                 break;
                         }
                         break;
@@ -417,8 +351,8 @@ namespace ARM_SHN.ElementControl
                         {
                             case ViewElementDraw.stroke:
                                 if (Impulses.ContainsKey(Viewmode.passage))
-                                    Stroke = _color_passage;
-                                else Stroke = _color_pasive;
+                                    ViewModel.Stroke = _color_passage;
+                                else ViewModel.Stroke = _color_pasive;
                                 break;
                         }
                         break;
@@ -426,7 +360,7 @@ namespace ARM_SHN.ElementControl
                         switch (control.ViewControlDraw)
                         {
                             case ViewElementDraw.stroke:
-                                Stroke = _colornotcontrol;
+                                ViewModel.Stroke = _colornotcontrol;
                                 break;
                         }
                         break;
@@ -442,7 +376,7 @@ namespace ARM_SHN.ElementControl
                 {
                     foreach (var imp in Impulses)
                         imp.Value.state = StatesControl.nocontrol;
-                    Stroke = _colornotcontrol;
+                    ViewModel.Stroke = _colornotcontrol;
                 }
             }
         }
@@ -454,45 +388,10 @@ namespace ARM_SHN.ElementControl
             else
             {
                 if (IsVisible)
-                    Stroke = _colordefultlinehelp;
+                    ViewModel.Stroke = _colordefultlinehelp;
                 else
-                    Stroke = _color_active;
+                    ViewModel.Stroke = _color_active;
             }
-        }
-
-        /// <summary>
-        /// формируем геометрию объкта
-        /// </summary>
-        /// <param name="geometry"></param>
-        private void GeometryFigureCopy(PathGeometry geometry, double Weight)
-        {
-            foreach (PathFigure geo in geometry.Figures)
-            {
-                PathFigure newfigure = new PathFigure(){IsClosed = false};
-                newfigure.StartPoint = new Point(geo.StartPoint.X, geo.StartPoint.Y);
-                foreach (PathSegment seg in geo.Segments)
-                {
-                    //сегмент линия
-                    LineSegment lin = seg as LineSegment;
-                    if (lin != null)
-                    {
-                        newfigure.Segments.Add(new LineSegment() { Point = new Point(lin.Point.X, lin.Point.Y) });
-                        continue;
-                    }
-                }
-                m_figure.Figures.Add(newfigure);
-            }
-            //
-            if (Weight < 1)
-                StrokeThickness = m_strokethickness;
-            else
-            {
-                StrokeThickness = Weight;
-                m_strokethickness = Weight;
-            }
-            //
-            m_strokethickness *= LoadProject.ProejctGrafic.Scroll;
-            StrokeThickness = m_strokethickness;
         }
     }
 }

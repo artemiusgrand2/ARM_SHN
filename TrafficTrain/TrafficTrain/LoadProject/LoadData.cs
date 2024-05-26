@@ -823,9 +823,9 @@ namespace ARM_SHN
                                 {
                                     TextHelpSave text = el as TextHelpSave;
                                     TextHelp newelement = new TextHelp(GetPathGeometry(el.Figures), text.Left * System.Windows.SystemParameters.CaretWidth,
-                                                                    text.Top * System.Windows.SystemParameters.CaretWidth, text.FontSize * System.Windows.SystemParameters.CaretWidth, text.Text);
+                                                                    text.Top * System.Windows.SystemParameters.CaretWidth, text.FontSize * System.Windows.SystemParameters.CaretWidth, text.Text, text.Angle);
                                     //
-                                    newelement.Text.RenderTransform = new RotateTransform(text.Angle);
+                                    //newelement.Text.RenderTransform = new RotateTransform(text.Angle);
                                     newelement.Text.MaxWidth = text.Width * System.Windows.SystemParameters.CaretWidth;
                                     newelement.Text.MaxHeight = text.Height * System.Windows.SystemParameters.CaretWidth;
                                     SetSettingsObject(newelement, el, DrawCanvas, result, visible);
@@ -890,11 +890,12 @@ namespace ARM_SHN
                                                             string item = string.Empty;
                                                             var type = FieldType.UintType;
                                                             var find = false;
-                                                            var station = el.StationNumber;
+                                                            var stationParse = el.StationNumber;
                                                             //
                                                             foreach (var row in rows)
                                                             {
-                                                                find = GetIdItemTable(el.StationNumber, row.Value.Impuls, ref tableId, ref item, nameKey, ref type, ref station);
+                                                                find = GetIdItemTable(el.StationNumber, row.Value.Impuls, ref tableId, ref item, nameKey, ref type, ref stationParse);
+                                                                el.StationNumber = stationParse;
                                                                 format = (row.Value.Messages.ContainsKey(StatesControl.activ)) ? row.Value.Messages[StatesControl.activ] : string.Empty;
                                                                 factor = (row.Value.Messages.ContainsKey(StatesControl.pasiv)) ? row.Value.Messages[StatesControl.pasiv] : string.Empty;
                                                                 if (row.Value.Messages.TryGetValue(StatesControl.nocontrol, out var selectMessage))
@@ -907,7 +908,7 @@ namespace ARM_SHN
                                                                 break;
                                                             }
                                                             //
-                                                            var newelement = new AnalogCell(station, GetPathGeometry(el.Figures), nameKey,
+                                                            var newelement = new AnalogCell(GetPathGeometry(el.Figures), nameKey,
                                                             track.Xinsert * System.Windows.SystemParameters.CaretWidth,
                                                             track.Yinsert * System.Windows.SystemParameters.CaretWidth,
                                                             track.TextSize * System.Windows.SystemParameters.CaretWidth, track.Angle, tableId, item, format, factor, type);
@@ -947,31 +948,10 @@ namespace ARM_SHN
                                                                                  AnalisServiceImpulses(FullImpulsesElement((int)el.StationNumber, NumberContolTS.big_path,
                                                                                  string.Format("{0}-{1}", NumberContolTS.big_path, nameKey))));
                                                 newelement.Text.FontWeight = FontWeights.Bold;
-                                                //проверяем есть ли электрофикация пути
-                                                if (newelement.Impulses.ContainsKey(Viewmode.electrification))
-                                                    newelement.ViewTraction = ViewTraction.electric_traction;
-                                                //проверяем есть ли на пути пассжирская платформа
-                                                if (newelement.Impulses.ContainsKey(Viewmode.pass))
-                                                    newelement.IsPlatform = true;
                                                 SetSettingsObject(newelement, el, DrawCanvas, result, visible);
                                             }
                                             break;
                                     }
-                                }
-                                break;
-                            case ViewElement.namestation:
-                                {
-                                    NameStationSave namestation = el as NameStationSave;
-                                    NameStation newelement = new NameStation(GetPathGeometry(el.Figures), nameKey,
-                                                                                 namestation.Left * System.Windows.SystemParameters.CaretWidth,
-                                                                                 namestation.Top * System.Windows.SystemParameters.CaretWidth,
-                                                                                 namestation.FontSize * System.Windows.SystemParameters.CaretWidth);
-                                    //
-                                    newelement.Text.RenderTransform = new RotateTransform(namestation.Angle);
-                                    newelement.Text.MaxWidth = namestation.Width * System.Windows.SystemParameters.CaretWidth;
-                                    newelement.Text.MaxHeight = namestation.Height * System.Windows.SystemParameters.CaretWidth;
-                                    //выводи объекта на панель
-                                    SetSettingsObject(newelement, el, DrawCanvas, result, visible);
                                 }
                                 break;
                             case ViewElement.time:
@@ -980,7 +960,7 @@ namespace ARM_SHN
                                     TimeElement newelement = new TimeElement(GetPathGeometry(el.Figures),
                                                                          time.Left * System.Windows.SystemParameters.CaretWidth,
                                                                          time.Top * System.Windows.SystemParameters.CaretWidth,
-                                                                         time.FontSize * System.Windows.SystemParameters.CaretWidth, win);
+                                                                         time.FontSize * System.Windows.SystemParameters.CaretWidth);
                                     //
                                     newelement.Text.RenderTransform = new RotateTransform(time.Angle);
                                     newelement.Text.MaxWidth = time.Width * System.Windows.SystemParameters.CaretWidth;
@@ -1234,7 +1214,7 @@ namespace ARM_SHN
                         var line = element as LineHelp;
                         if (line != null)
                         {
-                            if (!string.IsNullOrEmpty(name) && line.NameLine == name && !line.IsVisible)
+                            if (!string.IsNullOrEmpty(name) && line.NameObject == name && !line.IsVisible)
                             {
                                 element.Visibility = Visibility.Visible;
                             }

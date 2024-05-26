@@ -11,6 +11,7 @@ using ARM_SHN.Interface;
 
 using SCADA.Common.Models;
 using SCADA.Common.Enums;
+using System.Windows.Media.Media3D;
 
 namespace ARM_SHN.ElementControl
 {
@@ -30,7 +31,7 @@ namespace ARM_SHN.ElementControl
         /// <summary>
         /// геометрическое иписание фигуры
         /// </summary>
-        private PathGeometry _geometry = new PathGeometry();
+        protected PathGeometry _geometry = new PathGeometry();
 
         /// <summary>
         /// обозначение
@@ -57,9 +58,7 @@ namespace ARM_SHN.ElementControl
         public GraficElementModel ViewModel { get; private set; }
 
 
-        public int StationControl { get; set; }
 
-        public int StationTransition { get; set; }
 
         public string NameObject
         {
@@ -83,6 +82,32 @@ namespace ARM_SHN.ElementControl
             }
         }
 
+        public int StationControl
+        {
+            get
+            {
+                if (ViewModel != null)
+                    return ViewModel.StationNumber;
+                //
+                return 0;
+            }
+            set
+            {
+                ViewModel.StationNumber = value;
+            }
+        }
+
+        public new virtual bool IsMouseOver
+        {
+            get
+            {
+                return base.IsMouseOver;
+            }
+        }
+
+        protected Point _startPoint;
+        protected double _width, _height;
+
         public BaseGraficElement(PathGeometry geometry, bool IsClosed = false, bool IsFilled = true, int indexFigure = -1)
         {
             ViewModel = new GraficElementModel();
@@ -90,9 +115,9 @@ namespace ARM_SHN.ElementControl
             CreateGeometry(geometry, IsClosed, IsFilled, indexFigure);
         }
 
-        public BaseGraficElement(string name, int stationNumber, ViewElement view, TypeView typeView, PathGeometry geometry, bool IsClosed = false, bool IsFilled = true, int indexFigure = -1)
+        public BaseGraficElement(string name, ViewElement view, PathGeometry geometry, bool IsClosed = false, bool IsFilled = true, int indexFigure = -1)
         {
-            ViewModel = new GraficElementModel(name, stationNumber, view, typeView);
+            ViewModel = new GraficElementModel(name, view);
             SetBindins(ViewModel);
             CreateGeometry(geometry, IsClosed, IsFilled, indexFigure);
         }
@@ -104,16 +129,16 @@ namespace ARM_SHN.ElementControl
             CreateGeometry(geometry, false, true, indexFigure);
         }
 
-        public BaseGraficElement(string name, int stationNumber, ViewElement view, TypeView typeView, PathGeometry geometry, int indexFigure)
+        public BaseGraficElement(string name, ViewElement view, PathGeometry geometry, int indexFigure)
         {
-            ViewModel = new GraficElementModel(name, stationNumber, view, typeView);
+            ViewModel = new GraficElementModel(name, view);
             SetBindins(ViewModel);
             CreateGeometry(geometry, false, true, indexFigure);
         }
 
-        public BaseGraficElement(string name, int stationNumber, ViewElement view, TypeView typeView, PathGeometry geometry)
+        public BaseGraficElement(string name, ViewElement view,PathGeometry geometry)
         {
-            ViewModel = new GraficElementModel(name, stationNumber, view, typeView);
+            ViewModel = new GraficElementModel(name, view);
             SetBindins(ViewModel);
             CreateGeometry(geometry, false, true, -1);
         }
@@ -143,24 +168,20 @@ namespace ARM_SHN.ElementControl
             this.SetBinding(Canvas.ZIndexProperty, bindingZIndex);
         }
 
-        protected virtual bool CheckMouseOver()
-        {
-            return IsMouseOver;
-        }
-
         protected virtual void CreateGeometry(PathGeometry geometry, bool IsClosed, bool IsFilled, int indexFigure)
         {
             if (geometry == null)
                 return;
             //
             int index = 0;
+            var bufferPoints = new List<Point>();
             foreach (PathFigure geo in geometry.Figures)
             {
                 PathFigure newfigure = new PathFigure() { IsClosed = IsClosed };
                 if (index == 0 && !IsFilled)
                     newfigure.IsFilled = IsFilled;
                 newfigure.StartPoint = new Point(geo.StartPoint.X, geo.StartPoint.Y);
-                var bufferPoints = new List<Point>();
+                _startPoint = new Point(geo.StartPoint.X, geo.StartPoint.Y);
                 bufferPoints.Add(newfigure.StartPoint);
                 foreach (PathSegment seg in geo.Segments)
                 {
@@ -194,6 +215,9 @@ namespace ARM_SHN.ElementControl
                 }
                 index++;
             }
+            //
+            _height = bufferPoints.Max(y => y.Y) - bufferPoints.Min(y => y.Y);
+            _width = bufferPoints.Max(x => x.X) - bufferPoints.Min(x => x.X);
         }
 
     }

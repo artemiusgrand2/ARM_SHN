@@ -22,8 +22,7 @@ namespace ARM_SHN
 
         public static void UpdateColor()
         {
-            if (NewColor != null)
-                NewColor();
+            NewColor?.Invoke();
         }
         public static void AnalisLoad()
         {
@@ -101,11 +100,6 @@ namespace ARM_SHN
                                    status9, status10, status11, status12, status13, status14, status15, status16;
                 //
                 ComBoxColorNames.ItemsSource = LoadProject.ColorConfiguration.ColorNames;
-
-                status1 = new ControlColorStatus("Номер поезда", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.NameStation.Train, window, NameStation._color_train, EnumColor.NameStationTrain) });
-                status2 = new ControlColorStatus("По умолчанию", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.NameStation.Track, window, NameStation._color_track, EnumColor.NameStationTrack) });
-                ControlColorElement namestation = new ControlColorElement("Название станции", new List<ControlColorStatus>() { status1, status2 });
-                MainPanel.Children.Add(namestation);
                 //Рамка станции
                 status1 = new ControlColorStatus("Фон", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.AreaStation.Fon, window, RamkaStation._colorfill, EnumColor.AreaStationFon) });
                 status2 = new ControlColorStatus("Граница", new List<ControlColor>() { new ControlColor(LoadProject.ColorConfiguration.AreaStation.Stroke, window, RamkaStation._colorstroke, EnumColor.AreaStationStroke) });

@@ -17,58 +17,15 @@ namespace ARM_SHN.ElementControl
     /// <summary>
     /// класс индикации шильд
     /// </summary>
-    class HelpElement : Shape, IGraficElement,  ISelectElement, IDisposable, IText, IIndicationEl
+    class HelpElement : BaseTextGraficElement, ISelectElement, IText, IIndicationEl
     {
         #region Переменные и свойства
-        /////геометрия элемента
-        /// <summary>
-        /// отрисовываемая геометрия
-        /// </summary>
-        protected override Geometry DefiningGeometry
-        {
-            get
-            {
-                return _figure;
-            }
-        }
-        private PathGeometry _figure = new PathGeometry();
-        /// <summary>
-        /// геометрическое иписание фигуры
-        /// </summary>
-        public PathGeometry Figure
-        {
-            get
-            {
-                return _figure;
-            }
-            set
-            {
-                _figure = value;
-            }
-        }
-        ///////
-        /// <summary>
-        /// показывет выбран ли элемент для построения команды
-        /// </summary>
-        public bool SelectElement { get; set; }
 
         //////основные свойства пути
-        /// <summary>
-        /// шестизначный номер станции контроля
-        /// </summary>
-        public int StationControl { get; set; }
         /// <summary>
         /// шестизначный номер станции перехода
         /// </summary>
         public int StationTransition { get; set; }
-        /// <summary>
-        /// название станции
-        /// </summary>
-        public string StationName { get; set; }
-        /// <summary>
-        /// название элемента
-        /// </summary>
-        public string NameElement { get; set; }
         ////////
 
         //////цветовая палитра
@@ -114,80 +71,16 @@ namespace ARM_SHN.ElementControl
         /// </summary>
         double _strokethickness = 1 * SystemParameters.CaretWidth;
 
-        private TextBlock m_text = new TextBlock();
-        /// <summary>
-        /// тескт названия объекта
-        /// </summary>
-        public TextBlock Text
-        {
-            get
-            {
-                return m_text;
-            }
-            set
-            {
-                m_text = value;
-            }
-        }
-        /// <summary>
-        /// начальный размер текста
-        /// </summary>
-        double m_startfontsize;
-        /// <summary>
-        /// первоначальное разположение текста
-        /// </summary>
-        Thickness m_startmargin;
-  
-        /// <summary>
-        /// поворот текста
-        /// </summary>
-        public  double RotateText { get; set; }
-        static double _ktextweight = 1.6;
-        public static double Kwtext
-        {
-            get
-            {
-                return _ktextweight;
-            }
-            set
-            {
-                _ktextweight = value;
-            }
-        }
-        static double _ktextheight = 0.8;
-        public static double Khtext
-        {
-            get
-            {
-                return _ktextheight;
-            }
-            set
-            {
-                _ktextheight = value;
-            }
-        }
         /// <summary>
         /// приоритет отображения фона
         /// </summary>
-        List<Viewmode> _priority_fill = new List<Viewmode>() { Viewmode.controlRedF, Viewmode.controlYellowF, Viewmode.controlRed, Viewmode.controlYellow, Viewmode.controlWhite};
-        /// <summary>
-        /// пояснения
-        /// </summary>
-        public string Notes { get; set; }
-        /// <summary>
-        /// Индекс слоя
-        /// </summary>
-        public int ZIntex { get; set; }
-        ///// <summary>
-        ///// приоритет отображения рамки
-        ///// </summary>
-        //List<Viewmode> _priority_stroke = new List<Viewmode>() {Viewmode.accident_dga, Viewmode.fault };
+        List<Viewmode> _priority_fill = new List<Viewmode>() { Viewmode.controlRedF, Viewmode.controlYellowF, Viewmode.controlRed, Viewmode.controlYellow, Viewmode.controlWhite };
 
         public string NameUl
         {
             get
             {
-                return NameElement;
+                return NameObject;
             }
         }
 
@@ -200,28 +93,25 @@ namespace ARM_SHN.ElementControl
         /// <param name="stationnumber">шестизначный номер станции</param>
         /// <param name="geometry">геометрия объекта</param>
         /// <param name="name">название объекта</param>
-        public HelpElement(PathGeometry geometry, string text, string name, double marginX, double marginY, double fontsize, double rotate, Dictionary<Viewmode, StateElement> impulses)
+        public HelpElement(PathGeometry geometry, string text, string name, double marginX, double marginY, double fontsize, double rotate, Dictionary<Viewmode, StateElement> impulses) :
+                  base(name, ViewElement.help_element, geometry, rotate)
         {
-            m_text.Text = text;
-            NameElement = name;
-            m_text.Foreground = _colortext;
-            m_text.FontSize = fontsize;
-            RotateText = rotate;
-            m_text.Margin = new Thickness(marginX, marginY, 0, 0);
-            m_text.RenderTransform = new RotateTransform(RotateText);
-            //первоначальные координаты
-            m_startfontsize = fontsize;
-            m_startmargin = new Thickness(marginX, marginY, 0, 0);
+            ViewModel.Text = name;
+            ViewModel.Foreground = _colortext;
+            //ViewModel.FontSize = fontsize;
+            //ViewModel.Margin = new Thickness(marginX, marginY, 0, 0);
+            ViewModel.RenderTransform = new RotateTransform(RotateText);
+            LocationText();
+            ViewModel.StrokeThickness = (LoadProject.ProejctGrafic.Scroll * SystemParameters.CaretWidth);
             //
             Impulses = impulses;
-            GeometryFigureCopy(geometry);
             Analis();
             //обработка информации по импульсам и номерам поездов
             LoadColorControl.NewColor += NewColor;
             Connections.NewTart += StartFlashing;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             LoadColorControl.NewColor -= NewColor;
             Connections.NewTart -= StartFlashing;
@@ -229,7 +119,7 @@ namespace ARM_SHN.ElementControl
 
         private void StartFlashing()
         {
-            Dispatcher.Invoke(new Action(() => Flashing()));
+            Flashing();
         }
         /// <summary>
         /// обрабатываем мирцание
@@ -251,7 +141,7 @@ namespace ARM_SHN.ElementControl
                     switch (control.ViewControlDraw)
                     {
                         case ViewElementDraw.fill:
-                            Fill = brushes[0];
+                            ViewModel.Fill = brushes[0];
                             break;
                     }
                 }
@@ -259,7 +149,7 @@ namespace ARM_SHN.ElementControl
                     switch (control.ViewControlDraw)
                     {
                         case ViewElementDraw.fill:
-                            Fill = brushes[1];
+                            ViewModel.Fill = brushes[1];
                             break;
                     }
             }
@@ -278,40 +168,6 @@ namespace ARM_SHN.ElementControl
             return new List<Brush>();
         }
 
-        /// <summary>
-        /// формируем геометрию объкта
-        /// </summary>
-        /// <param name="geometry"></param>
-        private void GeometryFigureCopy(PathGeometry geometry)
-        {
-            foreach (PathFigure geo in geometry.Figures)
-            {
-                PathFigure newfigure = new PathFigure() { IsClosed = true };
-                newfigure.StartPoint = new Point(geo.StartPoint.X, geo.StartPoint.Y);
-                foreach (PathSegment seg in geo.Segments)
-                {
-                    //сегмент линия
-                    LineSegment lin = seg as LineSegment;
-                    if (lin != null)
-                    {
-                        newfigure.Segments.Add(new LineSegment() { Point = new Point(lin.Point.X, lin.Point.Y) });
-                        continue;
-                    }
-                    //сегмент арка
-                    ArcSegment arc = seg as ArcSegment;
-                    if (arc != null)
-                    {
-                        newfigure.Segments.Add(new ArcSegment() { Point = new Point(arc.Point.X, arc.Point.Y), Size = new Size(arc.Size.Width, arc.Size.Height) });
-                        continue;
-                    }
-                }
-                _figure.Figures.Add(newfigure);
-            }
-            //
-            _strokethickness *= LoadProject.ProejctGrafic.Scroll;
-            StrokeThickness = _strokethickness;
-        }
-
         private void NewColor()
         {
             UpdateElement(false);
@@ -323,14 +179,14 @@ namespace ARM_SHN.ElementControl
             {
                 if (!ImpulsesClientTCP.Connect)
                 {
-                    foreach (KeyValuePair<Viewmode, StateElement> imp in Impulses)
+                    foreach (var imp in Impulses)
                         imp.Value.state = StatesControl.nocontrol;
-                    Stroke = _colornotcontrolstroke;
-                    Fill = _colornotcontrol;
+                    ViewModel.Stroke = _colornotcontrolstroke;
+                    ViewModel.Fill = _colornotcontrol;
 
                 }
                 else
-                    Stroke = _color_stroke_defult;
+                    ViewModel.Stroke = _color_stroke_defult;
             }
         }
 
@@ -349,7 +205,7 @@ namespace ARM_SHN.ElementControl
                 }
             }
             //обновляем элемент
-            if(update)
+            if (update)
                 UpdateElement(true);
             //
             return new List<string>();
@@ -404,18 +260,18 @@ namespace ARM_SHN.ElementControl
                 if (!CheckUpdate)
                 {
                     if (!_update_stroke)
-                        Stroke = _colornotcontrolstroke;
+                        ViewModel.Stroke = _colornotcontrolstroke;
                     if (!_update_fill)
-                        Fill = _colornotcontrol;
-                    m_text.Foreground = _colortext;
+                        ViewModel.Fill = _colornotcontrol;
+                    ViewModel.Foreground = _colortext;
                 }
             }
             else
             {
                 if (!CheckUpdate)
                 {
-                    Stroke = _colornotcontrolstroke;
-                    Fill = _colornotcontrol;
+                    ViewModel.Stroke = _colornotcontrolstroke;
+                    ViewModel.Fill = _colornotcontrol;
                 }
             }
         }
@@ -451,19 +307,19 @@ namespace ARM_SHN.ElementControl
                         switch (control.Name)
                         {
                             case Viewmode.controlRed:
-                                Fill = _colorRed;
+                                ViewModel.Fill = _colorRed;
                                 break;
                             case Viewmode.controlYellow:
-                                Fill = _colorYellow;
+                                ViewModel.Fill = _colorYellow;
                                 break;
                             case Viewmode.controlWhite:
-                                Fill = _colorWhite;
+                                ViewModel.Fill = _colorWhite;
                                 break;
                             case Viewmode.controlRedF:
-                                Fill = _colorRed;
+                                ViewModel.Fill = _colorRed;
                                 break;
                             case Viewmode.controlYellowF:
-                                Fill = _colorYellow;
+                                ViewModel.Fill = _colorYellow;
                                 break;
                         }
                         break;
@@ -471,23 +327,23 @@ namespace ARM_SHN.ElementControl
                         switch (control.ViewControlDraw)
                         {
                             case ViewElementDraw.fill:
-                                Fill = _color_fon_defult;
+                                ViewModel.Fill = _color_fon_defult;
                                 break;
-                            //case ViewElementDraw.stroke:
-                            //    Stroke = _color_stroke_defult;
-                            //    break;
+                                //case ViewElementDraw.stroke:
+                                //    Stroke = _color_stroke_defult;
+                                //    break;
                         }
                         break;
                     case StatesControl.nocontrol:
                         switch (control.ViewControlDraw)
                         {
                             case ViewElementDraw.fill:
-                                Fill = _colornotcontrol;
+                                ViewModel.Fill = _colornotcontrol;
                                 break;
                         }
                         break;
                 }
-            } 
+            }
         }
     }
 }

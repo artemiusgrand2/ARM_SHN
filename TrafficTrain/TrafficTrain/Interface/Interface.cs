@@ -13,7 +13,7 @@ namespace ARM_SHN.Interface
 
     public interface IText
     {
-        TextBlock Text { get; set; }
+        TextBlock Text { get; }
     }
 
     public interface IIndicationEl
@@ -56,7 +56,7 @@ namespace ARM_SHN.Interface
         /// <summary>
         /// толщина элемента
         /// </summary>
-        double StrokeThickness { get; set; }
+        //double StrokeThickness { get; set; }
 
         int StationControl { get; set; }
         int StationTransition { get; set; }

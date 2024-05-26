@@ -648,12 +648,6 @@ namespace ARM_SHN
                 case EnumColor.ScreenFon:
                     SettingsWindow.m_colorfon = new SolidColorBrush(color);
                     break;
-                case EnumColor.NameStationTrain:
-                    NameStation._color_train = new SolidColorBrush(color);
-                    break;
-                case EnumColor.NameStationTrack:
-                    NameStation._color_track = new SolidColorBrush(color);
-                    break;
                 case EnumColor.AreaStationFon:
                     RamkaStation._colorfill = new SolidColorBrush(color);
                     break;

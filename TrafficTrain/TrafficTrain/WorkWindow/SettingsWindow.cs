@@ -208,30 +208,30 @@ namespace ARM_SHN.WorkWindow
 
         private void NewInfomation()
         {
-            m_content.Dispatcher.Invoke(new Action(() =>
-            {
-                {
+            //m_content.Dispatcher.Invoke(new Action(() =>
+            //{
+            //    {
                     var messages = new List<string>();
                     foreach (var el in LoadProject.Indications)
                         messages.AddRange(el.Analis());
                     //
                     if (messages.Count > 0)
                         LoadProject.AddMessages(messages.Distinct().ToList());
-                }
-            }));
+            //    }
+            //}));
         }
 
         private void ConnectCloseServer()
         {
-            m_content.Dispatcher.Invoke(new Action(() =>
-            {
-                {
+            //m_content.Dispatcher.Invoke(new Action(() =>
+            //{
+            //    {
                     foreach (var el in LoadProject.Indications)
                     {
                         el.ServerClose();
                     }
-                }
-            }));
+            //    }
+            //}));
         }
 
         private void window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

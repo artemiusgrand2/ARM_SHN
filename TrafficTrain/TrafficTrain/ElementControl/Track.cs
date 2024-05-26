@@ -20,66 +20,8 @@ namespace ARM_SHN.ElementControl
     /// <summary>
     /// класс описывающий станционный путь
     /// </summary>
-    public class StationPath : Shape, IDisposable, IGraficElement, ISelectElement, IInfoElement, IText, IIndicationEl
+    public class StationPath : BaseTextGraficElement, ISelectElement, IInfoElement,  IIndicationEl, IText
     {
-        #region Переменные и свойства
-        /////геометрия элемента
-        /// <summary>
-        /// отрисовываемая геометрия
-        /// </summary>
-        protected override Geometry DefiningGeometry
-        {
-            get
-            {
-                return _figure;
-            }
-        }
-        private PathGeometry _figure = new PathGeometry();
-        /// <summary>
-        /// геометрическое иписание фигуры
-        /// </summary>
-        public PathGeometry Figure
-        {
-            get
-            {
-                return _figure;
-            }
-            set
-            {
-                _figure = value;
-            }
-        }
-       
-        //////основные свойства пути
-        /// <summary>
-        /// шестизначный номер станции к которой принадлежит путь
-        /// </summary>
-        public int StationControl { get; set; }
-
-        public int StationTransition { get; set; }
-
-        private string nametrack = string.Empty;
-        /// <summary>
-        /// название пути
-        /// </summary>
-        public string NameTrack
-        {
-            get
-            {
-                return nametrack;
-            }
-        }
-
-        /// <summary>
-        /// вид тяги для пути по умлчанию автономная
-        /// </summary>
-        public ViewTraction ViewTraction { get; set; }
-        /// <summary>
-        /// имеет ли путь платформу
-        /// </summary>
-        public bool IsPlatform { get; set; }
-        ////////
-
         #region Colors
         //////цветовая палитра
         /// <summary>
@@ -88,7 +30,7 @@ namespace ARM_SHN.ElementControl
         public static Brush _colorfencing = Brushes.SaddleBrown;
         /// <summary>
         /// цвет не занятого пути
-        /// </summary>
+        /// </summary>StationTransition
         public static Brush _colorpassiv = new SolidColorBrush(Color.FromRgb(195, 195, 195));
         /// <summary>
         /// цвет  занятого пути
@@ -119,10 +61,6 @@ namespace ARM_SHN.ElementControl
         /// </summary>
         public static Brush m_colordiesel_traction = Brushes.Black;
         /// <summary>
-        /// цвет  пути если есть наличие платформы
-        /// </summary>
-        public static Brush m_color_platform = Brushes.White;
-        /// <summary>
         /// цвет контура пути с электрической тягой
         /// </summary>
         public static Brush _colorelectric_traction = Brushes.Blue;
@@ -149,30 +87,7 @@ namespace ARM_SHN.ElementControl
         /// коллекция возможных состояний элемента станционный путь
         /// </summary>
         public Dictionary<Viewmode, StateElement > Impulses { get; set; }
-        /// <summary>
-        /// толщина контура объкта
-        /// </summary>
-        double _strokethickness = 1 * SystemParameters.CaretWidth;
 
-        private TextBlock m_text = new TextBlock();
-        /// <summary>
-        /// тескт названия объекта
-        /// </summary>
-        public TextBlock Text
-        {
-            get
-            {
-                return m_text;
-            }
-            set
-            {
-                m_text = value;
-            }
-        }
-        /// <summary>
-        /// поворот текста
-        /// </summary>
-        public  double RotateText { get; set; }
         /// <summary>
         /// приоритет отображения фона
         /// </summary>
@@ -182,25 +97,18 @@ namespace ARM_SHN.ElementControl
         /// </summary>
         List<Viewmode> _priority_stroke = new List<Viewmode>() { Viewmode.electrification};
 
-        /// <summary>
-        /// обозначение
-        /// </summary>
-        public string Notes { get; set; }
-        /// <summary>
-        /// Индекс слоя
-        /// </summary>
-        public int ZIntex { get; set; }
         public string NameUl
         {
             get
             {
-                return nametrack;
+                return NameObject;
             }
         }
 
         public string FileClick { get; set; } = string.Empty;
 
-        #endregion
+        public int StationTransition { get; set; }
+
 
         /// <summary>
         /// Конструктор
@@ -209,25 +117,22 @@ namespace ARM_SHN.ElementControl
         /// <param name="geometry">геометрия объекта</param>
         /// <param name="text">название объекта</param>
         public StationPath(PathGeometry geometry, string text, string name, double marginX, double marginY, double fontsize, 
-                            double rotate, Dictionary<Viewmode, StateElement> impulses)
+                            double rotate, Dictionary<Viewmode, StateElement> impulses):
+             base(name, ViewElement.chiefroad, geometry, rotate)
         {
-            nametrack = name;
-            m_text.Text = text;
-            //
-            m_text.Foreground = _color_path;
-            m_text.FontSize = fontsize;
-            RotateText = rotate;
-            m_text.Margin = new Thickness(marginX, marginY, 0, 0);
-            m_text.RenderTransform = new RotateTransform(RotateText);
+            ViewModel.Text = text;
+            ViewModel.Foreground = _color_path;
+            ViewModel.FontSize = fontsize;
+            ViewModel.Margin = new Thickness(marginX, marginY, 0, 0);
+            ViewModel.RenderTransform = new RotateTransform(RotateText);
+            ViewModel.StrokeThickness = LoadProject.ProejctGrafic.Scroll * SystemParameters.CaretWidth;
             Impulses = AnalisCollectionStateControl(impulses);
-            //графика
-            GeometryFigureCopy(geometry);
             Analis();
             //
             LoadColorControl.NewColor += NewColor;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             LoadColorControl.NewColor -= NewColor;
         }
@@ -238,7 +143,7 @@ namespace ARM_SHN.ElementControl
         /// <param name="impulses"></param>
         private Dictionary<Viewmode, StateElement> AnalisCollectionStateControl(Dictionary<Viewmode, StateElement> impulses)
         {
-            foreach (KeyValuePair<Viewmode, StateElement> control in impulses)
+            foreach (var control in impulses)
             {
                 //смотрим с каким графическим объектом работает контроль
                 foreach (var stroke_element in _priority_stroke)
@@ -259,53 +164,12 @@ namespace ARM_SHN.ElementControl
             return Notes;
         }
 
-
-        /// <summary>
-        /// формируем геометрию объкта
-        /// </summary>
-        /// <param name="geometry"></param>
-        private void GeometryFigureCopy(PathGeometry geometry)
-        {
-            foreach (PathFigure geo in geometry.Figures)
-            {
-                PathFigure newfigure = new PathFigure() { IsClosed = true };
-                newfigure.StartPoint = new Point(geo.StartPoint.X, geo.StartPoint.Y);
-                foreach (PathSegment seg in geo.Segments)
-                {
-                    //сегмент линия
-                    LineSegment lin = seg as LineSegment;
-                    if (lin != null)
-                    {
-                        newfigure.Segments.Add(new LineSegment() { Point = new Point(lin.Point.X, lin.Point.Y) });
-                        continue;
-                    }
-                    //сегмент арка
-                    ArcSegment arc = seg as ArcSegment;
-                    if (arc != null)
-                    {
-                        newfigure.Segments.Add(new ArcSegment() { Point = new Point(arc.Point.X, arc.Point.Y), Size = new Size(arc.Size.Width, arc.Size.Height) });
-                        continue;
-                    }
-                }
-                _figure.Figures.Add(newfigure);
-            }
-            //
-            if (Impulses.Count == 0)
-                Stroke = _colornotcontrolstroke;
-            //
-            _strokethickness *= LoadProject.ProejctGrafic.Scroll;
-            StrokeThickness = _strokethickness;
-            Fill = _colornotcontrol;
-            Stroke = m_colordiesel_traction;
-            //LocationText();
-        }
-
         private void NewColor()
         {
             UpdateElement(false);
             //
-            if (m_text.Text == NameTrack)
-                m_text.Foreground = _color_path;
+            if (ViewModel.Text == NameObject)
+                ViewModel.Foreground = _color_path;
         }
 
         public void ServerClose()
@@ -314,7 +178,7 @@ namespace ARM_SHN.ElementControl
             {
                 if (ImpulsesClientTCP.Connect)
                     //GetColorStroke();
-                    Stroke = m_colordiesel_traction;
+                    ViewModel.Stroke = m_colordiesel_traction;
                 else
                 {
                     foreach (var imp in Impulses)
@@ -323,8 +187,8 @@ namespace ARM_SHN.ElementControl
                         imp.Value.LastUpdate = DateTime.Now;
                     }
                     //обнуляем значения
-                    Stroke = _colornotcontrolstroke;
-                    Fill = _colornotcontrol;
+                    ViewModel.Stroke = _colornotcontrolstroke;
+                    ViewModel.Fill = _colornotcontrol;
                 }
             }
         }
@@ -412,17 +276,17 @@ namespace ARM_SHN.ElementControl
                 if (!CheckUpdate)
                 {
                     if (!_update_stroke)
-                        Stroke = m_colordiesel_traction;
+                        ViewModel.Stroke = m_colordiesel_traction;
                     if (!_update_fill)
-                        Fill = _colornotcontrol;
+                        ViewModel.Fill = _colornotcontrol;
                 }
             }
             else
             {
                 if (!CheckUpdate)
                 {
-                    Stroke = _colornotcontrolstroke;
-                    Fill = _colornotcontrol;
+                    ViewModel.Stroke = _colornotcontrolstroke;
+                    ViewModel.Fill = _colornotcontrol;
                 }
             }
         }
@@ -460,19 +324,19 @@ namespace ARM_SHN.ElementControl
                         switch (control.Name)
                         {
                             case Viewmode.fencing:
-                                Fill = _colorfencing;
+                                ViewModel.Fill = _colorfencing;
                                 break;
                             case Viewmode.occupation:
-                                Fill = _coloractiv;
+                                ViewModel.Fill = _coloractiv;
                                 break;
                             case Viewmode.locking:
-                                Fill = _color_loking;
+                                ViewModel.Fill = _color_loking;
                                 break;
                             case Viewmode.lockingM:
-                                Fill = _color_lokingM;
+                                ViewModel.Fill = _color_lokingM;
                                 break;
                             case Viewmode.lockingY:
-                                Fill = _color_lokingY;
+                                ViewModel.Fill = _color_lokingY;
                                 break;
                         }
                         break;
@@ -480,7 +344,7 @@ namespace ARM_SHN.ElementControl
                         switch (control.ViewControlDraw)
                         {
                             case ViewElementDraw.fill:
-                                Fill = _colorpassiv;
+                                ViewModel.Fill = _colorpassiv;
                                 break;
                         }
                         break;
@@ -488,34 +352,12 @@ namespace ARM_SHN.ElementControl
                         switch (control.ViewControlDraw)
                         {
                             case ViewElementDraw.fill:
-                                Fill = _colornotcontrol;
+                                ViewModel.Fill = _colornotcontrol;
                                 break;;
                         }
                         break;
                 }
             }
-        }
-
-
-        /// <summary>
-        /// определяем занят ли в данный момент путь
-        /// </summary>
-        /// <returns></returns>
-        public string OccupationPath()
-        {
-            if (Impulses.TryGetValue(Viewmode.occupation, out var imp))
-            {
-                switch (imp.state)
-                {
-                    case StatesControl.activ:
-                        return "занят";
-                    case StatesControl.pasiv:
-                        return "не занят";
-                    case StatesControl.nocontrol:
-                        return "не контролируется";
-                }
-            }
-            return "не контролируется";
         }
     }
 }
