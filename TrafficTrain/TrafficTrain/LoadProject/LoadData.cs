@@ -29,6 +29,9 @@ using SCADA.Common.ImpulsClient;
 using SCADA.Common.LogicalParse;
 using SCADA.Common.Constant;
 using log4net;
+using System.Windows.Shapes;
+using System.Runtime.InteropServices.ComTypes;
+using System.IO.Pipes;
 
 //using CefSharp.Wpf;
 
@@ -163,6 +166,11 @@ namespace ARM_SHN
         /// </summary>
         private static uint m_countMessages = 100;
 
+        /// <summary>
+        /// максимальный размер файла диагностики, в MB
+        /// </summary>
+        private static uint m_maxFileDiagnostics = 10;
+
         private static string m_DirDiagnostics = @".\Messages";
 
         private static string m_FileDiagnostics;
@@ -206,20 +214,28 @@ namespace ARM_SHN
                             m_messages.RemoveAt(0);
                         //записываем сообщение
                         if (isWriteDiagnostics)
+                        {
+                            if (File.Exists(m_FileDiagnostics))
+                            {
+                                if ((new FileInfo(m_FileDiagnostics)).Length > m_maxFileDiagnostics* 1000 * 1024)
+                                    CreateDirDiagnostics(m_DirDiagnostics);
+                            }
+                            //
                             lock (thisLock)
                             {
                                 //(new AddMessage(() =>
                                 //{
-                                    File.AppendAllText(m_FileDiagnostics, message + Environment.NewLine, Encoding.UTF8);
-                              //  })).BeginInvoke(null, null);
+                                File.AppendAllText(m_FileDiagnostics, message + Environment.NewLine, Encoding.UTF8);
+                                //  })).BeginInvoke(null, null);
                             }
-                        update = true;
+                            update = true;
+                        }
                     }
                 }
                 //
                 if (update)
                 {
-                    var result = new StringBuilder();
+                    var result = new StringBuilder(m_messages.Count);
                     foreach (var message in m_messages)
                         result.Append(message);
                     //
@@ -232,14 +248,14 @@ namespace ARM_SHN
         public static string CreateMessages(string message, DateTime start, DateTime end)
         {
             var startStr = GetDateTimeStr(start);
-            var endStr =(end != DateTime.MinValue) ? GetDateTimeStr(end) :string.Empty;
+            var endStr = (end != DateTime.MinValue) ? $" - {GetDateTimeStr(end)}" :string.Empty;
             //
-            return string.Format("{0}{1}. {2}{3}", startStr, (!string.IsNullOrEmpty(endStr)) ? string.Format(" - {0}", endStr) : endStr, message, Environment.NewLine);
+            return $"{startStr}{endStr}. {message}{Environment.NewLine}";
         }
 
         public static string GetDateTimeStr(DateTime dateTime)
         {
-            return string.Format("{0:D2}.{1:D2}.{2:D4} {3:D2}:{4:D2}:{5:D2}", dateTime.Day, dateTime.Month, dateTime.Year, dateTime.Hour, dateTime.Minute, dateTime.Second);
+            return $"{dateTime.Day:D2}.{dateTime.Month:D2}.{dateTime.Year:D4} {dateTime.Hour:D2}:{dateTime.Minute:D2}:{dateTime.Second:D2}";
         }
 
         private string GetListStringNamesFieldType()
@@ -277,25 +293,25 @@ namespace ARM_SHN
                                 Project.Scroll = 1;
                             //
                             reader.Close();
-                            m_log.Info(string.Format("{0} успешно загружена !!!", namedesing));
+                            m_log.Info($"{namedesing} успешно загружена !!!");
                             return Project;
                         }
                     }
                     else
                     {
-                        m_log.Error(string.Format("Файла графики по адресу {0} - не существует", filename));
+                        m_log.Error($"Файла графики по адресу {filename} - не существует");
                         return null;
                     }
                 }
                 else
                 {
-                    m_log.Error(string.Format("Введите в файле конфигурации путь к проекту {0}", namedesing));
+                    m_log.Error($"Введите в файле конфигурации путь к проекту {namedesing}");
                     return null;
                 }
             }
             catch (Exception error)
             {
-                m_log.Error(string.Format("Ошибка {0}, в файле {1} !!!", error.Message, namedesing));
+                m_log.Error($"Ошибка {error.Message}, в файле {namedesing} !!!");
                 return null;
             }
         }
@@ -1277,12 +1293,15 @@ namespace ARM_SHN
             if (uint.TryParse(App.Configuration["ReturnTime"], out buffer))
                 m_returnTime = buffer;
             //
-            CreateDirDiagnostics(App.Configuration["Diagnostics"].ToString(), m_DirDiagnostics);
+            if (uint.TryParse(App.Configuration["MaxFileDiagnostics"], out buffer))
+                m_maxFileDiagnostics = buffer;
+            //
+            CreateDirDiagnostics(App.Configuration.AllKeys.Contains("Diagnostics")? App.Configuration["Diagnostics"]: m_DirDiagnostics, m_DirDiagnostics);
             LoadDiagnostics();
             m_log.Info("-----------------------------------------------------------------------Загрузка завершена !!!!-------------------------------------------------------------------");
         }
 
-        private static void CreateDirDiagnostics(string path, string pathDefult)
+        private static void CreateDirDiagnostics(string path, string pathDefult = "")
         {
             if (!Directory.Exists(path))
             {
@@ -1293,7 +1312,7 @@ namespace ARM_SHN
                 catch
                 {
                     if (!string.IsNullOrEmpty(pathDefult))
-                        CreateDirDiagnostics(pathDefult, string.Empty);
+                        CreateDirDiagnostics(pathDefult);
                     else
                     {
                         m_log.Error($"Нельзя создать католог {path} для диагностики");
@@ -1302,11 +1321,10 @@ namespace ARM_SHN
                 }
             }
             //
-            m_FileDiagnostics = string.Format("{0}{1}", (new DirectoryInfo(path)).FullName, string.Format(@"\Журнал_событий_{0:D4}_{1:D2}_{2:D2}_{3:D2}_{4:D2}_{5:D2}.log", DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second));
+            m_FileDiagnostics = System.IO.Path.Combine(path, $"Журнал_событий_{DateTime.Now.Year:D4}_{DateTime.Now.Month:D2}_{DateTime.Now.Day:D2}_{DateTime.Now.Hour:D2}_{DateTime.Now.Minute:D2}_{DateTime.Now.Second:D2}.log");
             isWriteDiagnostics = true;
-            m_DirDiagnostics = (new DirectoryInfo(path)).FullName;
+            m_DirDiagnostics = path;
         }
-
 
         private static void LoadDiagnostics()
         {
@@ -1314,32 +1332,41 @@ namespace ARM_SHN
             {
                 if (Directory.Exists(m_DirDiagnostics))
                 {
-                    var directory = new DirectoryInfo(m_DirDiagnostics);
-                    var messages = new List<string>();
-                    foreach (var file in directory.GetFiles("Журнал_событий_*_*_*_*_*_*.log", SearchOption.TopDirectoryOnly).OrderByDescending(x=>x.CreationTime))
+                    var messages = new List<string>((int)m_countMessages);
+                    foreach (var file in (new DirectoryInfo(m_DirDiagnostics)).GetFiles("Журнал_событий_*_*_*_*_*_*.log", SearchOption.TopDirectoryOnly).OrderByDescending(x => x.CreationTime))
                     {
-                        var text = File.ReadLines(file.FullName, Encoding.UTF8).ToList();
-                        //
-                        if (text != null)
+                        using (var fstream = File.OpenRead(file.FullName))
                         {
-                            text.Reverse();
-                            foreach (var row in text)
+                            var buffer = new byte[1];
+                            var curPosition = fstream.Length;
+                            var queue = new Queue<byte>();
+
+                            while (curPosition > 0)
                             {
-                                  if (Regex.Match(row, patternLog).Success)
-                                  {
-                                      if (messages.Count < m_countMessages)
-                                      {
-                                          messages.Add(row + Environment.NewLine);
-                                      }
-                                      else
-                                      {
-                                          goto metka;
-                                      }
-                                  }
+                                curPosition --;
+                                fstream.Seek(curPosition, SeekOrigin.Begin);
+                                fstream.Read(buffer, 0, buffer.Length);
+                                var curChars = Encoding.UTF8.GetChars(buffer);
+                                if (curChars[0] == '\n' && queue.Count > 0)
+                                {
+                                    var lineBytes = queue.ToArray();
+                                    Array.Reverse(lineBytes);
+                                    var curText = Encoding.UTF8.GetString(lineBytes).Trim();
+                                    queue.Clear();
+                                    if (Regex.Match(curText, patternLog).Success)
+                                    {
+                                        if (messages.Count < m_countMessages)
+                                            messages.Add(curText + Environment.NewLine);
+                                        else
+                                            goto metka;
+                                    }
+                                }
+                                else
+                                    queue.Enqueue(buffer[0]);
                             }
                         }
                     }
-                    //
+                //
                 metka:
                     if (messages.Count > 0)
                     {
@@ -1349,6 +1376,55 @@ namespace ARM_SHN
                 }
             }
         }
+
+        //private static void LoadDiagnostics()
+        //{
+        //    if (isWriteDiagnostics)
+        //    {
+        //        if (Directory.Exists(m_DirDiagnostics))
+        //        {
+        //            var messages = new List<string>((int)m_countMessages);
+        //            foreach (var file in (new DirectoryInfo(m_DirDiagnostics)).GetFiles("Журнал_событий_*_*_*_*_*_*.log", SearchOption.TopDirectoryOnly).OrderByDescending(x => x.CreationTime))
+        //            {
+        //                var f = File.ReadAllLines(file.FullName, Encoding.UTF8);
+        //                Encoding encoding = Encoding.UTF8;
+
+        //                // Открываем файл на чтение
+        //                using (FileStream fileStream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read))
+        //                {
+        //                    // Проверяем длину файла и читаем с конца
+        //                    long fileLength = fileStream.Length;
+        //                    int bufferSize = 1;  // Размер буфера для чтения
+        //                    byte[] buffer = new byte[bufferSize];
+
+        //                    // Создаем StringBuilder для накопления текста
+        //                    StringBuilder sb = new StringBuilder();
+
+        //                    // Читаем данные с конца файла к началу
+        //                    for (long position = fileLength - bufferSize; position >= 0; position -= bufferSize)
+        //                    {
+        //                        fileStream.Seek(position, SeekOrigin.Begin);
+        //                        int bytesRead = fileStream.Read(buffer, 0, bufferSize);
+        //                        sb.Insert(0, encoding.GetString(buffer, 0, bytesRead));
+        //                    }
+
+        //                    // Если осталась часть данных в начале файла, дочитываем её
+        //                    if (fileLength % bufferSize != 0)
+        //                    {
+        //                        fileStream.Seek(0, SeekOrigin.Begin);
+        //                        int remainingBytes = (int)(fileLength % bufferSize);
+        //                        byte[] remainingBuffer = new byte[remainingBytes];
+        //                        fileStream.Read(remainingBuffer, 0, remainingBytes);
+        //                        sb.Insert(0, encoding.GetString(remainingBuffer));
+        //                    }
+
+        //                    // Выводим полученный текст
+        //                    Console.WriteLine(sb.ToString());
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         public static void LoadColorAll()
         {
